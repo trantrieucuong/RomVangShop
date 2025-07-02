@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<meta name="author" content="mironcoder" />
+<meta name="email" content="mironcoder@gmail.com" />
+<meta name="profile" content="https://themeforest.net/user/mironcoder" />
+<meta name="template" content="greeny" />
+<meta name="title" content="greeny - Ecommerce Food Store HTML Template" />
+<meta name="keywords"
+	content="organic, food, shop, ecommerce, store, html, bootstrap, template, agriculture, vegetables, products, farm, grocery, natural, online" />
+<title>Thế giới nông sản</title>
+<link rel="icon" href="/images/logo.png" />
+<link rel="stylesheet" href="fonts/flaticon/flaticon.css" />
+<link rel="stylesheet" href="fonts/icofont/icofont.min.css" />
+<link rel="stylesheet" href="fonts/fontawesome/fontawesome.min.css" />
+<link rel="stylesheet" href="vendor/venobox/venobox.min.css" />
+<link rel="stylesheet" href="vendor/slickslider/slick.min.css" />
+<link rel="stylesheet" href="vendor/niceselect/nice-select.min.css" />
+<link rel="stylesheet" href="vendor/bootstrap/bootstrap.min.css" />
+<link rel="stylesheet" href="css/main.css" />
+<link rel="stylesheet" href="css/index.css" />
+<link rel="stylesheet" href="css/contact.css">
+
+ <meta name="viewport" content="width=device-width, initial-scale=1">
+
+</head>
+<body>
+	
+	<!--************************************
+				Header Start
+		*************************************-->
+		<header th:replace="~{/web/fragments/header :: header}"></header>
+		<!--************************************
+				Header End
+		*************************************-->
+	
+	<section class="home-index-slider slider-arrow slider-dots">
+		<div class=" banner-1">
+			<div class="container">
+				<div class="row align-items-center">
+					<div class="col-md-6 col-lg-6">
+						<div class="banner-content">
+							<h1>CAM KẾT CHẤT LƯỢNG</h1>
+							<p>Tất cả các sản phẩm đều có quy trình rõ ràng, nghiêm ngặt, về tất cả các công đoạn trong quy trình sử lý và sản xuất, Công khai minh bách các sản phẩm làm ra như thế nào, mang lại ý nghĩa gì co người tiêu dùng, chúng tôi luôn đồng hành cũng các bạn</p>
+							<div class="banner-btn">
+								<a class="btn btn-inline"
+									th:href="@{/products}">
+									<i class="fas fa-shopping-basket"></i>
+									<span>Mua sắm ngay bây giờ</span>
+								</a>
+<!-- 								<a class="btn btn-outline" -->
+<!-- 									href="javascript:void(0);"> -->
+<!-- 									<i class="icofont-sale-discount"></i> -->
+<!-- 									<span>nhận đề nghị</span> -->
+<!-- 								</a> -->
+							</div>
+						</div>
+					</div>
+					<div class="col-md-6 col-lg-6">
+						<div class="banner-img">
+							<img src="images/home/index/04.png" alt="index" />
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class=" banner-2">
+			<div class="container">
+				<div class="row align-items-center">
+					<div class="col-md-6 col-lg-6">
+						<div class="banner-content">
+							<h1>CAM KẾT CHẤT LƯỢNG</h1>
+							<p>Tất cả các sản phẩm đều có quy trình rõ ràng, nghiêm ngặt, về tất cả các công đoạn trong quy trình sử lý và sản xuất, Công khai minh bách các sản phẩm làm ra như thế nào, mang lại ý nghĩa gì co người tiêu dùng, chúng tôi luôn đồng hành cũng các bạn</p>
+							<div class="banner-btn">
+								<a class="btn btn-inline"
+								   th:href="@{/products}">
+									<i class="fas fa-shopping-basket"></i>
+									<span>Mua sắm ngay bây giờ</span>
+								</a>
+								<!-- 								<a class="btn btn-outline" -->
+								<!-- 									href="javascript:void(0);"> -->
+								<!-- 									<i class="icofont-sale-discount"></i> -->
+								<!-- 									<span>nhận đề nghị</span> -->
+								<!-- 								</a> -->
+							</div>
+						</div>
+					</div>
+					<div class="col-md-6 col-lg-6">
+						<div class="banner-img">
+							<img src="images/home/index/03.png" alt="index" />
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+	<section class="section suggest-part">
+
+	</section>
+	<section class="section recent-part">
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-12">
+					<div class="section-heading">
+						<h2>Mặt hàng mới về</h2>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col">
+					<ul class="new-slider slider-arrow">
+						<li th:each="item : ${productList}">
+							<div class="product-card">
+								<div class="product-media">
+									<div class="product-label">
+										<label class="label-text new">mới vế</label>
+										<label class="label-text sale">- [[${item.discount + '%'}]]</label>
+									</div>
+									<button class="product-wish wish">
+										<i class="fas fa-heart"></i>
+									</button>
+									<a class="product-image" th:href="@{/productDetail(id=${item.productId})}">
+										<img th:src="@{'/loadImage?imageName='+${item.productImage}}" alt="product" />
+										</a>
+									<div class="product-widget">
+										 
+										<a
+											title="Video sản phẩm"
+											href="https://youtu.be/9xzcVxSBbG8"
+											class="venobox fas fa-play"
+											data-autoplay="true"
+											data-vbtype="video">
+										</a>
+										<a
+											title="Chi tiết sản phẩm"
+											th:href="@{/productDetail(id=${item.productId})}"
+											class="fas fa-eye">
+										</a>
+									</div>
+								</div>
+								<div class="product-content">
+									<div class="product-rating">
+										<i class="active icofont-star"></i>
+										<i class="active icofont-star"></i>
+										<i class="active icofont-star"></i>
+										<i class="active icofont-star"></i>
+										<i class="icofont-star"></i>
+									</div>
+									
+									<h6 class="product-name">
+										<a th:href="@{/productDetail(id=${item.productId})}">[[${item.productName}]]</a>
+									</h6>
+									<h6 class="product-price">
+										<del>
+											[[${#numbers.formatInteger(item.price.intValue(), 0, 'COMMA')} + ' VND']]
+										</del>
+										<span>
+  [[${#numbers.formatInteger((item.price - (item.price * item.discount / 100)).intValue(), 0, 'COMMA')} + ' VND']]
+</span>
+
+
+
+									</h6>							
+									
+									 <th:block th:if="${item.quantity !=  0}">
+									  <a class="product-add1" title="Thêm giỏ hàng" th:href="@{/addToCart(productId=${item.productId})}">
+										<i class="fas fa-shopping-basket"></i><span>Thêm giỏ hàng</span>
+									</a>	       	                               
+									 </th:block>
+									 
+									  <th:block th:if="${item.quantity ==  0}">
+									  <a class="product-add2">
+										<i class="fas fa-shopping-basket"></i><span>Hết hàng</span>
+									</a>	       	                               
+									 </th:block>
+									
+								</div>
+							</div>
+						</li>
+					</ul>
+				</div>
+				
+			</div>
+			<div class="row">
+				<div class="col-lg-12">
+					<div class="section-btn-25">
+						<a th:href="@{/products}" class="btn btn-outline"><i
+							class="fas fa-eye"></i><span>xem thêm</span></a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+	<div class="section promo-part">
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-12">
+					<div class="promo-img">
+						<a href="javascript:void(0);"><img src="images/promo/home/10.jpg" alt="promo" /></a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<section class="section feature-part">
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-12">
+					<div class="section-heading">
+						<h2>Mặt hàng nổi bật</h2>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col">
+					<ul class="new-slider slider-arrow">
+						<li th:each="item : ${bestSaleProduct20}">
+							<div class="product-card">
+								<div class="product-media">
+									<div class="product-label">
+										<label class="label-text feat">nổi bật</label>
+										<label class="label-text sale">- [[${item.discount + '%'}]]</label>
+									</div>
+									<button class="product-wish wish">
+										<i class="fas fa-heart"></i>
+									</button>
+									<a class="product-image" th:href="@{/productDetail(id=${item.productId})}">
+										<img th:src="@{'/loadImage?imageName='+${item.productImage}}" alt="product" />
+										</a>
+									<div class="product-widget">
+										
+										<a
+											title="Product Video"
+											href="https://youtu.be/9xzcVxSBbG8"
+											class="venobox fas fa-play"
+											data-autoplay="true"
+											data-vbtype="video">
+										</a>
+										<a
+											title="Chi tiết sản phẩm"
+											th:href="@{/productDetail(id=${item.productId})}"
+											class="fas fa-eye">
+										</a>
+									</div>
+								</div>
+								<div class="product-content">
+									<div class="product-rating">
+										<i class="active icofont-star"></i>
+										<i class="active icofont-star"></i>
+										<i class="active icofont-star"></i>
+										<i class="active icofont-star"></i>
+										<i class="icofont-star"></i>
+									</div>
+									
+									<h6 class="product-name">
+										<a th:href="@{/productDetail(id=${item.productId})}">[[${item.productName}]]</a>
+									</h6>
+									<h6 class="product-price">
+										<del>
+											[[${#numbers.formatInteger(item.price.intValue(), 0, 'COMMA')} + ' VND']]
+										</del>
+										<span>
+  [[${#numbers.formatInteger((item.price - (item.price * item.discount / 100)).intValue(), 0, 'COMMA')} + ' VND']]
+</span>
+									</h6>
+									
+									<th:block th:if="${item.quantity !=  0}">
+									  <a class="product-add1" title="Thêm giỏ hàng" th:href="@{/addToCart(productId=${item.productId})}">
+										<i class="fas fa-shopping-basket"></i><span>Thêm giỏ hàng</span>
+									</a>	       	                               
+									 </th:block>
+									 
+									  <th:block th:if="${item.quantity ==  0}">
+									  <a class="product-add2">
+										<i class="fas fa-shopping-basket"></i><span>Hết hàng</span>
+									</a>	       	                               
+									 </th:block>
+									
+								</div>
+							</div>
+						</li>
+					</ul>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-lg-12">
+					<div class="section-btn-25">
+						<a th:href="@{/products}" class="btn btn-outline"><i
+							class="fas fa-eye"></i><span>xem thêm</span></a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+	<section class="section countdown-part">
+		<div class="container">
+			<div class="row align-items-center">
+				<div class="col-lg-6 mx-auto">
+					<div class="countdown-content">
+						<h3>ƯU ĐÃI GIẢM GIÁ ĐẶC BIỆT CHO CÁC MẶT HÀNG</h3>
+						<p>Chương trình ưu đãi hàng tuần.</p>
+						<div class="countdown countdown-clock">
+							<span class="countdown-time"><span id="days">00</span><small>days</small></span>
+							<span class="countdown-time"><span id="hours">00</span><small>hours</small></span>
+							<span class="countdown-time"><span id="minutes">00</span><small>minutes</small></span>
+							<span class="countdown-time"><span id="seconds">00</span><small>seconds</small></span>
+						</div>
+
+						<a th:href="@{/products}" class="btn btn-inline"><i
+							class="fas fa-shopping-basket"></i><span>Mua sắm ngay bây
+								giờ</span></a>
+					</div>
+				</div>
+				<div class="col-lg-1"></div>
+				<div class="col-lg-5">
+					<div class="countdown-img">
+						<img src="images/lop1.png" alt="countdown" />
+						<div class="countdown-off">
+							<span>20%</span><span>off</span>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+	<section class="section newitem-part">
+		<div class="container">
+			<div class="row">
+				<div class="col">
+					<div class="section-heading">
+						<h2>Mặt hàng bán chạy</h2>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col">
+					<ul class="new-slider slider-arrow">
+						<li th:each="item : ${bestSaleProduct20}">
+							<div class="product-card">
+								<div class="product-media">
+									<div class="product-label">
+										<label class="label-text new">mới</label>
+										<label class="label-text sale">- [[${item.discount + '%'}]]</label>
+									</div>
+									<button class="product-wish wish">
+										<i class="fas fa-heart"></i>
+									</button>
+									<a class="product-image" th:href="@{/productDetail(id=${item.productId})}">
+										<img th:src="@{'/loadImage?imageName='+${item.productImage}}" alt="product" />
+										</a>
+									<div class="product-widget">
+										
+										<a
+											title="Product Video"
+											href="https://youtu.be/9xzcVxSBbG8"
+											class="venobox fas fa-play"
+											data-autoplay="true"
+											data-vbtype="video">
+										</a>
+										<a
+											title="Chi tiết sản phẩm"
+											th:href="@{/productDetail(id=${item.productId})}"
+											class="fas fa-eye">
+										</a>
+									</div>
+								</div>
+								<div class="product-content">
+									<div class="product-rating">
+										<i class="active icofont-star"></i>
+										<i class="active icofont-star"></i>
+										<i class="active icofont-star"></i>
+										<i class="active icofont-star"></i>
+										<i class="icofont-star"></i>
+									</div>
+									<h6 class="product-name">
+										<a th:href="@{/productDetail(id=${item.productId})}">[[${item.productName}]]</a>
+									</h6>
+									<h6 class="product-price">
+										<del>
+											[[${#numbers.formatInteger(item.price.intValue(), 0, 'COMMA')} + ' VND']]
+										</del>
+										<span>
+  [[${#numbers.formatInteger((item.price - (item.price * item.discount / 100)).intValue(), 0, 'COMMA')} + ' VND']]
+</span>
+									</h6>
+									
+									<th:block th:if="${item.quantity !=  0}">
+									  <a class="product-add1" title="Thêm giỏ hàng" th:href="@{/addToCart(productId=${item.productId})}">
+										<i class="fas fa-shopping-basket"></i><span>Thêm giỏ hàng</span>
+									</a>	       	                               
+									 </th:block>
+									 
+									  <th:block th:if="${item.quantity ==  0}">
+									  <a class="product-add2">
+										<i class="fas fa-shopping-basket"></i><span>Hết hàng</span>
+									</a>	       	                               
+									 </th:block>
+									
+								</div>
+							</div>
+						</li>
+					</ul>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col">
+					<div class="section-btn-25">
+						<a th:href="@{/products}" class="btn btn-outline"><i
+							class="fas fa-eye"></i><span>xem thêm</span></a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<section class="intro-part">
+		<div class="container">
+			<div class="row intro-content">
+				<div class="col-sm-6 col-lg-3">
+					<div class="intro-wrap">
+						<div class="intro-icon">
+							<i class="fas fa-truck"></i>
+						</div>
+						<div class="intro-content">
+							<h5>Giao Hàng Tận Nhà Miễn Phí</h5>
+							<p>Chính sách hỗ trợ người dùng</p>
+						</div>
+					</div>
+				</div>
+				<div class="col-sm-6 col-lg-3">
+					<div class="intro-wrap">
+						<div class="intro-icon">
+							<i class="fas fa-sync-alt"></i>
+						</div>
+						<div class="intro-content">
+							<h5>Chính Sách Hoàn Trả</h5>
+							<p>Chính sách hỗ trợ người dùng</p>
+						</div>
+					</div>
+				</div>
+				<div class="col-sm-6 col-lg-3">
+					<div class="intro-wrap">
+						<div class="intro-icon">
+							<i class="fas fa-headset"></i>
+						</div>
+						<div class="intro-content">
+							<h5>Hệ Thống Hỗ Trợ</h5>
+						<p>Chính sách hỗ trợ người dùng</p>
+						</div>
+					</div>
+				</div>
+				<div class="col-sm-6 col-lg-3">
+					<div class="intro-wrap">
+						<div class="intro-icon">
+							<i class="fas fa-lock"></i>
+						</div>
+						<div class="intro-content">
+							<h5>Cách Thanh Toán An Toàn</h5>
+							<p>Chính sách hỗ trợ người dùng</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+	
+
+	
+	<!--************************************
+				Footer Start
+		*************************************-->
+		<footer th:replace="~{/web/fragments/footer :: footer}"></footer>
+				
+		<!--************************************
+				Footer End
+		*************************************-->
+		
+	<script src="vendor/bootstrap/jquery-1.12.4.min.js"></script>
+	<script src="vendor/bootstrap/popper.min.js"></script>
+	<script src="vendor/bootstrap/bootstrap.min.js"></script>
+	<script src="vendor/countdown/countdown.min.js"></script>
+	<script src="vendor/niceselect/nice-select.min.js"></script>
+	<script src="vendor/slickslider/slick.min.js"></script>
+	<script src="vendor/venobox/venobox.min.js"></script>
+	<script src="js/nice-select.js"></script>
+	<script src="js/countdown.js"></script>
+	<script src="js/accordion.js"></script>
+	<script src="js/venobox.js"></script>
+	<script src="js/slick.js"></script>
+	<script src="js/main.js"></script>
+	<script>
+		// Thời gian kết thúc: sau 24h kể từ khi tải trang
+		const endTime = new Date().getTime() + 24 * 60 * 60 * 1000;
+
+		const countdownInterval = setInterval(() => {
+			const now = new Date().getTime();
+			const distance = endTime - now;
+
+			if (distance < 0) {
+				clearInterval(countdownInterval);
+				document.getElementById("days").innerText = "00";
+				document.getElementById("hours").innerText = "00";
+				document.getElementById("minutes").innerText = "00";
+				document.getElementById("seconds").innerText = "00";
+				return;
+			}
+
+			const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+			const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+			const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+			const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+			document.getElementById("days").innerText = String(days).padStart(2, '0');
+			document.getElementById("hours").innerText = String(hours).padStart(2, '0');
+			document.getElementById("minutes").innerText = String(minutes).padStart(2, '0');
+			document.getElementById("seconds").innerText = String(seconds).padStart(2, '0');
+		}, 1000);
+	</script>
+
+
+
+	
+</body>
+</html>

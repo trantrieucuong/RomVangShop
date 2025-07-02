@@ -1,0 +1,242 @@
+.home-index-slider .dandik {
+    right: 30px;
+}
+
+.home-index-slider .bamdik {
+    left: 30px;
+}
+
+.home-index-slider .slick-dots {
+    bottom: 50px;
+}
+
+.banner-part {
+    padding: 50px 0px 60px;
+    margin-bottom: 25px;
+    position: relative;
+    z-index: 1;
+}
+
+.banner-part::before {
+    position: absolute;
+    content: "";
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    opacity: 0.05;
+    background: url(../images/banner-shape.jpg);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+}
+
+.banner-1 {
+    background: -webkit-gradient(linear, left top, right top, from(#CCFFFF), to(#ffff99));
+    background: linear-gradient(to right, #CCFFFF, #ffff99);
+}
+
+.banner-2 {
+    background: -webkit-gradient(linear, right top, left top, from(#CCFFFF), to(#ffff99));
+    background: linear-gradient(to left, #CCFFFF, #ffff99);
+}
+
+.banner-content h1 {
+    text-transform: capitalize;
+    margin-bottom: 22px;
+}
+
+.banner-content p {
+    font-size: 18px;
+    line-height: 28px;
+    margin-bottom: 50px;
+}
+
+.banner-btn .btn {
+    margin-right: 15px;
+}
+
+.banner-img img {
+    width: 100%;
+}
+
+@media (max-width: 767px) {
+    .banner-content h1 {
+        font-size: 38px;
+        line-height: 48px;
+    }
+
+    .banner-img {
+        display: none;
+    }
+
+    .banner-btn .btn {
+        margin: 8px;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+    .banner-content h1 {
+        font-size: 32px;
+        line-height: 42px;
+    }
+
+    .banner-btn .btn {
+        padding: 14px 22px;
+        margin-right: 10px;
+    }
+}
+
+
+.suggest-slider li {
+    margin: 0px 10px;
+}
+
+@media (max-width: 575px) {
+    .suggest-slider li {
+        margin: 0px 5px;
+    }
+}
+
+.promo-img {
+    width: 100%;
+    overflow: hidden;
+    border-radius: 8px;
+}
+
+.promo-img a {
+    width: 100%;
+}
+
+.promo-img a img {
+    width: 100%;
+    border-radius: 8px;
+    transition: all linear .3s;
+}
+
+.promo-img a img:hover {
+    -webkit-transform: scale(1.05);
+    transform: scale(1.05);
+}
+
+.new-slider li {
+    margin: 0px 12px;
+}
+
+@media (max-width: 575px) {
+    .new-slider .product-card {
+        width: 220px;
+    }
+}
+
+.testimonial-slider .slick-slide {
+    opacity: 0.3;
+    -webkit-transform: scale(0.75);
+    transform: scale(0.75);
+    transition: all linear .3s;
+}
+
+.testimonial-slider .slick-center {
+    opacity: 1;
+    -webkit-transform: scale(1);
+    transform: scale(1);
+    transition: all linear .3s;
+}
+
+.testimonial-slider .dandik,
+.testimonial-slider .bamdik {
+    opacity: 1;
+    visibility: visible;
+}
+
+.testimonial-slider .dandik {
+    right: 50px;
+}
+
+.testimonial-slider .bamdik {
+    left: 50px;
+}
+
+.brand-slider .dandik,
+.brand-slider .bamdik {
+    top: 35%;
+}
+
+.blog-slider .blog-card {
+    margin: 0px 15px 25px;
+}
+
+.blog-slider .dandik,
+.blog-slider .bamdik {
+    top: 43%;
+}
+
+@media (max-width: 767px) {
+    .blog-slider .blog-card {
+        margin: 0px 10px 25px;
+    }
+}
+
+.df-messenger-bubble {
+    border-radius: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background-color: #F4F6F7;
+    border: 1px solid #E4E6EB;
+}
+.df-messenger-agent-message {
+    background-color: #0084ff;
+    color: #ffffff;
+}
+
+.df-messenger-user-message {
+    background-color: #f0f0f0;
+    color: #000000;
+}
+
+.df-messenger-user-input-container {
+    background-color: #ffffff;
+}
+
+.df-messenger-send-icon {
+    color: #0084ff;
+}
+.df-messenger-send-icon:before {
+    content: "\f1d8"; /* Unicode của biểu tượng gửi trong Font Awesome */
+}
+
+.title-wrapper {
+    align-items: center;
+    background-color: #42A5F5;
+    background-color: #4fba69;
+    border-radius: 5px 5px 0 0;
+    box-shadow: 0px 3px 6px 0px #00000029;
+    color: white;
+    color: #fff;
+    display: flex;
+    font-family: 'Roboto', sans-serif;
+    font-size: 18px;
+    height: 50px;
+    justify-content: space-between;
+    padding-left: 15px;
+}
+
+
+df-messenger {
+  --df-messenger-bot-message: #3bd645; /* Màu nền bong bóng cho tin nhắn của đại lý */
+  --df-messenger-chips-color: #fff;
+  --df-messenger-chips-border-color: #e0e0e0;
+  
+  --df-messenger-button-titlebar-color: #0084ff; /* Màu sắc cho nút nổi và thanh tiêu đề của hộp thoại trò chuyện */
+  --df-messenger-chat-background-color: #ffffff; /* Màu nền cho hộp thoại trò chuyện */
+  --df-messenger-font-color: #050505; /* Màu chữ cho tin nhắn */
+  --df-messenger-input-box-color: #F0F0F0; /* Màu nền cho ô nhập văn bản */
+  --df-messenger-input-font-color: #050505; /* Màu chữ cho hộp nhập văn bản */
+  --df-messenger-input-placeholder-font-color: #050505; /* Màu chữ cho văn bản giữ chỗ trong hộp nhập văn bản */
+  --df-messenger-send-icon: #0084ff; /* Màu của biểu tượng gửi trong hộp nhập văn bản */
+  --df-messenger-user-message: #00a1e6; /* Màu nền bong bóng cho tin nhắn của người dùng */
+}
+.section-heading {
+	    padding-top: 30px;
+	
+}

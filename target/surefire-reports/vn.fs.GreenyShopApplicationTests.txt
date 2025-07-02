@@ -1,0 +1,15 @@
+-------------------------------------------------------------------------------
+Test set: vn.fs.GreenyShopApplicationTests
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 11.17 s <<< FAILURE! - in vn.fs.GreenyShopApplicationTests
+contextLoads  Time elapsed: 0.014 s  <<< ERROR!
+java.lang.IllegalStateException: Failed to load ApplicationContext
+Caused by: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'cartController': Unsatisfied dependency expressed through field 'paypalService'; nested exception is org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'paypalService': Unsatisfied dependency expressed through field 'apiContext'; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'apiContext' defined in class path resource [vn/fs/config/PaypalConfig.class]: Bean instantiation via factory method failed; nested exception is org.springframework.beans.BeanInstantiationException: Failed to instantiate [com.paypal.base.rest.APIContext]: Factory method 'apiContext' threw exception; nested exception is response-code: 0	details: null
+Caused by: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'paypalService': Unsatisfied dependency expressed through field 'apiContext'; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'apiContext' defined in class path resource [vn/fs/config/PaypalConfig.class]: Bean instantiation via factory method failed; nested exception is org.springframework.beans.BeanInstantiationException: Failed to instantiate [com.paypal.base.rest.APIContext]: Factory method 'apiContext' threw exception; nested exception is response-code: 0	details: null
+Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'apiContext' defined in class path resource [vn/fs/config/PaypalConfig.class]: Bean instantiation via factory method failed; nested exception is org.springframework.beans.BeanInstantiationException: Failed to instantiate [com.paypal.base.rest.APIContext]: Factory method 'apiContext' threw exception; nested exception is response-code: 0	details: null
+Caused by: org.springframework.beans.BeanInstantiationException: Failed to instantiate [com.paypal.base.rest.APIContext]: Factory method 'apiContext' threw exception; nested exception is response-code: 0	details: null
+Caused by: com.paypal.base.rest.PayPalRESTException: retry fails..  check log for more information
+Caused by: com.paypal.base.exception.HttpErrorException: retry fails..  check log for more information
+Caused by: java.net.UnknownHostException: api.sandbox.paypal.com
+Caused by: java.net.UnknownHostException: api.sandbox.paypal.com
+
