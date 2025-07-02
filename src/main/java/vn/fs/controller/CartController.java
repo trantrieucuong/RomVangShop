@@ -218,7 +218,7 @@ public class CartController extends CommomController {
 		}
 
 		// sendMail
-		commomDataService.sendSimpleEmail(user.getEmail(), "Greenty-Shop Xác Nhận Đơn hàng", "xác nhận", cartItems,
+		commomDataService.sendSimpleEmail(user.getEmail(), "RomVang-Shop Xác Nhận Đơn hàng", "xác nhận", cartItems,
 				totalPrice, order);
 
 		shoppingCartService.clear();
@@ -268,7 +268,7 @@ public class CartController extends CommomController {
 				}
 
 				// sendMail
-				commomDataService.sendSimpleEmail(user.getEmail(), "Greenty-Shop Xác Nhận Đơn hàng", "aaaa", cartItems,
+				commomDataService.sendSimpleEmail(user.getEmail(), "RomVang-Shop Xác Nhận Đơn hàng", "aaaa", cartItems,
 						totalPrice, orderFinal);
 
 				shoppingCartService.clear();
