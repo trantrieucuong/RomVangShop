@@ -6134,6 +6134,24 @@ tbody tr td:last-child {
   font-weight: 400;
   color: var(--text);
 }
+.image-container {
+  width: 100%;
+  height: 170px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 8px;
+  background-color: #f9f9f9; /* tuỳ chọn */
+}
+
+.fixed-image {
+  height: 100%;
+  width: auto;
+  object-fit: cover;
+}
+
+
 @media (max-width: 575px) {
   .bottom-paginate {
     margin-bottom: 30px;

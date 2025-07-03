@@ -124,8 +124,10 @@
 										<i class="fas fa-heart"></i>
 									</button>
 									<a class="product-image" th:href="@{/productDetail(id=${item.productId})}">
-										<img th:src="@{'/loadImage?imageName='+${item.productImage}}" alt="product" />
-										</a>
+										<div class="image-container">
+										<img th:src="@{'/loadImage?imageName='+${item.productImage}}" alt="product" class="fixed-image" />
+										</div>
+									</a>
 									<div class="product-widget">
 										 
 										<a
@@ -150,10 +152,30 @@
 										<i class="active icofont-star"></i>
 										<i class="icofont-star"></i>
 									</div>
-									
-									<h6 class="product-name">
-										<a th:href="@{/productDetail(id=${item.productId})}">[[${item.productName}]]</a>
+
+									<h6 class="product-name" style="
+    margin-bottom: 3px;
+    text-transform: capitalize;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+">
+										<a th:href="@{/productDetail(id=${item.productId})}" style="
+      color: var(--sub-heading);
+      transition: all linear 0.3s;
+      -webkit-transition: all linear 0.3s;
+      -moz-transition: all linear 0.3s;
+      -ms-transition: all linear 0.3s;
+      -o-transition: all linear 0.3s;
+      text-decoration: none;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: inline-block;
+      width: 100%;
+  ">[[${item.productName}]]</a>
 									</h6>
+
 									<h6 class="product-price">
 										<del>
 											[[${#numbers.formatInteger(item.price.intValue(), 0, 'COMMA')} + ' VND']]
