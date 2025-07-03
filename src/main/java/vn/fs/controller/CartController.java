@@ -1,7 +1,9 @@
 package vn.fs.controller;
 
+import java.security.Principal;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.mail.MessagingException;
@@ -31,6 +33,7 @@ import com.paypal.api.payments.Payment;
 import com.paypal.base.rest.PayPalRESTException;
 
 import vn.fs.commom.CommomDataService;
+import vn.fs.config.Config;
 import vn.fs.config.PaypalPaymentIntent;
 import vn.fs.config.PaypalPaymentMethod;
 import vn.fs.entities.CartItem;
@@ -42,6 +45,7 @@ import vn.fs.repository.OrderDetailRepository;
 import vn.fs.repository.OrderRepository;
 import vn.fs.service.PaypalService;
 import vn.fs.service.ShoppingCartService;
+import vn.fs.service.VnpayService;
 import vn.fs.util.Utils;
 
 
@@ -66,29 +70,15 @@ public class CartController extends CommomController {
 	@Autowired
 	OrderDetailRepository orderDetailRepository;
 
+	@Autowired
+	VnpayService vnpayService;
+
 	public Order orderFinal = new Order();
 
 	public static final String URL_PAYPAL_SUCCESS = "pay/success";
 	public static final String URL_PAYPAL_CANCEL = "pay/cancel";
 	private Logger log = LoggerFactory.getLogger(getClass());
 
-//	@GetMapping(value = "/shoppingCart_checkout")
-//	public String shoppingCart(Model model) {
-//
-//		Collection<CartItem> cartItems = shoppingCartService.getCartItems();
-//		model.addAttribute("cartItems", cartItems);
-//		model.addAttribute("total", shoppingCartService.getAmount());
-//		double totalPrice = 0;
-//		for (CartItem cartItem : cartItems) {
-//			double price = cartItem.getQuantity() * cartItem.getProduct().getPrice();
-//			totalPrice += price - (price * cartItem.getProduct().getDiscount() / 100);
-//		}
-//
-//		model.addAttribute("totalPrice", totalPrice);
-//		model.addAttribute("totalCartItems", shoppingCartService.getCount());
-//
-//		return "web/shoppingCart_checkout";
-//	}
 
 	// add cartItem
 	@GetMapping(value = "/addToCart")
@@ -169,23 +159,33 @@ public class CartController extends CommomController {
 
 		String checkOut = request.getParameter("checkOut");
 
+		// Lấy giỏ hàng
 		Collection<CartItem> cartItems = shoppingCartService.getCartItems();
 
+		// Tính tổng tiền
 		double totalPrice = 0;
 		for (CartItem cartItem : cartItems) {
 			double price = cartItem.getQuantity() * cartItem.getProduct().getPrice();
 			totalPrice += price - (price * cartItem.getProduct().getDiscount() / 100);
 		}
 
-		BeanUtils.copyProperties(order, orderFinal);
-		if (StringUtils.equals(checkOut, "paypal")) {
+		// Lưu địa chỉ & số điện thoại vào session (dùng lại cho VNPay)
+		String address = order.getAddress();
+		String phone = order.getPhone();
+		session.setAttribute("checkout_address", address);
+		session.setAttribute("checkout_phone", phone);
 
+		// Gán các giá trị cho orderFinal để tái sử dụng cho PayPal
+		BeanUtils.copyProperties(order, orderFinal);
+
+		// -------- PAYPAL --------
+		if (StringUtils.equals(checkOut, "paypal")) {
 			String cancelUrl = Utils.getBaseURL(request) + "/" + URL_PAYPAL_CANCEL;
 			String successUrl = Utils.getBaseURL(request) + "/" + URL_PAYPAL_SUCCESS;
 			try {
-				totalPrice = totalPrice / 25456;
-				Payment payment = paypalService.createPayment(totalPrice, "USD", PaypalPaymentMethod.paypal,
-						PaypalPaymentIntent.sale, "payment description", cancelUrl, successUrl);
+				double totalUsd = totalPrice / 25456; // Tỷ giá tạm thời
+				Payment payment = paypalService.createPayment(totalUsd, "USD", PaypalPaymentMethod.paypal,
+						PaypalPaymentIntent.sale, "Thanh toán qua PayPal", cancelUrl, successUrl);
 				for (Links links : payment.getLinks()) {
 					if (links.getRel().equals("approval_url")) {
 						return "redirect:" + links.getHref();
@@ -194,39 +194,63 @@ public class CartController extends CommomController {
 			} catch (PayPalRESTException e) {
 				log.error(e.getMessage());
 			}
-
 		}
 
-		session = request.getSession();
+		// -------- VNPay --------
+		else if (StringUtils.equals(checkOut, "vnpay")) {
+			// Lấy hoặc tạo mã giỏ hàng
+			String cartCode = (String) session.getAttribute("cartCode");
+			if (cartCode == null) {
+				cartCode = "GH" + Config.getRandomNumber(4);
+				session.setAttribute("cartCode", cartCode);
+			}
+
+			// Gộp orderInfo: cartCode|address|phone
+			String orderInfo = cartCode + "|" + address + "|" + phone;
+
+			// Mã đơn hàng
+			String orderCode = "hd" + System.currentTimeMillis();
+
+			// Tạo URL thanh toán
+			String paymentUrl = vnpayService.createPaymentUrl((int) totalPrice, user, orderInfo, orderCode);
+			return "redirect:" + paymentUrl;
+		}
+
+		// -------- Thanh toán COD (trả tiền mặt) --------
 		Date date = new Date();
 		order.setOrderDate(date);
-		order.setStatus(0);
-		order.getOrderId();
+		order.setStatus(0); // Chưa xử lý
 		order.setAmount(totalPrice);
 		order.setUser(user);
+		order.setNote("Thanh toán khi nhận hàng");
 
 		orderRepository.save(order);
 
+		// Lưu chi tiết đơn hàng
 		for (CartItem cartItem : cartItems) {
 			OrderDetail orderDetail = new OrderDetail();
-			orderDetail.setQuantity(cartItem.getQuantity());
 			orderDetail.setOrder(order);
 			orderDetail.setProduct(cartItem.getProduct());
-			double unitPrice = cartItem.getProduct().getPrice();
-			orderDetail.setPrice(unitPrice);
+			orderDetail.setQuantity(cartItem.getQuantity());
+			orderDetail.setPrice(cartItem.getProduct().getPrice());
 			orderDetailRepository.save(orderDetail);
 		}
 
-		// sendMail
-		commomDataService.sendSimpleEmail(user.getEmail(), "RomVang-Shop Xác Nhận Đơn hàng", "xác nhận", cartItems,
-				totalPrice, order);
+		// Gửi email xác nhận
+		commomDataService.sendSimpleEmail(user.getEmail(), "RomVang-Shop Xác Nhận Đơn hàng",
+				"Cảm ơn bạn đã đặt hàng!", cartItems, totalPrice, order);
 
+		// Dọn dẹp
 		shoppingCartService.clear();
 		session.removeAttribute("cartItems");
+		session.removeAttribute("checkout_address");
+		session.removeAttribute("checkout_phone");
+
 		model.addAttribute("orderId", order.getOrderId());
 
 		return "redirect:/checkout_success";
 	}
+
 
 	// paypal
 	@GetMapping(URL_PAYPAL_SUCCESS)
@@ -310,5 +334,83 @@ public class CartController extends CommomController {
 		 return "web/shoppingCart_checkout";
 	}
 
+	@GetMapping("/api/payment/vnpay_return")
+	public String handleVnpayReturn(@RequestParam Map<String, String> params,
+									HttpServletRequest request,
+									Model model,
+									HttpSession session,
+									Principal principal) throws MessagingException {
+
+		String responseCode = params.get("vnp_ResponseCode");
+		String orderCode = params.get("vnp_TxnRef");    // ví dụ: hd123456
+		String orderInfo = params.get("vnp_OrderInfo"); // ví dụ: GH1234|Số 1 HN|0912345678
+
+		// ❌ Nếu thất bại thì quay lại trang thanh toán
+		if (responseCode == null || !"00".equals(responseCode)) {
+			return "redirect:/checkout";
+		}
+
+		// ✅ Tách thông tin từ orderInfo
+		String cartCode = "";
+		String address = "";
+		String phone = "";
+
+		if (orderInfo != null) {
+			String[] parts = orderInfo.split("\\|");
+			cartCode = parts.length > 0 ? parts[0] : "";
+			address = parts.length > 1 ? parts[1] : "";
+			phone = parts.length > 2 ? parts[2] : "";
+		}
+
+		// ✅ Lấy user từ Principal
+		User user = userRepository.findByEmail(principal.getName());
+
+		// ✅ Lấy giỏ hàng
+		Collection<CartItem> cartItems = shoppingCartService.getCartItems();
+		double totalPrice = shoppingCartService.getAmount();
+
+		// ✅ Tạo đơn hàng
+		Order order = new Order();
+		order.setOrderDate(new Date());
+		order.setStatus(0); // chưa xử lý
+		order.setAmount(totalPrice);
+		order.setUser(user);
+		order.setNote("Thanh toán qua VNPay");
+		order.setAddress(address);
+		order.setPhone(phone);
+
+		// ✅ Lưu đơn hàng để lấy orderId
+		order = orderRepository.save(order);
+
+		// ✅ Lưu từng sản phẩm trong đơn hàng
+		for (CartItem cartItem : cartItems) {
+			OrderDetail detail = new OrderDetail();
+			detail.setOrder(order);
+			detail.setProduct(cartItem.getProduct());
+			detail.setQuantity(cartItem.getQuantity());
+			detail.setPrice(cartItem.getProduct().getPrice());
+			orderDetailRepository.save(detail);
+		}
+
+		// ✅ Gửi mail xác nhận
+		commomDataService.sendSimpleEmail(
+				user.getEmail(),
+				"Xác nhận đơn hàng qua VNPay",
+				"Cảm ơn bạn đã đặt hàng!",
+				cartItems,
+				totalPrice,
+				order
+		);
+
+		// ✅ Dọn dẹp giỏ hàng
+		shoppingCartService.clear();
+		session.removeAttribute("cartItems");
+		session.removeAttribute("checkout_address");
+		session.removeAttribute("checkout_phone");
+		session.removeAttribute("cartCode");
+
+		// ✅ Chuyển hướng về trang thành công
+		return "redirect:/checkout_success";
+	}
 
 }

@@ -124,12 +124,25 @@
 													<input th:field="*{enteredDate}" id="enteredDate" type="date" class="form-control" placeholder="ngày thêm">
 												</div>
 											</div>
-											<div class="col-sm-12">
-												<div class="form-group form-group-default">
-													<label>Images</label>
-													<input type="file" id="productImage" name="file" class="form-control">
-												</div>
+
+
+											<!-- Hiển thị ảnh hiện tại -->
+											<div class="form-group form-group-default">
+												<label>Ảnh hiện tại</label><br>
+												<img th:src="@{'/loadImage?imageName=' + ${product.productImage}}"
+													 alt="Ảnh hiện tại" style="height: 150px; border: 1px solid #ccc;">
 											</div>
+
+											<!-- Chọn ảnh mới -->
+											<div class="form-group form-group-default">
+												<label>Cập nhật ảnh mới</label>
+												<input type="file" id="productImage" name="file" class="form-control">
+											</div>
+
+											<!-- Hidden: Gửi tên ảnh cũ về nếu không chọn ảnh mới -->
+											<input type="hidden" name="oldImageName" th:value="${product.productImage}" />
+
+
 											<div class="col-sm-12">
 												<div class="form-group form-group-default">
 													<label>Mô tả sản phẩm</label>
@@ -156,7 +169,7 @@
 					<ul class="nav">
 						<li class="nav-item">
 							<a class="nav-link" href="javascript:void(0);">
-								GREENY-SHOP
+								RomVang-SHOP
 							</a>
 						</li>
 						<li class="nav-item">
@@ -172,7 +185,7 @@
 					</ul>
 				</nav>
 				<div class="copyright ml-auto">
-					2024, made with <i class="fa fa-heart heart text-danger"></i> by <a href="javascript:void(0);">GREENTY-SHOP</a>
+					2024, made with <i class="fa fa-heart heart text-danger"></i> by <a href="javascript:void(0);">RomVang-SHOP</a>
 				</div>				
 			</div>
 		</footer>

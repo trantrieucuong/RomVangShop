@@ -38,6 +38,8 @@ public class Order implements Serializable {
 	private String phone;
 	private int status;
 
+	private String note;
+
 	@OneToMany(mappedBy = "order")
 	private List<OrderDetail> orderDetails;
 
