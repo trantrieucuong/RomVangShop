@@ -131,39 +131,43 @@ public class ProductController{
 		return "admin/editProduct";
 	}
 
-	@PostMapping(value = "/updateProduct")
-	public String updateProduct(@ModelAttribute("product") Product product, Model model,
-	        @RequestParam("file") MultipartFile file, HttpServletRequest httpServletRequest) {
 
-	    // Kiểm tra nếu có file ảnh được tải lên
-	    if (!file.isEmpty()) {
-	        try {
-	            // Lưu file ảnh mới lên server
-	            File convFile = new File(pathUploadImage + "/" + file.getOriginalFilename());
-	            FileOutputStream fos = new FileOutputStream(convFile);
-	            fos.write(file.getBytes());
-	            fos.close();
-	            
-	            // Cập nhật tên file ảnh mới cho sản phẩm
-	            product.setProductImage(file.getOriginalFilename());
-	        } catch (IOException e) {
-	            // Xử lý nếu có lỗi khi lưu file
-	            e.printStackTrace();
-	        }
-	    }
 
-	    // Lưu thông tin sản phẩm vào cơ sở dữ liệu
-	    Product updatedProduct = productRepository.save(product);
-	    
-	    // Kiểm tra xem việc cập nhật sản phẩm thành công hay không và chuyển hướng tới trang danh sách sản phẩm
-	    if (updatedProduct != null) {
-	        model.addAttribute("message", "Update success");
-	    } else {
-	        model.addAttribute("message", "Update failure");
-	    }
-	    return "redirect:/admin/products";
+
+
+	@PostMapping("/updateProduct")
+	public String updateProduct(@ModelAttribute("product") Product product,
+								@RequestParam("file") MultipartFile file,
+								@RequestParam("oldImageName") String oldImageName,
+								HttpServletRequest request,
+								Model model) {
+
+		try {
+			if (!file.isEmpty()) {
+				// Nếu có file mới thì lưu file mới
+				String fileName = file.getOriginalFilename();
+				File uploadFile = new File(pathUploadImage + "/" + fileName);
+				FileOutputStream fos = new FileOutputStream(uploadFile);
+				fos.write(file.getBytes());
+				fos.close();
+
+				product.setProductImage(fileName); // set ảnh mới
+			} else {
+				// Không có ảnh mới -> giữ nguyên ảnh cũ
+				product.setProductImage(oldImageName);
+			}
+
+			productRepository.save(product);
+			model.addAttribute("message", "Update success");
+		} catch (IOException e) {
+			e.printStackTrace();
+			model.addAttribute("message", "Update failure");
+		}
+
+		return "redirect:/admin/products";
 	}
-	
+
+
 	// delete category
 	@GetMapping("/deleteProduct/{id}")
 	public String delProduct(@PathVariable("id") Long id, Model model) {
