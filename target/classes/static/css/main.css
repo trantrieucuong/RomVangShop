@@ -6151,6 +6151,51 @@ tbody tr td:last-child {
   object-fit: cover;
 }
 
+.order-status-filter {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.order-status-filter a {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  min-width: 140px;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 25px;
+  text-decoration: none;
+  color: #fff;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+/* Màu riêng cho từng trạng thái */
+.order-status-filter a.all {
+  background-color: #6c757d;
+}
+.order-status-filter a.pending {
+  background-color: #0d6efd;
+}
+.order-status-filter a.shipping {
+  background-color: #ffc107;
+  color: #000;
+}
+.order-status-filter a.completed {
+  background-color: #198754;
+}
+.order-status-filter a.active {
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 2px #333;
+}
+.order-status-filter a i {
+  font-size: 16px;
+}
+
 
 @media (max-width: 575px) {
   .bottom-paginate {

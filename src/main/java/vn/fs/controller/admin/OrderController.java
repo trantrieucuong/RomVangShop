@@ -2,8 +2,11 @@ package vn.fs.controller.admin;
 
 import java.io.IOException;
 import java.security.Principal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -11,10 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import vn.fs.dto.OrderExcelExporter;
@@ -64,15 +64,46 @@ public class OrderController {
 		return user;
 	}
 
-	// list order
-	@GetMapping(value = "/orders")
-	public String orders(Model model, Principal principal) {
+	@GetMapping("/orders")
+	public String orders(
+			Model model,
+			Principal principal,
+			@RequestParam(value = "month", required = false) Integer month,
+			@RequestParam(value = "orderStatus", required = false) Integer status
+	) {
+		if (month == null) {
+			month = LocalDate.now().getMonthValue(); // mặc định là tháng hiện tại
+		}
 
-		List<Order> orderDetails = orderRepository.findAll();
+		List<Integer> months = IntStream.rangeClosed(1, 12).boxed().collect(Collectors.toList());
+		model.addAttribute("months", months);
+
+		// Lấy toàn bộ đơn hàng của tháng
+		List<Order> allOrdersByMonth = orderRepository.findByMonth(month);
+
+		// Đếm theo trạng thái
+		model.addAttribute("countNew", allOrdersByMonth.stream().filter(o -> o.getStatus() == 0).count());
+		model.addAttribute("countConfirmed", allOrdersByMonth.stream().filter(o -> o.getStatus() == 1).count());
+		model.addAttribute("countDelivered", allOrdersByMonth.stream().filter(o -> o.getStatus() == 2).count());
+		model.addAttribute("countCanceled", allOrdersByMonth.stream().filter(o -> o.getStatus() == 3).count());
+
+		// Lọc theo trạng thái nếu có
+		List<Order> orderDetails = allOrdersByMonth;
+		if (status != null) {
+			orderDetails = allOrdersByMonth.stream()
+					.filter(o -> o.getStatus() == status)
+					.collect(Collectors.toList());
+		}
+
 		model.addAttribute("orderDetails", orderDetails);
+		model.addAttribute("selectedMonth", month);
+		model.addAttribute("selectedStatus", status);
 
 		return "admin/orders";
 	}
+
+
+
 
 	@GetMapping("/order/detail/{order_id}")
 	public ModelAndView detail(ModelMap model, @PathVariable("order_id") Long id) {
