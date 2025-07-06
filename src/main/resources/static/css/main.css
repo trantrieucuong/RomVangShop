@@ -6196,6 +6196,199 @@ tbody tr td:last-child {
   font-size: 16px;
 }
 
+/* Vùng chứa bảng cho phép cuộn ngang nếu cần */
+.table-scroll {
+  overflow-x: auto;
+  width: 100%;
+}
+
+/* Bảng chính */
+.table-list {
+  width: 100%;
+  min-width: 900px; /* Bắt buộc phải cuộn ở màn nhỏ */
+  table-layout: fixed; /* Khống chế kích thước cột */
+  border-collapse: collapse;
+}
+
+.table-list th,
+.table-list td {
+  padding: 10px 8px;
+  text-align: center;
+  vertical-align: middle;
+  font-size: 14px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+/* Cột ảnh */
+.table-image img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+/* Cột tên sản phẩm */
+.table-name h6 {
+  font-size: 14px;
+  white-space: normal;
+  word-break: break-word;
+  max-width: 160px;
+  margin: 0 auto;
+}
+
+/* Cột thể loại */
+.table-brand h6 {
+  font-size: 13px;
+  white-space: normal;
+  word-break: break-word;
+}
+
+/* Cột đơn giá và tổng tiền */
+.table-price h6,
+.table-total h6 {
+  font-weight: bold;
+  font-size: 14px;
+  color: #119744;
+}
+
+/* Input số lượng */
+.table-quantity .input-group {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.table-quantity input {
+  width: 40px;
+  text-align: center;
+  border: 1px solid #ccc;
+}
+
+.decrease-quantity,
+.increase-quantity {
+  padding: 0 10px;
+  border: 1px solid #ccc;
+  background: #f5f5f5;
+  cursor: pointer;
+}
+
+/* Hành động */
+.table-action a {
+  font-size: 16px;
+  margin: 0 4px;
+  color: #333;
+}
+
+.table-action a:hover {
+  color: red;
+}
+
+/* ====================
+   Responsive nhỏ hơn 768px
+   ==================== */
+@media (max-width: 768px) {
+  .table-list {
+    font-size: 12px;
+    min-width: 700px; /* Cho phép cuộn ngang */
+  }
+
+  .table-image img {
+    width: 45px;
+    height: 45px;
+  }
+
+  .table-name h6 {
+    max-width: 120px;
+    font-size: 12px;
+  }
+
+  .table-action a {
+    font-size: 14px;
+  }
+
+  .table-quantity input {
+    width: 30px;
+  }
+}
+
+/* ====================
+   Rất nhỏ: max-width 480px (mobile nhỏ)
+   ==================== */
+@media (max-width: 480px) {
+  .table-list {
+    min-width: 650px;
+  }
+
+  .table-name h6 {
+    max-width: 100px;
+  }
+
+  .table-image img {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+/* Wrapper cho input và nút + - */
+.quantity-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: nowrap;
+}
+
+/* Nút tăng / giảm */
+.quantity-btn {
+  background-color: #119744;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  font-size: 18px;
+  font-weight: bold;
+  line-height: 36px;
+  text-align: center;
+  transition: background 0.3s ease;
+}
+
+.quantity-btn:hover {
+  background-color: #0d7b35;
+}
+
+/* Ô input số lượng */
+.quantity-input {
+  width: 60px;
+  height: 36px;
+  text-align: center;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+/* Responsive cho thiết bị nhỏ hơn 576px (điện thoại) */
+@media (max-width: 575.98px) {
+  .quantity-btn {
+    width: 28px;
+    height: 28px;
+    font-size: 16px;
+    line-height: 28px;
+  }
+
+  .quantity-input {
+    width: 40px;
+    height: 28px;
+    font-size: 14px;
+  }
+
+  .quantity-box {
+    gap: 6px;
+  }
+}
+
+
 
 @media (max-width: 575px) {
   .bottom-paginate {

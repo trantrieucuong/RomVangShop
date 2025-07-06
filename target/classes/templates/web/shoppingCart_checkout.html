@@ -169,20 +169,24 @@
   
           
     <script th:inline="javascript">
-    
-    function updateQuantity(productId, quantity) {
-        fetch('/updateQuantity?productId=' + productId + '&quantity=' + quantity, { method: 'PUT' })
-            .then(response => {
-                if (response.ok) {
-                    console.log('Quantity updated successfully.');
-                } else {
-                    console.error('Failed to update quantity');
-                }
-            })
-            .catch(error => console.error('Error:', error));
-    }
 
-    function increaseQuantity(productId) {
+        function updateQuantity(productId, quantity) {
+            fetch('/updateQuantity?productId=' + productId + '&quantity=' + quantity, {
+                method: 'PUT'
+            })
+                .then(response => {
+                    if (response.ok) {
+                        console.log('Quantity updated successfully.');
+                        location.reload(); // ✅ Reload trang sau khi cập nhật thành công
+                    } else {
+                        console.error('Failed to update quantity');
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+
+        function increaseQuantity(productId) {
         var quantityInput = document.querySelector('[data-product="' + productId + '"]');
         var currentQuantity = parseInt(quantityInput.value);
         quantityInput.value = currentQuantity + 1;
