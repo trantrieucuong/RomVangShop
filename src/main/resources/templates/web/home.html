@@ -8,11 +8,11 @@
 <meta name="author" content="mironcoder" />
 <meta name="email" content="mironcoder@gmail.com" />
 <meta name="profile" content="https://themeforest.net/user/mironcoder" />
-<meta name="template" content="greeny" />
-<meta name="title" content="greeny - Ecommerce Food Store HTML Template" />
+<meta name="template" content="Rơm Vàng" />
+<meta name="title" content="Rơm Vàng - Ecommerce Food Store HTML Template" />
 <meta name="keywords"
-	content="organic, food, shop, ecommerce, store, html, bootstrap, template, agriculture, vegetables, products, farm, grocery, natural, online" />
-<title>Thế giới nông sản</title>
+	content="shop, ecommerce, store, html, bootstrap, template, agriculture, vegetables, products, farm, grocery, natural, online" />
+<title>Thế giới quà tặng</title>
 <link rel="icon" href="/images/logo.png" />
 <link rel="stylesheet" href="fonts/flaticon/flaticon.css" />
 <link rel="stylesheet" href="fonts/icofont/icofont.min.css" />
@@ -244,28 +244,30 @@
 							<div class="product-card">
 								<div class="product-media">
 									<div class="product-label">
-										<label class="label-text feat">nổi bật</label>
+										<label class="label-text new">Nổi Bật</label>
 										<label class="label-text sale">- [[${item.discount + '%'}]]</label>
 									</div>
 									<button class="product-wish wish">
 										<i class="fas fa-heart"></i>
 									</button>
 									<a class="product-image" th:href="@{/productDetail(id=${item.productId})}">
-										<img th:src="@{'/loadImage?imageName='+${item.productImage}}" alt="product" />
-										</a>
+										<div class="image-container">
+											<img th:src="@{'/loadImage?imageName='+${item.productImage}}" alt="product" class="fixed-image" />
+										</div>
+									</a>
 									<div class="product-widget">
-										
+
 										<a
-											title="Product Video"
-											href="https://youtu.be/9xzcVxSBbG8"
-											class="venobox fas fa-play"
-											data-autoplay="true"
-											data-vbtype="video">
+												title="Video sản phẩm"
+												href="https://youtu.be/9xzcVxSBbG8"
+												class="venobox fas fa-play"
+												data-autoplay="true"
+												data-vbtype="video">
 										</a>
 										<a
-											title="Chi tiết sản phẩm"
-											th:href="@{/productDetail(id=${item.productId})}"
-											class="fas fa-eye">
+												title="Chi tiết sản phẩm"
+												th:href="@{/productDetail(id=${item.productId})}"
+												class="fas fa-eye">
 										</a>
 									</div>
 								</div>
@@ -277,10 +279,30 @@
 										<i class="active icofont-star"></i>
 										<i class="icofont-star"></i>
 									</div>
-									
-									<h6 class="product-name">
-										<a th:href="@{/productDetail(id=${item.productId})}">[[${item.productName}]]</a>
+
+									<h6 class="product-name" style="
+    margin-bottom: 3px;
+    text-transform: capitalize;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+">
+										<a th:href="@{/productDetail(id=${item.productId})}" style="
+      color: var(--sub-heading);
+      transition: all linear 0.3s;
+      -webkit-transition: all linear 0.3s;
+      -moz-transition: all linear 0.3s;
+      -ms-transition: all linear 0.3s;
+      -o-transition: all linear 0.3s;
+      text-decoration: none;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: inline-block;
+      width: 100%;
+  ">[[${item.productName}]]</a>
 									</h6>
+
 									<h6 class="product-price">
 										<del>
 											[[${#numbers.formatInteger(item.price.intValue(), 0, 'COMMA')} + ' VND']]
@@ -288,20 +310,23 @@
 										<span>
   [[${#numbers.formatInteger((item.price - (item.price * item.discount / 100)).intValue(), 0, 'COMMA')} + ' VND']]
 </span>
+
+
+
 									</h6>
-									
+
 									<th:block th:if="${item.quantity !=  0}">
-									  <a class="product-add1" title="Thêm giỏ hàng" th:href="@{/addToCart(productId=${item.productId})}">
-										<i class="fas fa-shopping-basket"></i><span>Thêm giỏ hàng</span>
-									</a>	       	                               
-									 </th:block>
-									 
-									  <th:block th:if="${item.quantity ==  0}">
-									  <a class="product-add2">
-										<i class="fas fa-shopping-basket"></i><span>Hết hàng</span>
-									</a>	       	                               
-									 </th:block>
-									
+										<a class="product-add1" title="Thêm giỏ hàng" th:href="@{/addToCart(productId=${item.productId})}">
+											<i class="fas fa-shopping-basket"></i><span>Thêm giỏ hàng</span>
+										</a>
+									</th:block>
+
+									<th:block th:if="${item.quantity ==  0}">
+										<a class="product-add2">
+											<i class="fas fa-shopping-basket"></i><span>Hết hàng</span>
+										</a>
+									</th:block>
+
 								</div>
 							</div>
 						</li>
@@ -365,28 +390,30 @@
 							<div class="product-card">
 								<div class="product-media">
 									<div class="product-label">
-										<label class="label-text new">mới</label>
+										<label class="label-text new">Bán Chạy</label>
 										<label class="label-text sale">- [[${item.discount + '%'}]]</label>
 									</div>
 									<button class="product-wish wish">
 										<i class="fas fa-heart"></i>
 									</button>
 									<a class="product-image" th:href="@{/productDetail(id=${item.productId})}">
-										<img th:src="@{'/loadImage?imageName='+${item.productImage}}" alt="product" />
-										</a>
+										<div class="image-container">
+											<img th:src="@{'/loadImage?imageName='+${item.productImage}}" alt="product" class="fixed-image" />
+										</div>
+									</a>
 									<div class="product-widget">
-										
+
 										<a
-											title="Product Video"
-											href="https://youtu.be/9xzcVxSBbG8"
-											class="venobox fas fa-play"
-											data-autoplay="true"
-											data-vbtype="video">
+												title="Video sản phẩm"
+												href="https://youtu.be/9xzcVxSBbG8"
+												class="venobox fas fa-play"
+												data-autoplay="true"
+												data-vbtype="video">
 										</a>
 										<a
-											title="Chi tiết sản phẩm"
-											th:href="@{/productDetail(id=${item.productId})}"
-											class="fas fa-eye">
+												title="Chi tiết sản phẩm"
+												th:href="@{/productDetail(id=${item.productId})}"
+												class="fas fa-eye">
 										</a>
 									</div>
 								</div>
@@ -398,9 +425,30 @@
 										<i class="active icofont-star"></i>
 										<i class="icofont-star"></i>
 									</div>
-									<h6 class="product-name">
-										<a th:href="@{/productDetail(id=${item.productId})}">[[${item.productName}]]</a>
+
+									<h6 class="product-name" style="
+    margin-bottom: 3px;
+    text-transform: capitalize;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+">
+										<a th:href="@{/productDetail(id=${item.productId})}" style="
+      color: var(--sub-heading);
+      transition: all linear 0.3s;
+      -webkit-transition: all linear 0.3s;
+      -moz-transition: all linear 0.3s;
+      -ms-transition: all linear 0.3s;
+      -o-transition: all linear 0.3s;
+      text-decoration: none;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: inline-block;
+      width: 100%;
+  ">[[${item.productName}]]</a>
 									</h6>
+
 									<h6 class="product-price">
 										<del>
 											[[${#numbers.formatInteger(item.price.intValue(), 0, 'COMMA')} + ' VND']]
@@ -408,20 +456,23 @@
 										<span>
   [[${#numbers.formatInteger((item.price - (item.price * item.discount / 100)).intValue(), 0, 'COMMA')} + ' VND']]
 </span>
+
+
+
 									</h6>
-									
+
 									<th:block th:if="${item.quantity !=  0}">
-									  <a class="product-add1" title="Thêm giỏ hàng" th:href="@{/addToCart(productId=${item.productId})}">
-										<i class="fas fa-shopping-basket"></i><span>Thêm giỏ hàng</span>
-									</a>	       	                               
-									 </th:block>
-									 
-									  <th:block th:if="${item.quantity ==  0}">
-									  <a class="product-add2">
-										<i class="fas fa-shopping-basket"></i><span>Hết hàng</span>
-									</a>	       	                               
-									 </th:block>
-									
+										<a class="product-add1" title="Thêm giỏ hàng" th:href="@{/addToCart(productId=${item.productId})}">
+											<i class="fas fa-shopping-basket"></i><span>Thêm giỏ hàng</span>
+										</a>
+									</th:block>
+
+									<th:block th:if="${item.quantity ==  0}">
+										<a class="product-add2">
+											<i class="fas fa-shopping-basket"></i><span>Hết hàng</span>
+										</a>
+									</th:block>
+
 								</div>
 							</div>
 						</li>
