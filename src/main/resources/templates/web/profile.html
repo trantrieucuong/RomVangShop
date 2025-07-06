@@ -32,7 +32,7 @@
     <link rel="stylesheet" href="css/profile.css" />
   </head>
   <body>
-    
+
     <!--************************************
 				Header Start
 		*************************************-->
@@ -48,7 +48,7 @@
         <h2>thông tin tài khoản</h2>
         <ol class="breadcrumb">
           <li class="breadcrumb-item"><a th:href="@{/}">Trang chủ</a></li>
-          
+
         </ol>
       </div>
     </section>
@@ -93,13 +93,13 @@
               </div>
             </div>
           </div>
-        
+
           <div class="col-lg-12">
             <div class="account-card mb-0">
               <div class="account-title">
                 <h4>Lịch sử đặt hàng</h4>
               </div>
-              
+
               <section class="inner-section checkout-part">
                 <div class="container">
                   <div class="row">
@@ -107,7 +107,30 @@
                       <div class="account-card">
                         <div class="account-content">
                           <div class="table-scroll">
-                            <table class="table-list">
+                              <div class="order-status-filter">
+                                  <a th:href="@{/profile}" class="all"
+                                     th:classappend="${selectedStatus == null} ? ' active'">
+                                      <i class="fas fa-list-ul"></i> Tất cả
+                                  </a>
+                                  <a th:href="@{/profile(orderStatus=0)}" class="pending"
+                                     th:classappend="${selectedStatus == 0} ? ' active'">
+                                      <i class="fas fa-clock"></i> Chờ xác nhận
+                                  </a>
+                                  <a th:href="@{/profile(orderStatus=1)}" class="shipping"
+                                     th:classappend="${selectedStatus == 1} ? ' active'">
+                                      <i class="fas fa-truck"></i> Đang giao hàng
+                                  </a>
+                                  <a th:href="@{/profile(orderStatus=2)}" class="completed"
+                                     th:classappend="${selectedStatus == 2} ? ' active'">
+                                      <i class="fas fa-check-circle"></i> Đã thanh toán
+                                  </a>
+                                  <a th:href="@{/profile(orderStatus=3)}" class="completed"
+                                     th:classappend="${selectedStatus == 3} ? ' active'">
+                                      <i class="fas fa-trash-alt"></i> Đã Huỷ
+                                  </a>
+                              </div>
+                          <div th:fragment="orderTable">
+                              <table class="table-list">
                               <thead>
                                 <tr>
                                   <th scope="col">Mã Order</th>
@@ -132,26 +155,26 @@
 											<i class="fa fa-check-circle"> Chờ xác nhận</i>
 										</a>
 									</div>
-									
+
 									<div th:if="${item.status==1}">
 										<a style="cursor: pointer; color: #ffab10;">
 											<i class="fa fa-check-circle"> Đang giao hàng</i>
 										</a>
 									</div>
-									
+
 									<div th:if="${item.status==2}">
 										<a style="cursor: pointer; color: #119744;">
 											<i class="fa fa-check-circle"> Đã thanh toán</i>
 										</a>
 									</div>
-									
+
 									<div th:if="${item.status==3}">
 										<a style="cursor: pointer; color: #ff3838;">
 											<i class="fa fa-check-circle"> Đã hủy</i>
 										</a>
 									</div>
                                   </td>
-                                  
+
                                   <td class="table-action">
                                     <a
                                       class="view"
@@ -160,7 +183,7 @@
                                       >
                                       <i class="fas fa-eye"></i>
                                       </a>
-                                      
+
                                       <th:block th:if="${item.status==0}">
 	                                      <a class="trash" href="javascript:void(0);" title="Hủy đơn hàng"
 		                                      	th:data-id="${item.orderId}"
@@ -168,39 +191,41 @@
 	                                      	<i class="icofont-trash"></i>
 	                                      </a>
                                       </th:block>
-                                      
+
                                       <th:block th:if="${item.status!=0}">
 	                                      <a class="trash" href="javascript:void(0);" title="Không thể huỷ đơn hàng này"
 												style="cursor: not-allowed">
 	                                      	<i class="icofont-trash"></i>
 	                                      </a>
                                       </th:block>
-                                      
+
                                   </td>
                                 </tr>
-                                
+
                               </tbody>
                             </table>
-                            
+
                             <!-- pagination  -->
                             <div class="row">
 				              <div class="col-lg-12">
 				                <div class="bottom-paginate">
 				                  <p class="page-info"></p>
 				                  <ul class="pagination">
-				                    
+
 				                    <li th:each="pageNumber : ${pageNumbers}" th:if="${orderByUser.totalPages > 0}" class="page-item">
-				                      <a class="page-link"
-				                      		th:href="@{/profile(size=${orderByUser.size}, page=${pageNumber})}"
-				                      		th:class="${pageNumber==orderByUser.number + 1} ? 'page-link active'">
-				                      		[[${pageNumber}]]
-				                      </a>
-				                    </li>
-				                    
+                                        <a class="page-link"
+                                           th:href="@{/profile(size=${orderByUser.size}, page=${pageNumber}, orderStatus=${selectedStatus})}"
+                                           th:class="${pageNumber==orderByUser.number + 1} ? 'page-link active'">
+                                            [[${pageNumber}]]
+                                        </a>
+
+                                    </li>
+
 				                  </ul>
 				                </div>
 				              </div>
 				            </div>
+                          </div>
                           </div>
                         </div>
                       </div>
@@ -213,7 +238,7 @@
           </div>
         </div>
     </section>
-    
+
     <!-- Huỷ đơn hàng -->
 	<script>
 		function showConfigCancelModalDialog(id) {
@@ -222,7 +247,7 @@
 			$('#configmationCancelId').modal('show');
 		}
 	</script>
-	
+
 	<!-- Modal -->
 		<div class="modal" id="configmationCancelId">
 			<div class="modal-dialog modal-dialog-centered">
@@ -241,11 +266,11 @@
 						<a id="yesOptionCanCel" type="button" class="btn btn-success">Có</a>
 					</div>
 					</div>
-					
+
 				</div>
 			</div>
 		</div>
-    
+
     <section class="news-part"
 		style="background:  no-repeat center">
 		<div class="container">
@@ -317,17 +342,17 @@
 			</div>
 		</div>
 	</section>
-    
-    
+
+
     <!--************************************
 				Footer Start
 		*************************************-->
 		<footer th:replace="~{/web/fragments/footer :: footer}"></footer>
-				
+
 		<!--************************************
 				Footer End
 		*************************************-->
-		
+
     <script src="vendor/bootstrap/jquery-1.12.4.min.js"></script>
     <script src="vendor/bootstrap/popper.min.js"></script>
     <script src="vendor/bootstrap/bootstrap.min.js"></script>

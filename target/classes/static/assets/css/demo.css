@@ -303,3 +303,29 @@ body[data-background-color="dark"] .demo-icon .icon-class {
 		right: -85%;
 	}
 }
+/* Bọc nhóm button lọc */
+.order-filter-group {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	margin-bottom: 15px;
+}
+
+/* Style cho từng button */
+.order-filter-group a.btn {
+	flex: 1 1 auto;
+	min-width: 150px;
+	white-space: nowrap;
+	font-size: 14px;
+	padding: 8px 12px;
+	text-align: center;
+}
+
+/* Responsive nhỏ hơn 576px */
+@media (max-width: 576px) {
+	.order-filter-group a.btn {
+		font-size: 13px;
+		padding: 6px 10px;
+		min-width: 120px;
+	}
+}

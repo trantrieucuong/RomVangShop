@@ -61,7 +61,14 @@
 		<div class="content">
 			<div class="page-inner">
 				<div class="page-header">
+					<!-- Bộ lọc theo trạng thái -->
+
+
+
+
 					<h4 class="page-title">Quản lý đơn hàng</h4>
+
+
 					<ul class="breadcrumbs">
 						<li class="nav-home">
 							<a href="javascript:void(0);">
@@ -87,13 +94,43 @@
 							<div class="card-header">
 								<div class="d-flex align-items-center" style="justify-content: space-between;">
 									<h4 class="card-title" style="text-decoration: underline;">Quản lý đơn hàng</h4>
-									
-									 <div class="product-add1">
+									<form method="get" action="#" style="display: inline-block; margin-right: 15px;">
+										<label for="month">Chọn tháng: </label>
+										<select id="month" name="month" onchange="this.form.submit()" class="form-control" style="width: 150px; display: inline-block;">
+											<option th:each="m : ${months}"
+													th:value="${m}"
+													th:text="'Tháng ' + ${m}"
+													th:selected="${m} == ${selectedMonth}">
+											</option>
+										</select>
+										<input type="hidden" name="orderStatus" th:value="${selectedStatus}" />
+									</form>
+
+
+
+									<div class="product-add1">
 									  <a  th:href="@{/admin/export}" style="padding-left: 20px;">
 										<i class="fas fa-save" style="padding-right: 8px"></i></i><span>Tạo báo cáo</span>
 									</a>
 									 </div>	       	                               
 									
+								</div>
+								<div class="btn-group order-filter-group" role="group" aria-label="Lọc đơn hàng theo trạng thái">
+									<a th:href="@{/admin/orders(month=${selectedMonth})}" class="btn btn-outline-primary" th:classappend="${selectedStatus} == null ? 'active'">
+										Tất cả <span class="badge badge-primary ml-1">[[${countNew + countConfirmed + countDelivered + countCanceled}]]</span>
+									</a>
+									<a th:href="@{/admin/orders(month=${selectedMonth}, orderStatus=0)}" class="btn btn-outline-secondary" th:classappend="${selectedStatus} == 0 ? 'active'">
+										Chờ xác nhận <span class="badge badge-secondary ml-1">[[${countNew}]]</span>
+									</a>
+									<a th:href="@{/admin/orders(month=${selectedMonth}, orderStatus=1)}" class="btn btn-outline-warning" th:classappend="${selectedStatus} == 1 ? 'active'">
+										Đã xác nhận <span class="badge badge-warning ml-1">[[${countConfirmed}]]</span>
+									</a>
+									<a th:href="@{/admin/orders(month=${selectedMonth}, orderStatus=2)}" class="btn btn-outline-success" th:classappend="${selectedStatus} == 2 ? 'active'">
+										Đã giao <span class="badge badge-success ml-1">[[${countDelivered}]]</span>
+									</a>
+									<a th:href="@{/admin/orders(month=${selectedMonth}, orderStatus=3)}" class="btn btn-outline-danger" th:classappend="${selectedStatus} == 3 ? 'active'">
+										Đã hủy <span class="badge badge-danger ml-1">[[${countCanceled}]]</span>
+									</a>
 								</div>
 							</div>
 							<div class="alert alert-success row col-12"
