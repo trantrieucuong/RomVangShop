@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Huỷ đơn hàng</title>
+</head>
+<body>
+<h2>Lý do huỷ đơn hàng</h2>
+<form th:action="@{/order/cancel}" method="post">
+    <input type="hidden" name="orderId" th:value="${order.orderId}" />
+    <textarea name="reason" rows="5" cols="50" placeholder="Nhập lý do huỷ..." required></textarea>
+    <br/><br/>
+    <button type="submit">Xác nhận huỷ đơn</button>
+</form>
+</body>
+</html>

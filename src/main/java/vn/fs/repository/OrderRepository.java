@@ -20,6 +20,8 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
 	@Query("SELECT o FROM Order o WHERE FUNCTION('MONTH', o.orderDate) = :month")
 	List<Order> findByMonth(@Param("month") int month);
+	@Query("SELECT o FROM Order o LEFT JOIN FETCH o.cancellation")
+	List<Order> findAllWithCancellation();
 
 
 

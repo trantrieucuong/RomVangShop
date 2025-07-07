@@ -21,12 +21,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import com.paypal.api.payments.Links;
 import com.paypal.api.payments.Payment;
@@ -324,15 +319,16 @@ public class CartController extends CommomController {
 		return "web/checkout_paypal_success";
 
 	}
-	
+
 
 	@PutMapping(value = "/updateQuantity", params = { "productId", "quantity" })
-	public String updateQ(ModelMap model, HttpSession session, @RequestParam("productId") Long id,
-			@RequestParam("quantity") int qty) {
-		shoppingCartService.updateQuantity(id, qty);;
-
-		 return "web/shoppingCart_checkout";
+	@ResponseBody
+	public ResponseEntity<String> updateQ(@RequestParam("productId") Long id,
+										  @RequestParam("quantity") int qty) {
+		shoppingCartService.updateQuantity(id, qty);
+		return ResponseEntity.ok("updated");
 	}
+
 
 	@GetMapping("/api/payment/vnpay_return")
 	public String handleVnpayReturn(@RequestParam Map<String, String> params,

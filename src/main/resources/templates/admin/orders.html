@@ -131,6 +131,9 @@
 									<a th:href="@{/admin/orders(month=${selectedMonth}, orderStatus=3)}" class="btn btn-outline-danger" th:classappend="${selectedStatus} == 3 ? 'active'">
 										Đã hủy <span class="badge badge-danger ml-1">[[${countCanceled}]]</span>
 									</a>
+									<a th:href="@{/admin/orders(month=${selectedMonth}, orderStatus=4)}" class="btn btn-outline-danger" th:classappend="${selectedStatus} == 4 ? 'active'">
+										Đơn Chờ Huỷ <span class="badge badge-danger ml-1">[[${countCanceleds}]]</span>
+									</a>
 								</div>
 							</div>
 							<div class="alert alert-success row col-12"
@@ -178,6 +181,7 @@
 												</td>
 												
 												<td class="text-center">
+
 													<div th:if="${item.status==0}">
 														<a style="cursor: pointer; color: #0e76a8;" th:data-id="${item.orderId}"
 															onclick="showConfigConfirmModalDialog(this.getAttribute('data-id'))">
@@ -204,12 +208,71 @@
 													<div th:if="${item.status==3}" style="cursor: pointer; color: #ff3838;">
 														<i class="fas fa-ban"> Đã huỷ</i>
 													</div>
-												
+
+													<div th:if="${item.status==4}">
+														<a style="cursor: pointer; color: #ff3838;"
+														   th:data-id="${item.orderId}"
+														   onclick="showConfigApproveCancelDialog(this.getAttribute('data-id'))">
+															<i class="fas fa-ban"> Duyệt Huỷ</i>
+														</a>
+													</div>
+
+													<!-- Hidden input lưu lý do huỷ -->
+													<input type="hidden"
+														   th:id="'cancelReason-' + ${item.orderId}"
+														   th:value="${item.cancellation != null ? item.cancellation.reason : 'Không có lý do'}" />
+
+
+
 												</td>
 											</tr>
 										</tbody>
 									</table>
-									
+
+									<!-- Modal Duyệt Huỷ -->
+									<!-- Modal Duyệt Huỷ -->
+									<div class="modal" id="configmationApproveCancelId">
+										<div class="modal-dialog" role="document">
+											<div class="modal-content">
+												<div class="modal-header">
+													<h5 class="modal-title">Xác nhận duyệt huỷ đơn</h5>
+													<button type="button" class="close" data-dismiss="modal"
+															aria-label="Close">
+														<span aria-hidden="true">&times;</span>
+													</button>
+												</div>
+												<div class="modal-body">
+													<p>
+														Bạn có chắc chắn muốn <strong>duyệt huỷ</strong> đơn hàng có mã "<span id="idApproveCancel"></span>" ?
+													</p>
+													<p><strong>Lý do khách yêu cầu huỷ:</strong> <span id="cancelReason"></span></p>
+												</div>
+												<div class="modal-footer">
+													<a id="yesOptionApproveCancel" type="button" class="btn btn-info">Có</a>
+													<button type="button" class="btn btn-danger" data-dismiss="modal">Không</button>
+												</div>
+											</div>
+										</div>
+									</div>
+
+
+
+									<!-- Duyệt huỷ đơn -->
+									<script>
+										function showConfigApproveCancelDialog(id) {
+											$('#idApproveCancel').text(id);
+											$('#yesOptionApproveCancel').attr('href', '/admin/order/approveCancel/' + id);
+
+											// Lấy lý do từ input hidden theo orderId
+											let reason = $('#cancelReason-' + id).val();
+											$('#cancelReason').text(reason);
+
+											$('#configmationApproveCancelId').modal('show');
+										}
+									</script>
+
+
+
 									<!-- Xác nhận đơn -->
 									<script>
 										function showConfigConfirmModalDialog(id) {

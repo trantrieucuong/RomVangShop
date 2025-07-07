@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -80,12 +81,14 @@ public class OrderController {
 
 		// Lấy toàn bộ đơn hàng của tháng
 		List<Order> allOrdersByMonth = orderRepository.findByMonth(month);
+		List<Order> orderDetailst = orderRepository.findAllWithCancellation();
 
 		// Đếm theo trạng thái
 		model.addAttribute("countNew", allOrdersByMonth.stream().filter(o -> o.getStatus() == 0).count());
 		model.addAttribute("countConfirmed", allOrdersByMonth.stream().filter(o -> o.getStatus() == 1).count());
 		model.addAttribute("countDelivered", allOrdersByMonth.stream().filter(o -> o.getStatus() == 2).count());
 		model.addAttribute("countCanceled", allOrdersByMonth.stream().filter(o -> o.getStatus() == 3).count());
+		model.addAttribute("countCanceleds", allOrdersByMonth.stream().filter(o -> o.getStatus() == 4).count());
 
 		// Lọc theo trạng thái nếu có
 		List<Order> orderDetails = allOrdersByMonth;
@@ -96,6 +99,7 @@ public class OrderController {
 		}
 
 		model.addAttribute("orderDetails", orderDetails);
+		model.addAttribute("orderDetailst", orderDetailst);
 		model.addAttribute("selectedMonth", month);
 		model.addAttribute("selectedStatus", status);
 
@@ -130,6 +134,28 @@ public class OrderController {
 
 		return new ModelAndView("forward:/admin/orders", model);
 	}
+
+	@GetMapping("/order/approveCancel/{order_id}")
+	@Transactional
+	public ModelAndView approveCancel(@PathVariable("order_id") Long id, ModelMap model) {
+		Optional<Order> o = orderRepository.findById(id);
+		if (o.isEmpty()) {
+			model.addAttribute("message", "Không tìm thấy đơn hàng.");
+			return new ModelAndView("forward:/admin/orders", model);
+		}
+		Order order = o.get();
+
+		if (order.getStatus() == 4) {
+			order.setStatus((short) 3); // Chuyển thành đã huỷ
+			orderRepository.save(order);
+			model.addAttribute("message", "Duyệt huỷ đơn hàng thành công.");
+		} else {
+			model.addAttribute("message", "Không thể duyệt huỷ đơn hàng này.");
+		}
+
+		return new ModelAndView("forward:/admin/orders", model);
+	}
+
 
 	@RequestMapping("/order/confirm/{order_id}")
 	public ModelAndView confirm(ModelMap model, @PathVariable("order_id") Long id) {
