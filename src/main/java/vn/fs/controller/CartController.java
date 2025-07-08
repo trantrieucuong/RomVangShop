@@ -31,13 +31,10 @@ import vn.fs.commom.CommomDataService;
 import vn.fs.config.Config;
 import vn.fs.config.PaypalPaymentIntent;
 import vn.fs.config.PaypalPaymentMethod;
-import vn.fs.entities.CartItem;
-import vn.fs.entities.Order;
-import vn.fs.entities.OrderDetail;
-import vn.fs.entities.Product;
-import vn.fs.entities.User;
+import vn.fs.entities.*;
 import vn.fs.repository.OrderDetailRepository;
 import vn.fs.repository.OrderRepository;
+import vn.fs.repository.UserPointRepository;
 import vn.fs.service.PaypalService;
 import vn.fs.service.ShoppingCartService;
 import vn.fs.service.VnpayService;
@@ -67,6 +64,10 @@ public class CartController extends CommomController {
 
 	@Autowired
 	VnpayService vnpayService;
+
+	@Autowired
+	private UserPointRepository userPointRepository;
+
 
 	public Order orderFinal = new Order();
 
@@ -119,6 +120,20 @@ public class CartController extends CommomController {
 	    
 	    model.addAttribute("totalCartItems", shoppingCartService.getCount());
 	    return "redirect:/checkout";
+	}
+
+	private void updateUserPointAfterPayment(User user, double totalAmount) {
+		int earnedPoints = (int) (totalAmount / 1000); // 1000 VND = 1 điểm
+		Optional<UserPoint> userPointOpt = userPointRepository.findByUser(user);
+
+		if (userPointOpt.isPresent()) {
+			UserPoint userPoint = userPointOpt.get();
+			userPoint.setPoint(userPoint.getPoint() + earnedPoints);
+			userPointRepository.save(userPoint);
+		} else {
+			UserPoint newUserPoint = new UserPoint(user, 3 + earnedPoints); // 3 điểm thưởng khách mới
+			userPointRepository.save(newUserPoint);
+		}
 	}
 
 
@@ -220,6 +235,8 @@ public class CartController extends CommomController {
 		order.setNote("Thanh toán khi nhận hàng");
 
 		orderRepository.save(order);
+		updateUserPointAfterPayment(user, totalPrice);
+
 
 		// Lưu chi tiết đơn hàng
 		for (CartItem cartItem : cartItems) {
@@ -275,6 +292,8 @@ public class CartController extends CommomController {
 				orderFinal.setUser(user);
 				orderFinal.setAmount(totalPrice);
 				orderRepository.save(orderFinal);
+				updateUserPointAfterPayment(user, totalPrice);
+
 
 				for (CartItem cartItem : cartItems) {
 					OrderDetail orderDetail = new OrderDetail();
@@ -377,6 +396,8 @@ public class CartController extends CommomController {
 
 		// ✅ Lưu đơn hàng để lấy orderId
 		order = orderRepository.save(order);
+		updateUserPointAfterPayment(user, totalPrice);
+
 
 		// ✅ Lưu từng sản phẩm trong đơn hàng
 		for (CartItem cartItem : cartItems) {
