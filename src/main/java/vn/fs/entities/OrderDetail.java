@@ -10,6 +10,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -32,8 +33,10 @@ public class OrderDetail implements Serializable {
 	@ManyToOne
 	@JoinColumn(name = "productId")
 	private Product product;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "orderId")
+	@JsonBackReference
 	private Order order;
+
 }

@@ -4,6 +4,7 @@ import java.util.Date;
 
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
 
 @Data
@@ -24,7 +25,9 @@ public class OrderCancellation {
 
     @OneToOne
     @JoinColumn(name = "order_id", unique = true)
+    @JsonBackReference
     private Order order;
+
 
 
 }
