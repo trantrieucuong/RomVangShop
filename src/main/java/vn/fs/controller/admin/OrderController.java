@@ -19,14 +19,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import vn.fs.dto.OrderExcelExporter;
-import vn.fs.entities.Order;
-import vn.fs.entities.OrderDetail;
-import vn.fs.entities.Product;
-import vn.fs.entities.User;
-import vn.fs.repository.OrderDetailRepository;
-import vn.fs.repository.OrderRepository;
-import vn.fs.repository.ProductRepository;
-import vn.fs.repository.UserRepository;
+import vn.fs.entities.*;
+import vn.fs.repository.*;
 import vn.fs.service.OrderDetailService;
 import vn.fs.service.SendMailService;
 
@@ -52,6 +46,28 @@ public class OrderController {
 
 	@Autowired
 	UserRepository userRepository;
+
+	@Autowired
+	UserPointRepository userPointRepository;
+
+	private void updateUserPoint(User user, double totalAmount, boolean isAdd) {
+		int pointChange = (int) (totalAmount / 1000); // 1000 VND = 1 điểm
+		Optional<UserPoint> optional = userPointRepository.findByUser(user);
+
+		if (optional.isPresent()) {
+			UserPoint userPoint = optional.get();
+			if (isAdd) {
+				userPoint.setPoint(userPoint.getPoint() + pointChange);
+			} else {
+				userPoint.setPoint(Math.max(0, userPoint.getPoint() - pointChange));
+			}
+			userPointRepository.save(userPoint);
+		} else if (isAdd) {
+			UserPoint newPoint = new UserPoint(user, 3 + pointChange);
+			userPointRepository.save(newPoint);
+		}
+	}
+
 
 	@ModelAttribute(value = "user")
 	public User user(Model model, Principal principal, User user) {
@@ -145,9 +161,16 @@ public class OrderController {
 		}
 		Order order = o.get();
 
+		// Chỉ duyệt huỷ nếu đang là "chờ huỷ" (status = 4)
 		if (order.getStatus() == 4) {
-			order.setStatus((short) 3); // Chuyển thành đã huỷ
+			// Nếu đơn đã được duyệt trước đó → trừ điểm
+			if (order.getStatus() == 1) {
+				updateUserPoint(order.getUser(), order.getAmount(), false);
+			}
+
+			order.setStatus(3); // Đã huỷ
 			orderRepository.save(order);
+
 			model.addAttribute("message", "Duyệt huỷ đơn hàng thành công.");
 		} else {
 			model.addAttribute("message", "Không thể duyệt huỷ đơn hàng này.");
@@ -157,6 +180,7 @@ public class OrderController {
 	}
 
 
+
 	@RequestMapping("/order/confirm/{order_id}")
 	public ModelAndView confirm(ModelMap model, @PathVariable("order_id") Long id) {
 		Optional<Order> o = orderRepository.findById(id);
@@ -164,11 +188,19 @@ public class OrderController {
 			return new ModelAndView("forward:/admin/orders", model);
 		}
 		Order oReal = o.get();
-		oReal.setStatus((short) 1);
-		orderRepository.save(oReal);
+
+		// Chỉ duyệt nếu đơn đang là "chờ xử lý"
+		if (oReal.getStatus() == 0) {
+			oReal.setStatus(1); // Đã duyệt
+			orderRepository.save(oReal);
+
+			// Cộng điểm
+			updateUserPoint(oReal.getUser(), oReal.getAmount(), true);
+		}
 
 		return new ModelAndView("forward:/admin/orders", model);
 	}
+
 
 	@RequestMapping("/order/delivered/{order_id}")
 	public ModelAndView delivered(ModelMap model, @PathVariable("order_id") Long id) {

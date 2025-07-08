@@ -235,7 +235,7 @@ public class CartController extends CommomController {
 		order.setNote("Thanh toán khi nhận hàng");
 
 		orderRepository.save(order);
-		updateUserPointAfterPayment(user, totalPrice);
+
 
 
 		// Lưu chi tiết đơn hàng
@@ -292,7 +292,7 @@ public class CartController extends CommomController {
 				orderFinal.setUser(user);
 				orderFinal.setAmount(totalPrice);
 				orderRepository.save(orderFinal);
-				updateUserPointAfterPayment(user, totalPrice);
+
 
 
 				for (CartItem cartItem : cartItems) {
@@ -396,7 +396,7 @@ public class CartController extends CommomController {
 
 		// ✅ Lưu đơn hàng để lấy orderId
 		order = orderRepository.save(order);
-		updateUserPointAfterPayment(user, totalPrice);
+
 
 
 		// ✅ Lưu từng sản phẩm trong đơn hàng

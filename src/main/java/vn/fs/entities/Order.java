@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -32,14 +33,19 @@ public class Order implements Serializable {
 	private String note;
 
 	@OneToMany(mappedBy = "order")
+	@JsonManagedReference
 	private List<OrderDetail> orderDetails;
+
+	@OneToOne(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JsonManagedReference
+	private OrderCancellation cancellation;
+
 
 	@ManyToOne
 	@JoinColumn(name = "userId")
 	private User user;
 
-	@OneToOne(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	private OrderCancellation cancellation;
+
 
 
 }
