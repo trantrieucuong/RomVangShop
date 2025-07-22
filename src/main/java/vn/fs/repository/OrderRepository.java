@@ -36,4 +36,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 	 
 	 @Query("SELECT COUNT(o) FROM Order o WHERE o.status = 0")
 	 Long countNewOrders();
+//tuyên
+	@Query("SELECT MAX(o.orderId) FROM Order o")
+	Long findMaxOrderId();
 }

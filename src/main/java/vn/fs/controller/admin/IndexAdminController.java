@@ -23,16 +23,16 @@ import vn.fs.repository.UserRepository;
 @Controller
 @RequestMapping("/admin")
 public class IndexAdminController{
-	
+
 	@Autowired
 	UserRepository userRepository;
-	
-	 @Autowired
-	 private OrderRepository orderRepository;
-	 
-	 @Autowired
+
+	@Autowired
+	private OrderRepository orderRepository;
+
+	@Autowired
 	OrderDetailRepository orderDetailRepository;
-	
+
 	@ModelAttribute(value = "user")
 	public User user(Model model, Principal principal, User user) {
 
@@ -46,31 +46,32 @@ public class IndexAdminController{
 	}
 
 	@GetMapping(value = "/home")
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_EMPLOYEE')")
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_EMPLOYEE')")
 	public String showDashboard(Model model) {
 //		 List<Object[]> monthlyStats = orderDetailRepository.repoWhereMonth();
 //		model.addAttribute("monthlyStats", monthlyStats);
-		
-		List<Object[]> monthlyStats = orderDetailRepository.repoWhereMonth();
-	    // Chuyển đổi danh sách monthlyStats thành mảng JSON
-	    ObjectMapper objectMapper = new ObjectMapper();
-	    String monthlyStatsJson;
-	    try {
-	        monthlyStatsJson = objectMapper.writeValueAsString(monthlyStats);
-	    } catch (JsonProcessingException e) {
-	        // Xử lý ngoại lệ nếu có
-	        monthlyStatsJson = "[]"; // Trả về một mảng JSON rỗng nếu có lỗi
-	    }
-	    // Truyền mảng JSON vào model
-	    model.addAttribute("monthlyStats", monthlyStatsJson);
-		
-		
-        model.addAttribute("totalRevenue", orderRepository.findTotalRevenue());
-        model.addAttribute("successfulOrders", orderRepository.countSuccessfulOrders());
-        model.addAttribute("cancelledOrders", orderRepository.countCancelledOrders());
-        model.addAttribute("totalUsers", userRepository.count());
-        model.addAttribute("newOrders", orderRepository.countNewOrders());
 
-        return "admin/index"; // Tên của file template trong thư mục templates/admin
-    }
+		List<Object[]> monthlyStats = orderDetailRepository.repoWhereMonth();
+		// Chuyển đổi danh sách monthlyStats thành mảng JSON
+		ObjectMapper objectMapper = new ObjectMapper();
+		String monthlyStatsJson;
+		try {
+			monthlyStatsJson = objectMapper.writeValueAsString(monthlyStats);
+		} catch (JsonProcessingException e) {
+			// Xử lý ngoại lệ nếu có
+			monthlyStatsJson = "[]"; // Trả về một mảng JSON rỗng nếu có lỗi
+		}
+		// Truyền mảng JSON vào model
+		model.addAttribute("monthlyStats", monthlyStatsJson);
+
+
+		model.addAttribute("totalRevenue", orderRepository.findTotalRevenue());
+		model.addAttribute("successfulOrders", orderRepository.countSuccessfulOrders());
+		model.addAttribute("cancelledOrders", orderRepository.countCancelledOrders());
+		model.addAttribute("totalUsers", userRepository.count());
+		model.addAttribute("newOrders", orderRepository.countNewOrders());
+
+		return "admin/index"; // Tên của file template trong thư mục templates/admin
+	}
+
 }

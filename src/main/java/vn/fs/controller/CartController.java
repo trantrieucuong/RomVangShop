@@ -1,10 +1,7 @@
 package vn.fs.controller;
 
 import java.security.Principal;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
@@ -59,6 +56,17 @@ public class CartController extends CommomController {
 	@Autowired
 	OrderRepository orderRepository;
 
+
+
+	public Long generateUniqueOrderId() {
+		Long id;
+		do {
+			id = 100000L + new java.util.Random().nextInt(900000); // số từ 100000 đến 999999
+		} while (orderRepository.existsById(id));
+		return id;
+	}
+
+
 	@Autowired
 	OrderDetailRepository orderDetailRepository;
 
@@ -98,28 +106,28 @@ public class CartController extends CommomController {
 		return "redirect:/products";
 	}
 
-	
+
 	@GetMapping(value = "/remove/{id}")
 	public String remove(@PathVariable("id") Long id, HttpServletRequest request, Model model) {
-	    Collection<CartItem> cartItems = shoppingCartService.getCartItems();
-	    session = request.getSession();
-	    
-	    // Tìm và xóa CartItem từ id
-	    Optional<CartItem> optionalCartItem = cartItems.stream()
-	                                                   .filter(item -> item.getId().equals(id))
-	                                                   .findFirst();
-	    if (optionalCartItem.isPresent()) {
-	        CartItem itemToRemove = optionalCartItem.get();
-	        
-	        // Xóa CartItem khỏi giỏ hàng
-	        shoppingCartService.remove(itemToRemove);
-	        
-	        // Cập nhật danh sách cartItems trong session
-	        cartItems.remove(itemToRemove);
-	    }
-	    
-	    model.addAttribute("totalCartItems", shoppingCartService.getCount());
-	    return "redirect:/checkout";
+		Collection<CartItem> cartItems = shoppingCartService.getCartItems();
+		session = request.getSession();
+
+		// Tìm và xóa CartItem từ id
+		Optional<CartItem> optionalCartItem = cartItems.stream()
+				.filter(item -> item.getId().equals(id))
+				.findFirst();
+		if (optionalCartItem.isPresent()) {
+			CartItem itemToRemove = optionalCartItem.get();
+
+			// Xóa CartItem khỏi giỏ hàng
+			shoppingCartService.remove(itemToRemove);
+
+			// Cập nhật danh sách cartItems trong session
+			cartItems.remove(itemToRemove);
+		}
+
+		model.addAttribute("totalCartItems", shoppingCartService.getCount());
+		return "redirect:/checkout";
 	}
 
 	private void updateUserPointAfterPayment(User user, double totalAmount) {
@@ -145,6 +153,10 @@ public class CartController extends CommomController {
 		model.addAttribute("order", order);
 
 		Collection<CartItem> cartItems = shoppingCartService.getCartItems();
+
+
+		// Kiểm tra có phần tử null không
+		cartItems.removeIf(item -> item.getProduct() == null);
 		model.addAttribute("cartItems", cartItems);
 		model.addAttribute("total", shoppingCartService.getAmount());
 		model.addAttribute("NoOfItems", shoppingCartService.getCount());
@@ -180,6 +192,7 @@ public class CartController extends CommomController {
 		}
 
 		// Lưu địa chỉ & số điện thoại vào session (dùng lại cho VNPay)
+
 		String address = order.getAddress();
 		String phone = order.getPhone();
 		session.setAttribute("checkout_address", address);
@@ -227,6 +240,7 @@ public class CartController extends CommomController {
 		}
 
 		// -------- Thanh toán COD (trả tiền mặt) --------
+		order.setOrderId(generateUniqueOrderId());
 		Date date = new Date();
 		order.setOrderDate(date);
 		order.setStatus(0); // Chưa xử lý
@@ -267,7 +281,7 @@ public class CartController extends CommomController {
 	// paypal
 	@GetMapping(URL_PAYPAL_SUCCESS)
 	public String successPay(@RequestParam("" + "" + "") String paymentId, @RequestParam("PayerID") String payerId,
-			HttpServletRequest request, User user, Model model) throws MessagingException {
+							 HttpServletRequest request, User user, Model model) throws MessagingException {
 		Collection<CartItem> cartItems = shoppingCartService.getCartItems();
 		model.addAttribute("cartItems", cartItems);
 		model.addAttribute("total", shoppingCartService.getAmount());
@@ -286,6 +300,7 @@ public class CartController extends CommomController {
 
 				session = request.getSession();
 				Date date = new Date();
+				orderFinal.setOrderId(generateUniqueOrderId());
 				orderFinal.setOrderDate(date);
 				orderFinal.setStatus(0);
 				orderFinal.getOrderId();
@@ -386,6 +401,7 @@ public class CartController extends CommomController {
 
 		// ✅ Tạo đơn hàng
 		Order order = new Order();
+		order.setOrderId(generateUniqueOrderId());
 		order.setOrderDate(new Date());
 		order.setStatus(0); // chưa xử lý
 		order.setAmount(totalPrice);
