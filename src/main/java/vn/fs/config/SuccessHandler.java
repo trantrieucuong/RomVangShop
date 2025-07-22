@@ -17,10 +17,11 @@ public class SuccessHandler implements AuthenticationSuccessHandler {
 
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,
-			Authentication authentication) throws IOException, ServletException {
+										Authentication authentication) throws IOException, ServletException {
 		boolean hasRoleUser = false;
 		boolean hasAdmin = false;
 		boolean hasEmployee = false;
+		boolean hasSale = false;
 		Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
 		for (GrantedAuthority grantedAuthority : authorities) {
 			if (grantedAuthority.getAuthority().equals("ROLE_USER")) {
@@ -34,12 +35,19 @@ public class SuccessHandler implements AuthenticationSuccessHandler {
 				hasEmployee = true;
 				break;
 			}
+			else if (grantedAuthority.getAuthority().equals("ROLE_SALE")) {
+				hasSale = true;
+				break;
+			}
 		}
 		if (hasRoleUser) {
 			redirectStrategy.sendRedirect(httpServletRequest, httpServletResponse, "/checkout");
 		} else if (hasAdmin || hasEmployee) {
 			redirectStrategy.sendRedirect(httpServletRequest, httpServletResponse, "/admin/home");
-		} else {
+		}else if (hasSale ) {
+			redirectStrategy.sendRedirect(httpServletRequest, httpServletResponse, "/sale/saleHome");
+		}
+		else {
 			throw new IllegalStateException();
 		}
 	}

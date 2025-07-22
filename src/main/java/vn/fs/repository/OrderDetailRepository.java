@@ -1,12 +1,15 @@
 package vn.fs.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import vn.fs.entities.Order;
 import vn.fs.entities.OrderDetail;
+import vn.fs.entities.Product;
 
 
 @Repository
@@ -89,5 +92,8 @@ public interface OrderDetailRepository extends JpaRepository<OrderDetail, Long> 
     		+ "INNER JOIN user c ON p.user_id = c.user_id\r\n"
     		+ "GROUP BY c.user_id;", nativeQuery = true)
     public List<Object[]> reportCustommer();
+	// tuyên
+	Optional<OrderDetail> findByOrderAndProduct(Order order, Product product);
+	List<OrderDetail> findByOrder(Order order);
 
 }

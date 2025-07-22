@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org"
+      th:replace="~{admin/layout/layout :: layout(~{:: title}, ~{:: #css}, ~{:: .content-wrapper}, ~{:: #js})}">
+
+<head>
+    <title>Quản lý khách hàng</title>
+    <th:block id="css">
+        <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+    </th:block>
+</head>
+
+<body>
+<div class="content-wrapper">
+    <!-- ... (phần header giữ nguyên) ... -->
+
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row py-2">
+                <div class="col-12">
+                    <a href="/admin/categories/new" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Thêm mới
+                    </a>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <table id="table-customer" class="table table-bordered table-hover">
+                                <thead>
+                                <tr>
+                                    <th>Mã khách hàng</th>
+                                    <th>Tên Khách hàng</th>
+                                    <th>Số điện thoại</th>
+                                    <th>Hành động</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="customer : ${customers}">
+                                    <td th:text="${customer.customerCode}"></td>
+                                    <td th:text="${customer.name} ?: 'Khách lẻ'"></td>
+                                    <td th:text="${customer.phone} ?: '---'"></td>
+                                    <td>
+                                        <a th:href="@{/admin/customer/edit/{code}(code=${customer.customerCode})}"
+                                           class="btn btn-sm btn-warning">
+                                            Chỉnh sửa
+                                        </a>
+                                        <button class="btn btn-sm btn-danger"
+                                                th:attr="data-code=${customer.customerCode}"
+                                                onclick="deleteCustomer(this)">
+                                            Xóa
+                                        </button>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+</div>
+
+<th:block id="js">
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+    <script>
+    $(document).ready(function() {
+      $('#table-category').DataTable();
+    });
+
+
+
+
+  </script>
+</th:block>
+</body>
+</html>
