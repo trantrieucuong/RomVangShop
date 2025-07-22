@@ -19,6 +19,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import vn.fs.entities.Role;
 import vn.fs.entities.User;
+import vn.fs.repository.RoleRepository;
 import vn.fs.repository.UserRepository;
 import vn.fs.service.SendMailService;
 
@@ -37,6 +38,9 @@ public class RegisterController {
 
 	@Autowired
 	HttpSession session;
+
+	@Autowired
+	RoleRepository roleRepository;
 
 	@GetMapping("/register")
 	public ModelAndView registerForm(ModelMap model) {
@@ -75,7 +79,12 @@ public class RegisterController {
 			dto.setRegisterDate(new Date());
 			dto.setStatus(true);
 			dto.setAvatar("user.png");
-			dto.setRoles(Arrays.asList(new Role("ROLE_USER")));
+			Role userRole = roleRepository.findByName("ROLE_USER");
+			if (userRole == null) {
+				throw new RuntimeException("Không tìm thấy ROLE_USER trong database.");
+			}
+			dto.setRoles(List.of(userRole));
+
 			userRepository.save(dto);
 
 			session.removeAttribute("otp");
