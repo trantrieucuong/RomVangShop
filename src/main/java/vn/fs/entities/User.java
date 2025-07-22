@@ -35,6 +35,7 @@ public class User implements Serializable{
 	@Temporal(TemporalType.DATE)
 	private Date registerDate;
 	private Boolean status;
+	private String phone;
 
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinTable(name = "users_roles",
@@ -49,7 +50,7 @@ public class User implements Serializable{
 	}
 
 	public User(Long userId, String name, String email, String password, String avatar, Date registerDate,
-			Boolean status, Collection<Role> roles) {
+			Boolean status,String phone, Collection<Role> roles) {
 		super();
 		this.userId = userId;
 		this.name = name;
@@ -59,6 +60,7 @@ public class User implements Serializable{
 		this.registerDate = registerDate;
 		this.status = status;
 		this.roles = roles;
+		this.phone = phone;
 	}
 
 	public Long getUserId() {
@@ -117,9 +119,18 @@ public class User implements Serializable{
 		this.status = status;
 	}
 
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+
 	public Collection<Role> getRoles() {
 		return roles;
 	}
+
 
 	public void setRoles(Collection<Role> roles) {
 		this.roles = roles;

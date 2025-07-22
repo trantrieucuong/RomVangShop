@@ -3,6 +3,7 @@ package vn.fs.controller.Sale;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -12,9 +13,7 @@ import vn.fs.request.OrderItemRequest;
 
 import javax.servlet.http.HttpSession;
 import java.security.Principal;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Controller
 @RequestMapping("/sale")
@@ -31,6 +30,8 @@ public class SaleController {
 
     @Autowired
     OrderDetailRepository orderDetailRepository;
+    @Autowired
+    RoleRepository roleRepository;
 
 //    @ModelAttribute(value = "user")
 //    public User user(Model model, Principal principal, User user) {
@@ -223,5 +224,60 @@ public ResponseEntity<?> updateStock(@RequestBody Map<String, Object> data) {
 //        System.out.println("🔢 Mã OrderItem mới: " + result);
 //        return result;
 //    }
+
+    @PostMapping("/create-or-update-customer")
+    @ResponseBody
+    public ResponseEntity<?> createOrUpdateCustomer(@RequestBody Map<String, String> formData) {
+        String name = formData.get("name");
+        String email = formData.get("email");
+        String phone = formData.get("phone");
+
+        User existingUser = userRepository.findByEmail(email);
+
+        if (existingUser != null) {
+            // ✅ Nếu user đã tồn tại -> chỉ cập nhật số điện thoại
+            existingUser.setPhone(phone);
+            userRepository.save(existingUser);
+            return ResponseEntity.ok("✅ Đã cập nhật số điện thoại cho khách hàng.");
+        } else {
+            // ✅ Nếu chưa tồn tại -> tạo mới user
+            User newUser = new User();
+            newUser.setName(name);
+            newUser.setEmail(email);
+            newUser.setPhone(phone);
+
+            // 🔐 Tạo mật khẩu ngẫu nhiên và mã hóa bằng BCrypt
+            String rawPassword = generateRandomPassword(8);
+            newUser.setPassword(new BCryptPasswordEncoder().encode(rawPassword));
+
+            newUser.setStatus(true); // kích hoạt tài khoản
+            newUser.setRegisterDate(new Date());
+
+            // Gán role mặc định là ROLE_USER (hoặc ROLE_SALE tùy bạn)
+            Role defaultRole = roleRepository.findByName("ROLE_USER");
+            newUser.setRoles(List.of(defaultRole));
+
+            userRepository.save(newUser);
+
+            // ✅ Có thể log mật khẩu để admin biết nếu cần
+            System.out.println("🔐 Mật khẩu ngẫu nhiên của user " + email + ": " + rawPassword);
+
+            return ResponseEntity.ok("✅ Đã thêm khách hàng mới thành công.");
+        }
+    }
+
+
+    private String generateRandomPassword(int length) {
+        String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        StringBuilder password = new StringBuilder();
+        Random random = new Random();
+
+        for (int i = 0; i < length; i++) {
+            password.append(chars.charAt(random.nextInt(chars.length())));
+        }
+        return password.toString();
+    }
+
+
 
 }
