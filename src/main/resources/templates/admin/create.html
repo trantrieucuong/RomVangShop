@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tạo Bài Viết</title>
+
+    <!-- Bootstrap 4 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+
+    <!-- Summernote CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.18/summernote-bs4.min.css">
+
+    <!-- Toastr CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+
+    <style>
+        body {
+            background: #f5f6fa;
+        }
+
+        .card {
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            border: none;
+        }
+
+        .form-control.is-invalid {
+            border-color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container mt-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb bg-white">
+            <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="/admin/blogs/own-blogs">Blog</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Tạo bài viết</li>
+        </ol>
+    </nav>
+
+    <!-- Action Buttons -->
+    <div class="mb-3">
+        <a href="/admin/blogs/own-blogs" class="btn btn-secondary"><i class="fas fa-chevron-left"></i> Quay lại</a>
+        <button type="button" class="btn btn-primary" id="btn-create">Lưu</button>
+    </div>
+
+    <!-- Form Card -->
+    <div class="card">
+        <div class="card-body">
+            <form id="form-create-blog">
+                <div class="form-group">
+                    <label>Tiêu đề</label>
+                    <input type="text" class="form-control" id="title" name="title" placeholder="Nhập tiêu đề">
+                </div>
+
+                <div class="form-group">
+                    <label>Nội dung</label>
+                    <textarea id="content" class="form-control" rows="6" name="content"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Mô tả ngắn</label>
+                    <textarea id="description" class="form-control" rows="3" name="description"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Trạng thái</label>
+                    <select id="status" class="form-control" name="status">
+                        <option value="false">Nháp</option>
+                        <option value="true">Công khai</option>
+                    </select>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Script Dependencies -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.18/summernote-bs4.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.27.2/axios.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        $('#content').summernote({
+            height: 300,
+            placeholder: 'Nhập nội dung bài viết...'
+        });
+
+        // Validate form
+        $('#form-create-blog').validate({
+            rules: {
+                title: { required: true },
+                content: { required: true },
+                description: { required: true },
+                status: { required: true }
+            },
+            messages: {
+                title: { required: "Vui lòng nhập tiêu đề" },
+                content: { required: "Vui lòng nhập nội dung" },
+                description: { required: "Vui lòng nhập mô tả" },
+                status: { required: "Chọn trạng thái" }
+            },
+            errorElement: 'span',
+            errorPlacement: function (error, element) {
+                error.addClass('invalid-feedback');
+                element.closest('.form-group').append(error);
+            },
+            highlight: function (element) {
+                $(element).addClass('is-invalid');
+            },
+            unhighlight: function (element) {
+                $(element).removeClass('is-invalid');
+            }
+        });
+
+        // Toastr config
+        toastr.options = {
+            closeButton: true,
+            progressBar: true,
+            positionClass: "toast-top-right",
+            timeOut: "3000"
+        };
+
+        // Submit form
+        $('#btn-create').on('click', function () {
+            if (!$('#form-create-blog').valid()) return;
+
+            const data = {
+                title: $('#title').val(),
+                content: $('#content').val(),
+                description: $('#description').val(),
+                status: $('#status').val() === 'true'
+            };
+
+            axios.post('/api/blogs', data)
+                .then(function () {
+                    toastr.success('Tạo bài viết thành công!');
+                    setTimeout(() => window.location.href = '/admin/blogs/own-blogs', 1500);
+                })
+                .catch(function (error) {
+                    console.error(error);
+                    toastr.error(error.response?.data?.message || 'Đã có lỗi xảy ra!');
+                });
+        });
+    });
+</script>
+
+</body>
+</html>

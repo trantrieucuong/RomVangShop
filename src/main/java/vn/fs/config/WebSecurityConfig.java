@@ -10,13 +10,11 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-
 import vn.fs.service.UserDetailService;
-
 
 @Configuration
 @EnableWebSecurity
-public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
+public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
 	private UserDetailService userDetailService;
@@ -34,11 +32,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
 		return auth;
 	}
 
-	@Autowired
-	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-		auth.userDetailsService(userDetailService).passwordEncoder(passwordEncoder());
-	}
-
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 		auth.authenticationProvider(authenticationProvider());
@@ -46,35 +39,24 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http.csrf().disable();
+		http.csrf().disable()
 
-		http.authorizeRequests()
-				// ⚠️ Quyền cụ thể nên đặt trước quyền tổng quát
+				.authorizeRequests()
 				.antMatchers("/admin/users").hasRole("ADMIN")
-
-				// Role SALE chỉ được vào /sale/**
 				.antMatchers("/sale/**").hasRole("SALE")
-
-				// ADMIN và EMPLOYEE được vào /admin/**
 				.antMatchers("/admin/**").hasAnyRole("ADMIN", "EMPLOYEE")
-
-				// ROLE_USER được vào checkout
 				.antMatchers("/checkout").hasRole("USER")
-
-				// Các request còn lại cho phép tất cả (nên đặt cuối cùng)
 				.antMatchers("/**").permitAll()
-
-				// Các request chưa khớp thì yêu cầu phải login
 				.anyRequest().authenticated()
 
 				.and()
 				.formLogin()
-				.loginProcessingUrl("/doLogin")
 				.loginPage("/login")
-				.defaultSuccessUrl("/?login_success")
-				.successHandler(new SuccessHandler()) // xử lý custom nếu có
+				.loginProcessingUrl("/doLogin")
+				.successHandler(new SuccessHandler()) // Dùng SuccessHandler đã sửa
 				.failureUrl("/login?error=true")
 				.permitAll()
+
 				.and()
 				.logout()
 				.invalidateHttpSession(true)
@@ -82,12 +64,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
 				.logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
 				.logoutSuccessUrl("/?logout_success")
 				.permitAll()
-				.and()
-				.rememberMe()
-				.rememberMeParameter("remember")
-				.and()
-				.exceptionHandling()
-				.accessDeniedPage("/web/notFound");
-	}
 
+				.and()
+				.rememberMe().rememberMeParameter("remember")
+
+				.and()
+				.exceptionHandling().accessDeniedPage("/web/notFound");
+	}
 }
