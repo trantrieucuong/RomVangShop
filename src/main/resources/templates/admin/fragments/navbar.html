@@ -76,6 +76,43 @@
 							</ul>
 						</div>
 					</li>
+					<li class="nav-item"
+						th:classappend="${#httpServletRequest.requestURI.startsWith('/admin/blogs') ? 'active submenu' : ''}">
+						<a data-toggle="collapse" href="#blogMenu"
+						   th:attr="aria-expanded=${#httpServletRequest.requestURI.startsWith('/admin/blogs')}"
+						   class="nav-link">
+							<i class="nav-icon fas fa-recycle"></i>
+							<p>Bài viết</p>
+							<span class="caret"></span>
+						</a>
+						<div class="collapse"
+							 id="blogMenu"
+							 th:classappend="${#httpServletRequest.requestURI.startsWith('/admin/blogs') ? ' show' : ''}">
+							<ul class="nav nav-collapse">
+								<li>
+									<a th:href="@{/admin/blogs}"
+									   th:classappend="${#httpServletRequest.requestURI == '/admin/blogs' ? 'active' : ''}">
+										<span class="sub-item">Tất cả bài viết</span>
+									</a>
+								</li>
+								<li>
+									<a th:href="@{/admin/blogs/own-blogs}"
+									   th:classappend="${#httpServletRequest.requestURI == '/admin/blogs/own-blogs' ? 'active' : ''}">
+										<span class="sub-item">Bài viết của tôi</span>
+									</a>
+								</li>
+								<li>
+									<a th:href="@{/admin/blogs/create}"
+									   th:classappend="${#httpServletRequest.requestURI == '/admin/blogs/create' ? 'active' : ''}">
+										<span class="sub-item">Tạo bài viết</span>
+									</a>
+								</li>
+							</ul>
+						</div>
+					</li>
+
+
+
 					<li class="nav-item">
 						<a data-toggle="collapse" href="#charts">
 							<i class="far fa-chart-bar"></i>
