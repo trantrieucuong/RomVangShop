@@ -26,7 +26,7 @@ public class BlogController {
         // Lấy tất cả bài viết sắp xếp theo createdAt giảm dần
         List<Blog> blogList = blogService.getAllBlogs();
         model.addAttribute("blogList", blogList);
-        return "admin/blog/index";
+        return "admin/indexBlog";
     }
 
     // Danh sách bài viết của tôi
@@ -37,7 +37,7 @@ public class BlogController {
         // Lấy bài viết theo userId
         List<Blog> blogList = blogService.getAllBlogOfCurrentUser();
         model.addAttribute("blogList", blogList);
-        return "admin/blog/own-blog";
+        return "admin/own-blog";
     }
 
     // Tạo bài viết
@@ -64,7 +64,7 @@ public class BlogController {
         if (blog != null) {
             model.addAttribute("blog", blog);
             model.addAttribute("blogCode", blogCode); // Thêm blogCode vào mô hình
-            return "admin/blog/detail"; // Trả về tên template Thymeleaf
+            return "admin/detailBlog"; // Trả về tên template Thymeleaf
         } else {
             // Nếu không tìm thấy blog, có thể chuyển hướng hoặc hiển thị thông báo lỗi
             return "admin/error"; // Hoặc chuyển hướng về trang lỗi

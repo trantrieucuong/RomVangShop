@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Danh sách bài viết</title>
+
+  <!-- Bootstrap 4 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <!-- DataTables -->
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap4.min.css">
+
+  <style>
+    body {
+      background: #f5f6fa;
+    }
+    .card {
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      border: none;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container mt-4">
+  <!-- Breadcrumb -->
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb bg-white">
+      <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
+      <li class="breadcrumb-item active" aria-current="page">Danh sách bài viết</li>
+    </ol>
+  </nav>
+
+  <!-- Action Buttons -->
+  <div class="mb-3">
+    <a href="/admin/blogs/create" class="btn btn-primary">
+      <i class="fas fa-plus"></i> Viết bài
+    </a>
+    <a href="/admin/blogs" class="btn btn-info">
+      <i class="fas fa-redo"></i> Làm mới
+    </a>
+  </div>
+
+  <!-- Blog Table -->
+  <div class="card">
+    <div class="card-body">
+      <table id="table-blog" class="table table-striped table-bordered">
+        <thead>
+        <tr>
+          <th>Tiêu đề</th>
+          <th>Tác giả</th>
+          <th>Trạng thái</th>
+          <th>Ngày tạo</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="blog : ${blogList}">
+          <td>
+            <a th:href="@{/admin/blogs/{id}/detail (id=${blog.getBlogCode()})}" th:text="${blog.title}">Bài viết A</a>
+          </td>
+          <td th:if="${blog.user != null}">
+            <a th:href="@{/admin/users/{id}/detail(id=${blog.user.userId})}" th:text="${blog.user.name}">Nguyễn Văn A</a>
+          </td>
+          <td th:if="${blog.user == null}">
+            <i>Không có tác giả</i>
+          </td>
+
+          <td th:text="${blog.status ? 'Công khai' : 'Nháp'}">Công khai</td>
+          <td th:text="${#dates.format(blog.createdAt, 'dd/MM/yyyy')}">09/01/2024</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Scripts -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap4.min.js"></script>
+
+<script>
+  $(document).ready(function () {
+    $('#table-blog').DataTable({
+      paging: true,
+      lengthChange: true,
+      searching: true,
+      ordering: true,
+      info: true,
+      autoWidth: false,
+      responsive: true,
+      language: {
+        url: "//cdn.datatables.net/plug-ins/1.13.6/i18n/vi.json"
+      }
+    });
+  });
+</script>
+
+</body>
+</html>

@@ -29,24 +29,25 @@ public class SuccessHandler implements AuthenticationSuccessHandler {
 			HttpSession session = request.getSession();
 			session.setAttribute("userId", user.getUserId());
 			session.setAttribute("currentUser", user);
+
+			// ✅ In ra console
+			System.out.println(">>>>> Đăng nhập thành công. userId trong session: " + user.getUserId());
 		}
 
-		// === Lấy URL trước khi chuyển đến trang login (nếu có) ===
+		// === Lấy URL trước khi login (nếu có) ===
 		HttpSession session = request.getSession(false);
 		String redirectUrl = null;
 		if (session != null) {
 			redirectUrl = (String) session.getAttribute("redirectUrl");
-			// Xóa redirectUrl sau khi lấy ra để tránh dùng lại
 			session.removeAttribute("redirectUrl");
 		}
 
-		// === Nếu có redirectUrl, chuyển về đó luôn ===
 		if (redirectUrl != null && !redirectUrl.isEmpty()) {
 			redirectStrategy.sendRedirect(request, response, redirectUrl);
 			return;
 		}
 
-		// === Không có redirectUrl thì xử lý như cũ: điều hướng theo vai trò ===
+		// === Điều hướng theo vai trò ===
 		Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
 		for (GrantedAuthority authority : authorities) {
 			String role = authority.getAuthority();
@@ -66,4 +67,5 @@ public class SuccessHandler implements AuthenticationSuccessHandler {
 
 		throw new IllegalStateException("Không xác định được vai trò người dùng.");
 	}
+
 }

@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Danh sách bài viết</title>
+
+  <!-- Bootstrap 4 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <!-- DataTables -->
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap4.min.css">
+
+  <style>
+    body {
+      background: #f5f6fa;
+    }
+
+    .card {
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      border: none;
+    }
+
+    .btn {
+      min-width: 120px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <div class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-12">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+              <a href="/admin/dashboard">Dashboard</a>
+            </li>
+            <li class="breadcrumb-item active">
+              Bài viết của tôi
+            </li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main content -->
+  <section class="content">
+    <div class="container-fluid">
+      <div class="row py-2">
+        <div class="col-md-6">
+          <a href="/admin/blogs/create" type="button" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Viết bài
+          </a>
+          <a href="/admin/blogs/own-blogs" type="button" class="btn btn-info">
+            <i class="fas fa-redo"></i> Làm mới
+          </a>
+        </div>
+      </div>
+
+      <div class="row mt-3">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-body">
+              <table id="table-blog" class="table table-bordered table-hover table-striped">
+                <thead class="thead-light">
+                <tr>
+                  <th>Tiêu đề</th>
+                  <th>Trạng thái</th>
+                  <th>Ngày tạo</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="blog : ${blogList}">
+                  <td>
+                    <a th:href="@{/admin/blogs/{id}/detail(id=${blog.blogCode})}"
+                       th:text="${blog.title}">Tên bài viết</a>
+                  </td>
+                  <td>
+                    <span th:classappend="${blog.status} ? 'badge badge-success' : 'badge badge-secondary'"
+                          th:text="${blog.status ? 'Công khai' : 'Nháp'}">Trạng thái</span>
+                  </td>
+                  <td th:text="${#dates.format(blog.createdAt, 'dd/MM/yyyy')}">09/01/2024</td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+</div>
+
+<!-- Scripts -->
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap4.min.js"></script>
+
+<script>
+  $(document).ready(function () {
+    $('#table-blog').DataTable({
+      paging: true,
+      lengthChange: true,
+      searching: true,
+      ordering: true,
+      info: true,
+      autoWidth: false,
+      responsive: true,
+      language: {
+        search: "Tìm kiếm:",
+        lengthMenu: "Hiển thị _MENU_ bản ghi",
+        info: "Hiển thị _START_ đến _END_ của _TOTAL_ bản ghi",
+        paginate: {
+          first: "Đầu",
+          last: "Cuối",
+          next: "Tiếp",
+          previous: "Trước"
+        },
+        zeroRecords: "Không có dữ liệu phù hợp",
+        infoEmpty: "Không có dữ liệu",
+        infoFiltered: "(lọc từ _MAX_ bản ghi)"
+      }
+    });
+  });
+</script>
+
+</body>
+</html>
