@@ -130,8 +130,10 @@
                                   <td class="table-brand"><h6>[[${#numbers.formatDecimal((item.price - (item.price * item.product.discount/100)) * item.quantity, 1, 'DEFAULT', 0, 'DEFAULT')}+ ' đ']]</h6></td>
                                 </tr>
 
-                                <tr th:each="item : ${orderDetail}" th:if="${commentedMap[item.orderDetailId] == false}">
-                                    <td colspan="6">
+                                <tr th:each="item : ${orderDetail}"
+                                    th:if="${commentedMap[item.orderDetailId] == false and order.status == 2}">
+
+                                <td colspan="6">
                                         <form th:action="@{/comments/add}" method="post">
                                             <input type="hidden" name="orderDetailId" th:value="${item.orderDetailId}" />
                                             <input type="hidden" name="productId" th:value="${item.product.productId}" />
