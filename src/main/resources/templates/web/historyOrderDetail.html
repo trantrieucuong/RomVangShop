@@ -129,7 +129,28 @@
                                   <td class="table-address"><h6>[[${item.quantity}]]</h6></td>
                                   <td class="table-brand"><h6>[[${#numbers.formatDecimal((item.price - (item.price * item.product.discount/100)) * item.quantity, 1, 'DEFAULT', 0, 'DEFAULT')}+ ' đ']]</h6></td>
                                 </tr>
-                                
+
+                                <tr th:each="item : ${orderDetail}" th:if="${commentedMap[item.orderDetailId] == false}">
+                                    <td colspan="6">
+                                        <form th:action="@{/comments/add}" method="post">
+                                            <input type="hidden" name="orderDetailId" th:value="${item.orderDetailId}" />
+                                            <input type="hidden" name="productId" th:value="${item.product.productId}" />
+
+                                            <div class="form-group">
+                                                <label>Đánh giá (1-5 sao):</label>
+                                                <input type="number" name="rating" min="1" max="5" step="0.5" class="form-control" required />
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label>Nội dung:</label>
+                                                <textarea name="content" rows="2" class="form-control" required placeholder="Viết nhận xét..."></textarea>
+                                            </div>
+
+                                            <button type="submit" class="btn btn-success btn-sm mt-2">Gửi đánh giá</button>
+                                        </form>
+                                    </td>
+                                </tr>
+
                               </tbody>
                             </table>
                           </div>
