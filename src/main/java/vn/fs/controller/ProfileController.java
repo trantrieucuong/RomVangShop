@@ -153,6 +153,12 @@ public class ProfileController extends CommomController {
 			boolean exists = commentRepository.existsByOrderDetail_OrderDetailId(detail.getOrderDetailId());
 			commentedMap.put(detail.getOrderDetailId(), exists);
 		}
+		Optional<Order> orderOpt = orderRepository.findById(id);
+		if (orderOpt.isEmpty()) {
+			return new ModelAndView("redirect:/profile");
+		}
+		Order order = orderOpt.get();
+		model.addAttribute("order", order);
 		model.addAttribute("commentedMap", commentedMap);
 
 		commomDataService.commonData(model, user);
