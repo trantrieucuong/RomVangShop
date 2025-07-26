@@ -1,10 +1,7 @@
 package vn.fs.controller;
 
 import java.security.Principal;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -25,10 +22,7 @@ import vn.fs.entities.Order;
 import vn.fs.entities.OrderCancellation;
 import vn.fs.entities.OrderDetail;
 import vn.fs.entities.User;
-import vn.fs.repository.OrderCancellationRepository;
-import vn.fs.repository.OrderDetailRepository;
-import vn.fs.repository.OrderRepository;
-import vn.fs.repository.UserRepository;
+import vn.fs.repository.*;
 
 @Controller
 public class ProfileController extends CommomController {
@@ -47,6 +41,9 @@ public class ProfileController extends CommomController {
 
 	@Autowired
 	private OrderCancellationRepository orderCancellationRepository;
+
+	@Autowired
+	private CommentRepository commentRepository;
 
 	@GetMapping("/profile")
 	public String profile(Model model,
@@ -141,24 +138,32 @@ public class ProfileController extends CommomController {
 	}
 
 	@GetMapping("/order/detail/{order_id}")
-	public ModelAndView detail(Model model, Principal principal,
-							   @PathVariable("order_id") Long id) {
-
+	public ModelAndView detail(Model model, Principal principal, @PathVariable("order_id") Long id) {
 		if (principal == null) {
 			return new ModelAndView("redirect:/dang-nhap");
 		}
-
 		User user = userRepository.findByEmail(principal.getName());
 		model.addAttribute("user", user);
 
 		List<OrderDetail> orderDetails = orderDetailRepository.findByOrderId(id);
 		model.addAttribute("orderDetail", orderDetails);
 
+		Map<Long, Boolean> commentedMap = new HashMap<>();
+		for (OrderDetail detail : orderDetails) {
+			boolean exists = commentRepository.existsByOrderDetail_OrderDetailId(detail.getOrderDetailId());
+			commentedMap.put(detail.getOrderDetailId(), exists);
+		}
+		model.addAttribute("commentedMap", commentedMap);
+
 		commomDataService.commonData(model, user);
-		return new ModelAndView("web/historyOrderDetail");
+		ModelAndView mav = new ModelAndView("web/historyOrderDetail");
+		mav.addAllObjects(model.asMap());
+		return mav;
+
 	}
 
-//	@RequestMapping("/order/cancel/{order_id}")
+
+	//	@RequestMapping("/order/cancel/{order_id}")
 //	public ModelAndView cancel(ModelMap model, @PathVariable("order_id") Long id) {
 //		Optional<Order> orderOpt = orderRepository.findById(id);
 //		if (orderOpt.isEmpty()) {
