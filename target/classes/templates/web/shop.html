@@ -32,17 +32,14 @@
   </head>
   <body>
   
-  <!--************************************
-				Header Start
-		*************************************-->
+
 		<header th:replace="~{/web/fragments/header :: header}"></header>
-		<!--************************************
-				Header End
-		*************************************-->
+
 
     <section
-      class="inner-section single-banner"
-      style="background: url(/images/single-banner.png) no-repeat center">
+
+      class="inner-section single-banner">
+<!--      style="background: url(/images/single-banner.png) no-repeat center">-->
       <div class="container">
         <h2>Sản phẩm</h2>
         <ol class="breadcrumb">
@@ -52,6 +49,21 @@
         </ol>
       </div>
     </section>
+  <script>
+  const banner = document.querySelector(".single-banner");
+  const images = [
+    "/images/single-banner.png",
+    "/images/single-banner2.jpg",
+    "/images/single-banner4.jpg"
+  ];
+
+  let i = 0;
+  setInterval(() => {
+    banner.style.background = `url(${images[i]}) no-repeat center`;
+    banner.style.backgroundSize = "cover";
+    i = (i + 1) % images.length;
+  }, 5000); // đổi sau 5 giây
+</script>
     <section class="inner-section shop-part">
       <div class="container">
         <div class="row content-reverse">
@@ -93,7 +105,7 @@
 							  </button>
 						  </th:block>
 
-						  <a class="product-image" th:href="@{/productDetail(id=${item.productId})}">
+						  <a class="product-image" th:href="@{/productDetail(id=${item.productId})}" >
 							  <div class="image-container">
 								  <img th:src="@{'/loadImage?imageName='+${item.productImage}}" alt="product" class="fixed-image" />
 							  </div>
@@ -157,9 +169,9 @@
 						  </h6>
 
 						  <h6 class="product-price">
-							  <del>
-								  [[${#numbers.formatInteger(item.price.intValue(), 0, 'COMMA')} + ' VND']]
-							  </del>
+<!--							  <del>-->
+<!--								  [[${#numbers.formatInteger(item.price.intValue(), 0, 'COMMA')} + ' VND']]-->
+<!--							  </del>-->
 							  <span>
                 [[${#numbers.formatInteger((item.price - (item.price * item.discount / 100)).intValue(), 0, 'COMMA')} + ' VND']]
             </span>
@@ -204,7 +216,7 @@
           </div>
         <div class="col-lg-3">
             <div class="shop-widget-promo">
-              <a href="#"><img src="/images/promo/shop/01.PNG" alt="promo" /></a>
+              <a href="#"><img src="/images/logo1.jpg" alt="promo" /></a>
             </div>
             <div class="shop-widget">
               <h6 class="shop-widget-title">Theo thể loại</h6>

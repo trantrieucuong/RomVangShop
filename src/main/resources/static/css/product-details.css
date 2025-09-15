@@ -716,8 +716,55 @@
     }
 }
 
+/*hienn*/
+.highlight {
+    color: gold;     /* sao sáng */
+    font-weight: bold;
+}
+
+.normal {
+    color: #ccc;     /* sao mờ */
+}
+
+
 @media (min-width: 576px) and (max-width: 767px) {
     .review-reply-list {
         margin-left: 30px
     }
+}
+/* tuyên  css cho phần bình luận */
+.comment-item {
+  display: flex;
+  justify-content: space-between; /* nội dung bên trái, nút Xóa bên phải */
+  align-items: center;            /* căn giữa theo chiều dọc */
+  padding: 8px 0;
+  border-bottom: 1px solid #ddd;
+}
+
+.comment-content {
+  flex: 1; /* chiếm hết phần còn lại bên trái */
+}
+
+.delete-btn {
+  background: #e74c3c;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.delete-btn:hover {
+  background: #c0392b;
+}
+.edit-btn:hover {
+  background: #c0392b;
+}
+.edit-btn {
+  background: #e74c3c;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
 }

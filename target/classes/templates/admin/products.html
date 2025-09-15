@@ -73,6 +73,13 @@
 										<i class="fa fa-plus"></i>
 										Thêm mới
 									</button>
+									<form th:action="@{/admin/products/import}" method="post" enctype="multipart/form-data">
+										<input type="file" name="file" accept=".xlsx,.xls" required />
+										<button type="submit">Nhập Excel</button>
+									</form>
+									<form id="exportForm" th:action="@{/admin/export-products}" method="post" enctype="multipart/form-data">
+										<button type="submit">Xuất Excel</button>
+									</form>
 								</div>
 							</div>
 							<div class="card-body">
@@ -83,15 +90,15 @@
 											<div class="modal-header no-bd">
 												<h5 class="modal-title">
 													<span class="fw-mediumbold" style="text-decoration: underline; color: black;">
-													thêm mới sản phẩm</span> 
+													Thêm mới sản phẩm</span>
 												</h5>
 												<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 													<span aria-hidden="true">&times;</span>
 												</button>
 											</div>
 											<div class="modal-body">
-												<form th:action="@{/admin/addProduct}" th:object="${product}" method="post" enctype="multipart/form-data">
-													<div class="row">
+												<form id="addProductForm" th:action="@{/admin/addProduct}" th:object="${product}" method="post" enctype="multipart/form-data">
+												<div class="row">
 														<div class="col-sm-12">
 															<div class="form-group form-group-default">
 																<label>Tên sản phẩm</label>
@@ -130,12 +137,7 @@
 																<input th:field="*{discount}" id="discount" min = 0 type="number" class="form-control" placeholder="Giảm giá">
 															</div>
 														</div>
-														<div class="col-md-6 pr-0">
-															<div class="form-group form-group-default">
-																<label>Ngày thêm</label>
-																<input th:field="*{enteredDate}" id="enteredDate" type="date" class="form-control" placeholder="Ngày thêm">
-															</div>
-														</div>
+
 														<div class="col-sm-12">
 															<div class="form-group form-group-default">
 																<label>Images</label>
@@ -162,50 +164,61 @@
 								<div class="table-responsive">
 									<table id="add-row" class="display table table-striped table-hover" >
 										<thead>
-											<tr>
-												<th>ID</th>
-												<th>Ảnh</th>
-												<th>Tên sản phẩm</th>
-												<th>Thể loại</th>
-												<th>Đơn giá</th>
-												<th>Giảm giá</th>
-												<th>Số lượng</th>
-												<th>Ngày thêm</th>
-<!-- 												<th style="width: 20%">Mô tả sản phẩm</th> -->
-												<th >Hành động</th>
-											</tr>
+										<tr>
+											<th class="checkbox">
+												<!-- Chọn tất cả -->
+												<input type="checkbox" id="selectAll" />
+											</th>
+											<th>ID</th>
+											<th>Ảnh</th>
+											<th>Tên sản phẩm</th>
+											<th>Thể loại</th>
+											<th>Đơn giá</th>
+											<th>Giảm giá</th>
+											<th>Số lượng</th>
+											<th>Ngày thêm</th>
+											<th>Hành động</th>
+										</tr>
 										</thead>
-										
+
 										<tbody>
-											<tr th:each="item : ${products}">
-												<td>[[${item?.productId}]]</td>
-												<td>
-													<img th:src="@{'/loadImage?imageName='+${item.productImage}}" width="80px" alt="product" />
-												</td>
-												<td>[[${item.productName}]]</td>
-												<td>[[${item.category.categoryName}]]</td>
-												<td th:text="${#numbers.formatDecimal(item.price, 1, 'DEFAULT', 0, 'DEFAULT')}+' đ'"></td>
-												<td>[[${#numbers.formatDecimal(item?.discount, 1, 'DEFAULT', 0, 'DEFAULT')}+' %']]</td>
-												<td>[[${item.quantity}]]</td>
-												<td>[[${item.enteredDate}]]</td>
-<!-- 												<td>[[${item.description}]]</td> -->
-												<td>
-													<div class="form-button-action">
-														<a th:href="@{/admin/editProduct/{productId}(productId=${item.productId})}"
-															type="button" data-toggle="tooltip" title="" class="btn btn-link btn-primary btn-lg" data-original-title="Chỉnh sửa">
-															<i class="fa fa-edit"></i>
-														</a>
-														<button th:data-id="${item.productId}" th:data-name="${item.productName}"
-																onclick="showConfigModalDialog(this.getAttribute('data-id'), this.getAttribute('data-name'))"
-																type="button" data-toggle="tooltip" title="" class="btn btn-link btn-danger" data-original-title="Xóa">
-															<i class="fa fa-times"></i>
-														</button>
-													</div>
-												</td>
-											</tr>
+										<tr th:each="item : ${products}">
+											<td class="checkbox">
+												<!-- dùng name và value để submit hoặc JS lấy -->
+												<input type="checkbox" class="product-checkbox" th:value="${item.productId}" />
+											</td>
+
+											<td>[[${item.productId}]]</td>
+											<td>
+												<img th:src="@{'/loadImage?imageName='+${item.productImage}}" width="80" />
+											</td>
+											<td>[[${item.productName}]]</td>
+											<td>[[${item.category.categoryName}]]</td>
+											<td th:text="${#numbers.formatDecimal(item.price, 1, 'DEFAULT', 0, 'DEFAULT')}+' đ'"></td>
+											<td>[[${#numbers.formatDecimal(item.discount, 1, 'DEFAULT', 0, 'DEFAULT')}+' %']]</td>
+											<td>[[${item.quantity}]]</td>
+											<td>[[${item.enteredDate}]]</td>
+											<td>
+												<div class="form-button-action">
+													<a th:href="@{/admin/editProduct/{productId}(productId=${item.productId})}" class="btn btn-link btn-primary btn-lg">
+														<i class="fa fa-edit"></i>
+													</a>
+													<button th:data-id="${item.productId}" th:data-name="${item.productName}"
+															onclick="showConfigModalDialog(this.getAttribute('data-id'), this.getAttribute('data-name'))"
+															type="button" class="btn btn-link btn-danger">
+														<i class="fa fa-times"></i>
+													</button>
+												</div>
+											</td>
+										</tr>
 										</tbody>
+
 									</table>
-									
+
+
+
+
+
 									<script>
 									function showConfigModalDialog(id, name) {
 										$('#name').text(name);
@@ -238,6 +251,7 @@
 									</div>
 								</div>
 							</div>
+
 						</div>
 					</div>
 				</div>
@@ -334,6 +348,96 @@
 
 			}); */
 		});
+
+		// validate
+
+document.addEventListener("DOMContentLoaded", function () {
+	const form = document.getElementById("addProductForm");
+
+	form.addEventListener("submit", function (e) {
+		const name = document.getElementById("productName").value.trim();
+		const category = document.getElementById("categoryId").value;
+		const price = document.getElementById("price").value;
+		const quantity = document.getElementById("quantity").value;
+		const discount = document.getElementById("discount").value;
+		const image = document.getElementById("productImage").value;
+		const description = document.getElementById("description").value.trim();
+
+		let errorMessages = [];
+
+		if (name === "") {
+			errorMessages.push("Tên sản phẩm không được để trống.");
+		}
+
+		if (!category || category === "0") {
+			errorMessages.push("Vui lòng chọn thể loại.");
+		}
+
+		if (price === "" || isNaN(price) || Number(price) < 0) {
+			errorMessages.push("Đơn giá phải là số > 0.");
+		}
+
+		if (quantity === "" || isNaN(quantity) || Number(quantity) < 0) {
+			errorMessages.push("Số lượng phải là số > 0.");
+		}
+
+		if (discount === "" || isNaN(discount) || Number(discount) < 0 || Number(discount) > 100) {
+			errorMessages.push("Giảm giá phải từ 0 đến 100.");
+		}
+
+		if (image === "") {
+			errorMessages.push("Vui lòng chọn ảnh sản phẩm.");
+		}
+
+		if (description === "") {
+			errorMessages.push("Mô tả sản phẩm không được để trống.");
+		}
+
+		if (errorMessages.length > 0) {
+			e.preventDefault();
+			alert(errorMessages.join("\n"));
+		}
+	});
+});
+
+// phần này cho phần sản phẩm tuyên làm
+ const form = document.getElementById("exportForm");
+  form.addEventListener("submit", function (e) {
+    // xóa hidden input cũ
+    document.querySelectorAll("input[name='selectedIds']").forEach(el => el.remove());
+
+    const ids = getSelectedProducts();
+    ids.forEach(id => {
+      const hidden = document.createElement("input");
+      hidden.type = "hidden";
+      hidden.name = "selectedIds";
+      hidden.value = id;
+      form.appendChild(hidden);
+    });
+    // sau khi append, form sẽ submit như bình thường
+  });
+  // Chọn/bỏ chọn tất cả
+  document.getElementById("selectAll").addEventListener("change", function () {
+    const checked = this.checked;
+    document.querySelectorAll(".product-checkbox").forEach(cb => {
+      cb.checked = checked;
+    });
+  });
+
+  // Hàm lấy danh sách sản phẩm đã chọn
+  function getSelectedProducts() {
+    const selected = [];
+    document.querySelectorAll(".product-checkbox:checked").forEach(cb => {
+      selected.push(cb.value); // giá trị productId
+    });
+    return selected; // mảng các productId
+  }
+
+  // Ví dụ test:
+  // console.log(getSelectedProducts());
+
+
+
 	</script>
 </body>
 </html>

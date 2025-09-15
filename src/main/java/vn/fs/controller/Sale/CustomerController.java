@@ -4,6 +4,7 @@ package vn.fs.controller.Sale;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import vn.fs.entities.Role;
 import vn.fs.entities.User;
@@ -13,6 +14,7 @@ import vn.fs.repository.UserRepository;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 @RestController
 @RequestMapping("/api/customers")
@@ -40,6 +42,16 @@ public class CustomerController {
             user.setEmail(user.getEmail().trim().toLowerCase());
         }
 
+        // ✅ Kiểm tra trùng số điện thoại
+        if (user.getPhone() != null && userRepository.existsByPhone(user.getPhone())) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Số điện thoại đã tồn tại");
+        }
+
+        // ✅ Kiểm tra trùng email
+        if (user.getEmail() != null && userRepository.existsByEmailIgnoreCase(user.getEmail())) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Email đã tồn tại");
+        }
+
         // Gán ngày đăng ký nếu chưa có
         if (user.getRegisterDate() == null) {
             user.setRegisterDate(new Date());
@@ -52,16 +64,27 @@ public class CustomerController {
 
         // Nếu không gán role thì có thể set mặc định (ví dụ: ROLE_USER)
         if (user.getRoles() == null || user.getRoles().isEmpty()) {
-            Role defaultRole = roleRepository.findByName("ROLE_USER"); // cần khai báo RoleRepository
+            Role defaultRole = roleRepository.findByName("ROLE_USER");
             user.setRoles(List.of(defaultRole));
         }
-
+// 🔐 Tạo mật khẩu ngẫu nhiên và mã hóa bằng BCrypt
+        String rawPassword = generateRandomPassword(8);
+        user.setPassword(new BCryptPasswordEncoder().encode(rawPassword));
         // Lưu user
         User savedUser = userRepository.save(user);
 
         return ResponseEntity.ok(savedUser);
     }
+    private String generateRandomPassword(int length) {
+        String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        StringBuilder password = new StringBuilder();
+        Random random = new Random();
 
+        for (int i = 0; i < length; i++) {
+            password.append(chars.charAt(random.nextInt(chars.length())));
+        }
+        return password.toString();
+    }
 //    private String generateNextCustomerCode() {
 //        String prefix = "KH";
 //        String maxCode = customerRepository.findMaxCustomerCode(); // Ví dụ: KH000023

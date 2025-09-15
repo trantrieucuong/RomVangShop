@@ -6,6 +6,7 @@
     <title>Rơm Vàng - Trang quản trị</title>
     <meta content='width=device-width, initial-scale=1.0, shrink-to-fit=no' name='viewport'/>
     <link rel="icon" href="/assets/img/icon.ico" type="image/x-icon"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -22,7 +23,11 @@
 		});
 
 
+
     </script>
+    <style>
+
+    </style>
 
     <!-- CSS Files -->
     <link rel="stylesheet" href="/assets/css/bootstrap.min.css">
@@ -260,6 +265,7 @@ document.getElementById('paymentForm').addEventListener('submit', function (e) {
 
 
 
+
         </script>
         <!-- Modal thanh toán tiền mặt -->
         <div id="cashPaymentModal" class="cash-payment-modal">
@@ -317,7 +323,7 @@ document.getElementById('paymentForm').addEventListener('submit', function (e) {
             <div class="invoice-box" id="invoiceToPrint"
                  style="background: white; padding: 20px; border-radius: 8px; max-width: 420px; width: 100%; font-family: Arial, sans-serif;">
                 <div style="text-align: center; margin-bottom: 10px;">
-                    <img src="/img/products/logo.jpg" alt="Logo" style="height: 60px; object-fit: contain;">
+                    <img src="/images/logo1.jpg" alt="Logo" style="height: 60px; object-fit: contain;">
                     <h2 style="margin: 5px 0; font-size: 18px;">HÓA ĐƠN BÁN HÀNG</h2>
                     <p style="font-size: 12px;">Cửa hàng Rơm Vàng - Xin cảm ơn quý khách!</p>
                 </div>
@@ -349,7 +355,7 @@ document.getElementById('paymentForm').addEventListener('submit', function (e) {
                 <br>
                 <br>
                 <br>
-                <div class="footer-buttons"
+                <div class="footer-buttons" id="invoiceFooter"
                      style="margin-top: 12px; display: flex; justify-content: flex-end; gap: 8px;">
                     <button onclick="exportInvoiceToPDF()"
                             style="padding: 6px 12px; background: #22c55e; color: white; border-radius: 4px;">📄 Tải PDF
@@ -433,120 +439,119 @@ document.getElementById('paymentForm').addEventListener('submit', function (e) {
 <script src="/assets/js/atlantis.min.js"></script>
 <!-- Atlantis DEMO methods, don't include it in your project! -->
 <script src="/assets/js/setting-demo2.js"></script>
-<script>
-    document.getElementById('customerForm').addEventListener('submit', function (e) {
-        e.preventDefault();
+<!--<script>-->
+<!--    document.getElementById('customerForm').addEventListener('submit', function (e) {-->
+<!--        e.preventDefault();-->
 
-        const formData = {
-            name: this.name.value,
-            email: this.email.value,
-            phone: this.phone.value
-        };
+<!--        const formData = {-->
+<!--            name: this.name.value,-->
+<!--            email: this.email.value,-->
+<!--            phone: this.phone.value-->
+<!--        };-->
 
-        fetch('/sale/create-or-update-customer', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(formData)
-        })
-            .then(res => res.text())
-            .then(msg => {
-                alert(msg);
-                document.getElementById("customerModal").style.display = "none";
-            })
-            .catch(err => console.error("Lỗi:", err));
-    });
+<!--        fetch('/sale/create-or-update-customer', {-->
+<!--            method: 'POST',-->
+<!--            headers: {-->
+<!--                'Content-Type': 'application/json'-->
+<!--            },-->
+<!--            body: JSON.stringify(formData)-->
+<!--        })-->
+<!--            .then(res => res.text())-->
+<!--            .then(msg => {-->
+<!--                alert(msg);-->
+<!--                document.getElementById("customerModal").style.display = "none";-->
+<!--            })-->
+<!--            .catch(err => console.error("Lỗi:", err));-->
+<!--    });-->
 
-    $(document).ready(function() {
-			$('#basic-datatables').DataTable({
-			});
+<!--    $(document).ready(function() {-->
+<!--			$('#basic-datatables').DataTable({-->
+<!--			});-->
 
-			$('#multi-filter-select').DataTable( {
-				"pageLength": 5,
-				initComplete: function () {
-					this.api().columns().every( function () {
-						var column = this;
-						var select = $('<select class="form-control"><option value=""></option></select>')
-						.appendTo( $(column.footer()).empty() )
-						.on( 'change', function () {
-							var val = $.fn.dataTable.util.escapeRegex(
-								$(this).val()
-								);
+<!--			$('#multi-filter-select').DataTable( {-->
+<!--				"pageLength": 5,-->
+<!--				initComplete: function () {-->
+<!--					this.api().columns().every( function () {-->
+<!--						var column = this;-->
+<!--						var select = $('<select class="form-control"><option value=""></option></select>')-->
+<!--						.appendTo( $(column.footer()).empty() )-->
+<!--						.on( 'change', function () {-->
+<!--							var val = $.fn.dataTable.util.escapeRegex(-->
+<!--								$(this).val()-->
+<!--								);-->
 
-							column
-							.search( val ? '^'+val+'$' : '', true, false )
-							.draw();
-						} );
+<!--							column-->
+<!--							.search( val ? '^'+val+'$' : '', true, false )-->
+<!--							.draw();-->
+<!--						} );-->
 
-						column.data().unique().sort().each( function ( d, j ) {
-							select.append( '<option value="'+d+'">'+d+'</option>' )
-						} );
-					} );
-				}
-			});
+<!--						column.data().unique().sort().each( function ( d, j ) {-->
+<!--							select.append( '<option value="'+d+'">'+d+'</option>' )-->
+<!--						} );-->
+<!--					} );-->
+<!--				}-->
+<!--			});-->
 
-			// Add Row
-			$('#add-row').DataTable({
-				"pageLength": 5,
-			});
+<!--			// Add Row-->
+<!--			$('#add-row').DataTable({-->
+<!--				"pageLength": 5,-->
+<!--			});-->
 
-			var action = '<td> <div class="form-button-action"> <button type="button" data-toggle="tooltip" title="" class="btn btn-link btn-primary btn-lg" data-original-title="Edit Task"> <i class="fa fa-edit"></i> </button> <button type="button" data-toggle="tooltip" title="" class="btn btn-link btn-danger" data-original-title="Remove"> <i class="fa fa-times"></i> </button> </div> </td>';
+<!--			var action = '<td> <div class="form-button-action"> <button type="button" data-toggle="tooltip" title="" class="btn btn-link btn-primary btn-lg" data-original-title="Edit Task"> <i class="fa fa-edit"></i> </button> <button type="button" data-toggle="tooltip" title="" class="btn btn-link btn-danger" data-original-title="Remove"> <i class="fa fa-times"></i> </button> </div> </td>';-->
 
-			/* $('#addRowButton').click(function() {
-				$('#add-row').dataTable().fnAddData([
-					$("#addName").val(),
-					$("#addPosition").val(),
-					$("#addOffice").val(),
-					action
-					]);
-				$('#addRowModal').modal('hide');
+<!--			/* $('#addRowButton').click(function() {-->
+<!--				$('#add-row').dataTable().fnAddData([-->
+<!--					$("#addName").val(),-->
+<!--					$("#addPosition").val(),-->
+<!--					$("#addOffice").val(),-->
+<!--					action-->
+<!--					]);-->
+<!--				$('#addRowModal').modal('hide');-->
 
-			}); */
+<!--			}); */-->
 
-			 $('#editRowButton').click(function(event) {
-				/* $('#edit-row').dataTable().fnAddData([
-					$("#categoryId").val(category.categoryId),
-					$("#name").val(category.name),
-					action
-					]);
-				$('#editRowModal').modal('hide'); */
+<!--			 $('#editRowButton').click(function(event) {-->
+<!--				/* $('#edit-row').dataTable().fnAddData([-->
+<!--					$("#categoryId").val(category.categoryId),-->
+<!--					$("#name").val(category.name),-->
+<!--					action-->
+<!--					]);-->
+<!--				$('#editRowModal').modal('hide'); */-->
 
-				event.preventDefault();
+<!--				event.preventDefault();-->
 
-				var href= $(this).attr('href');
+<!--				var href= $(this).attr('href');-->
 
-				$.get(href, function(category){
-					$('#categoryId').val(category.categoryId);
-					$('#name').val(category.name);
-				})
+<!--				$.get(href, function(category){-->
+<!--					$('#categoryId').val(category.categoryId);-->
+<!--					$('#name').val(category.name);-->
+<!--				})-->
 
-				$('#editRowModal').modal();
+<!--				$('#editRowModal').modal();-->
 
-			});
+<!--			});-->
 
-			/* $('.table .btn').on('click', function(event){
+<!--			/* $('.table .btn').on('click', function(event){-->
 
-				event.preventDefault();
+<!--				event.preventDefault();-->
 
-				var href= $(this).attr('href');
+<!--				var href= $(this).attr('href');-->
 
-				$.get(href, function(category){
-					$('#categoryId').val(category.categoryId);
-					$('#name').val(category.name);
-				})
+<!--				$.get(href, function(category){-->
+<!--					$('#categoryId').val(category.categoryId);-->
+<!--					$('#name').val(category.name);-->
+<!--				})-->
 
-				$('#editRowModal').modal();
-			}); */
+<!--				$('#editRowModal').modal();-->
+<!--			}); */-->
 
-		});
-
-
+<!--		});-->
 
 
-</script>
+<!--</script>-->
 
 <!-- JAVASCRIPT -->
+
 <script id="js">
 
 // ========================== TẠO ĐƠN HÀNG ==========================
@@ -903,30 +908,41 @@ function closeInvoice() {
     document.getElementById("invoiceBackdrop").classList.remove("show");
 }
 
-
 function searchCustomer() {
-    const phoneInput = document.getElementById("phoneInput");
-    const phone = phoneInput.value.trim();
-    const resultDiv = document.getElementById("customerResult");
+  const phoneInput = document.getElementById("phoneInput");
+  const phone = phoneInput.value.trim();
+  const resultDiv = document.getElementById("customerResult");
 
-    if (!phone) {
-        resultDiv.innerText = "Vui lòng nhập số điện thoại.";
-        return;
-    }
+  if (!phone) {
+    resultDiv.innerText = "Vui lòng nhập số điện thoại.";
+    return;
+  }
 
-    fetch(`/api/customers/search?phone=${encodeURIComponent(phone)}`)
-        .then(response => {
-            if (!response.ok) throw new Error("Không tìm thấy khách hàng");
-            return response.json();
-        })
-        .then(data => {
-            resultDiv.innerText = `${data.name} - ${data.phone}`;
-        })
-        .catch(error => {
-            resultDiv.innerText = "Không tìm thấy khách hàng.";
-            console.error(error);
-        });
+  fetch(`/sale/phone/search?phone=${encodeURIComponent(phone)}`)
+    .then(response => {
+      if (!response.ok) throw new Error("Không tìm thấy khách hàng");
+      return response.json();
+    })
+    .then(data => {
+      // ✅ Hiển thị ra giao diện
+      resultDiv.innerText = `${data.name} - ${data.phone}`;
+
+      // ✅ Gán vào đơn hàng hiện tại
+      orders[selectedOrderIndex].customer = {
+        id: data.userId,
+        name: data.name,
+        phone: data.phone,
+        address: data.address || ""
+      };
+
+      console.log("✅ Đã gán customer vào đơn:", orders[selectedOrderIndex]);
+    })
+    .catch(error => {
+      resultDiv.innerText = "Không tìm thấy khách hàng.";
+      console.error(error);
+    });
 }
+
 
 // Mở modal chọn phương thức thanh toán
 function showPaymentOptions() {
@@ -980,61 +996,62 @@ document.getElementById('cashReceived').addEventListener('input', function () {
 });
                                         // thanh toán tiền mặt
 function confirmCashPayment() {
-    const received = parseInt(document.getElementById('cashReceived').value || "0");
-    const total = parseInt(document.getElementById('cashPaymentModal').dataset.total || "0");
+  const received = parseInt(document.getElementById('cashReceived').value || "0");
+  const total = parseInt(document.getElementById('cashPaymentModal').dataset.total || "0");
 
-    if (received < total) {
-        alert('Khách đưa chưa đủ tiền!');
-        return;
-    }
+  if (received < total) {
+    alert('Khách đưa chưa đủ tiền!');
+    return;
+  }
 
-    const currentOrder = orders[selectedOrderIndex];
-    const orderId = currentOrder.orderId; // Đổi từ orderCode → orderId
+  const currentOrder = orders[selectedOrderIndex];
+  const customer = currentOrder.customer || null; // 🛡️ tránh lỗi "customer is not defined"
 
-    const customerText = document.getElementById("customerResult")?.innerText.trim();
-    const fallbackTexts = ["Vui lòng nhập số điện thoại.", "Không tìm thấy khách hàng."];
-    const isGuest = !customerText || fallbackTexts.includes(customerText);
-    const customerCode = isGuest ? null : (currentOrder.customerCode || null);
-    const description = isGuest ? "Khách lẻ" : customerText;
+  const isGuest = !customer;
+  const description = isGuest ? "Khách lẻ" : customer.name;
 
-    const requestBody = {
-        orderId: orderId,
-        paymentMethod: "CASH",
-        customerCode: customerCode,
-        address: null,
-        phone: null,
-        description: description,
-        items: currentOrder.items.map(item => ({
-            productId: parseInt(item.code), // chuyển code thành productId
-            name: item.name,
-            price: item.price,
-            quantity: item.qty
-        }))
-    };
-console.log("DỮ LIỆU GỬI:", requestBody);
-console.log("ITEMS:", currentOrder.items);
-    fetch('/orders/thanh-toan', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': document.querySelector('meta[name="_csrf"]')?.content || ''
-        },
-        body: JSON.stringify(requestBody)
-    }).then(res => {
-        if (!res.ok) throw new Error("Lỗi thanh toán!");
-        return res.json();
-    }).then(orderData => {
-        showOrderInvoiceModal(orderData); // dùng function mới
-        closeCashModal();
+  const requestBody = {
+    orderId: currentOrder.orderId,
+    paymentMethod: "CASH",
+    phone: isGuest ? null : customer.phone,
+    address: isGuest ? null : customer.address,
+    description: description,
+    userId: isGuest ? null : customer.id, // ✅ Gửi đúng user ID để backend gán vào Order.user
+    items: currentOrder.items.map(item => ({
+      productId: parseInt(item.code),
+      name: item.name,
+      price: item.price,
+      quantity: item.qty
+    }))
+  };
 
-        // Xóa đơn hàng khỏi danh sách
-        orders.splice(selectedOrderIndex, 1);
-        localStorage.setItem("pendingOrders", JSON.stringify(orders));
-    }).catch(err => {
-        console.error(err);
-        alert("❌ Giao dịch thất bại!");
+  console.log("DỮ LIỆU GỬI:", requestBody);
+
+  fetch('/orders/thanh-toan', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRF-TOKEN': document.querySelector('meta[name="_csrf"]')?.content || ''
+    },
+    body: JSON.stringify(requestBody)
+  })
+    .then(res => {
+      if (!res.ok) throw new Error("Lỗi thanh toán!");
+      return res.json();
+    })
+    .then(orderData => {
+      showOrderInvoiceModal(orderData);
+      closeCashModal();
+
+      orders.splice(selectedOrderIndex, 1);
+      localStorage.setItem("pendingOrders", JSON.stringify(orders));
+    })
+    .catch(err => {
+      console.error(err);
+      alert("❌ Giao dịch thất bại!");
     });
 }
+
 
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -1051,8 +1068,14 @@ document.addEventListener("DOMContentLoaded", function () {
 function showOrderInvoiceModal(order) {
     // Điền thông tin cơ bản
     document.getElementById("invoiceCode").innerText = "Đơn #" + order.orderId;
-    document.getElementById("invoiceDate").innerText = new Date(order.orderDate).toLocaleString();
-    document.getElementById("invoiceCustomer").innerText = order.customerName || "Khách lẻ";
+    document.getElementById("invoiceDate").innerText = new Date().toLocaleString();
+
+      // 2. Lấy tên khách hàng hoặc mặc định "Khách lẻ"
+    const customerText = document.getElementById("customerResult")?.innerText.trim();
+    const fallbackTexts = ["Vui lòng nhập số điện thoại.", "Không tìm thấy khách hàng."];
+    const customerName = (!customerText || fallbackTexts.includes(customerText)) ? "Khách lẻ" : customerText;
+
+    document.getElementById("invoiceCustomer").innerText = customerName || "Khách lẻ";
 
     // Hiển thị danh sách sản phẩm
     const tbody = document.getElementById("invoiceItems");
@@ -1118,7 +1141,6 @@ document.getElementById("openCustomerFormBtn").addEventListener("click", () => m
 document.getElementById("closeCustomerModalBtn").addEventListener("click", () => modal.style.display = "none");
 modal.addEventListener("click", e => { if (e.target === modal) modal.style.display = "none"; });
 
-
 document.getElementById("customerForm").addEventListener("submit", async function (e) {
   e.preventDefault();
   const fd = new FormData(this);
@@ -1128,16 +1150,16 @@ document.getElementById("customerForm").addEventListener("submit", async functio
   const email = fd.get("email");
   const address = `${fd.get("ward")}, ${fd.get("district")}, ${fd.get("province")}`;
 
-  // Kiểm tra số điện thoại trùng
-  const phoneRes = await fetch(`/api/customers/checkPhone?phone=${encodeURIComponent(phone)}`);
+  // ✅ Kiểm tra số điện thoại trùng
+  const phoneRes = await fetch(`/sale/checkPhone?phone=${encodeURIComponent(phone)}`);
   const phoneExists = await phoneRes.json();
   if (phoneExists) {
     alert("Số điện thoại đã tồn tại!");
     return;
   }
 
-  // Kiểm tra email trùng
-  const emailRes = await fetch(`/api/customers/checkEmail?email=${encodeURIComponent(email)}`);
+  // ✅ Kiểm tra email trùng
+  const emailRes = await fetch(`/sale/checkEmail?email=${encodeURIComponent(email)}`);
   const emailExists = await emailRes.json();
   if (emailExists) {
     alert("Email đã tồn tại!");
@@ -1146,19 +1168,28 @@ document.getElementById("customerForm").addEventListener("submit", async functio
 
   const customer = { name, phone, email, address };
 
-  fetch("/api/customers/addKhachHang", {
-    method: "POST",
-    headers: {"Content-Type": "application/json"},
-    body: JSON.stringify(customer)
-  })
-    .then(res => res.ok ? res.json() : Promise.reject("Lỗi server"))
-    .then(data => {
-      alert("Thêm khách hàng thành công");
-      modal.style.display = "none";
-      this.reset();
-    })
-    .catch(err => alert(err));
+  try {
+    const res = await fetch("/api/customers/addKhachHang", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(customer)
+    });
+
+    if (!res.ok) {
+      const errorText = await res.text(); // backend có thể trả thông báo lỗi chi tiết
+      throw new Error(errorText || "Lỗi server");
+    }
+
+    const data = await res.json();
+    alert("Thêm khách hàng thành công");
+
+    document.getElementById("customerModal").style.display = "none";
+    this.reset();
+  } catch (err) {
+    alert(err.message || "Đã có lỗi xảy ra");
+  }
 });
+
 
 /* code js của thằng chó hóa đơn */
 function openInvoiceModal() {
@@ -1210,16 +1241,18 @@ function showInvoiceModal(invoiceData) {
 function exportInvoiceToPDF() {
     const invoice = document.getElementById("invoiceToPrint");
     const modal = document.getElementById("invoiceModal-IV");
+    const footer = document.getElementById("invoiceFooter");
 
     const wasHidden = modal.style.display === "none" || getComputedStyle(modal).display === "none";
 
     if (wasHidden) {
-        // ✅ Hiện modal tạm để DOM render nội dung
         modal.style.display = "flex";
-        modal.style.visibility = "hidden"; // ẩn với người dùng
+        modal.style.visibility = "hidden";
     }
 
-    // ✅ Delay 200ms để DOM render xong trước khi html2pdf chạy
+    // Ẩn footer tạm thời để không in
+    if (footer) footer.style.display = "none";
+
     setTimeout(() => {
         html2pdf().set({
             margin: 5,
@@ -1228,7 +1261,9 @@ function exportInvoiceToPDF() {
             html2canvas: { scale: 2 },
             jsPDF: { unit: 'mm', format: 'a5', orientation: 'portrait' }
         }).from(invoice).save().then(() => {
-            // ✅ Ẩn lại modal nếu ban đầu đang ẩn
+            // Hiện lại footer
+            if (footer) footer.style.display = "flex";
+
             if (wasHidden) {
                 modal.style.display = "none";
                 modal.style.visibility = "visible";
@@ -1236,6 +1271,7 @@ function exportInvoiceToPDF() {
         });
     }, 200);
 }
+
 
                                 // xem chi tiết hóa đơn
 
@@ -1286,57 +1322,79 @@ function viewInvoiceDetail() {
 function closeInvoiceDetailModal() {
     document.getElementById("invoiceDetailModal").style.display = "none";
 }
+                                        // thanh toán online
 function payOnline() {
   const amountText = document.getElementById('invTotal').innerText;
   const amount = parseInt(amountText.replace(/[^\d]/g, ''));
   const orderId = document.getElementById('invCode').dataset.orderId;
 
-  if (!orderId || amount <= 0) {
-    alert("Thiếu mã đơn hàng hoặc số tiền không hợp lệ.");
-    return;
-  }
+  const currentOrder = orders[selectedOrderIndex];
+  const customer = currentOrder.customer; // ✅ thêm dòng này
+  const customerText = document.getElementById("customerResult")?.innerText.trim();
+  const fallbackTexts = ["Vui lòng nhập số điện thoại.", "Không tìm thấy khách hàng."];
+  const isGuest = !customer || fallbackTexts.includes(customerText);
 
-  // ✅ Lưu trạng thái đơn hàng
-  localStorage.setItem("orders_backup", JSON.stringify(orders));
-  localStorage.setItem("selectedOrderIndex_backup", selectedOrderIndex);
-
-  // ✅ Gửi form tới PayOS
   const form = document.createElement('form');
   form.method = 'POST';
   form.action = '/orders/createPaymentLinkSale';
 
-  const orderIdInput = document.createElement('input');
-  orderIdInput.type = 'hidden';
-  orderIdInput.name = 'orderId';
-  orderIdInput.value = orderId;
+  const fields = {
+    orderId,
+    amount,
+    userId: isGuest ? '' : customer.id,
+    phone: isGuest ? '' : customer.phone,
+    address: isGuest ? '' : customer.address,
+    description: isGuest ? "Khách lẻ" : customer.name
+  };
 
-  const amountInput = document.createElement('input');
-  amountInput.type = 'hidden';
-  amountInput.name = 'amount';
-  amountInput.value = amount;
+  for (let key in fields) {
+    const input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = key;
+    input.value = fields[key];
+    form.appendChild(input);
+  }
 
-  form.appendChild(orderIdInput);
-  form.appendChild(amountInput);
   document.body.appendChild(form);
   form.submit();
 }
 
 
 window.addEventListener("DOMContentLoaded", () => {
+  // 🔄 Khôi phục đơn chưa thanh toán
   const backup = localStorage.getItem("orders_backup");
   if (backup) {
     orders = JSON.parse(backup);
     selectedOrderIndex = parseInt(localStorage.getItem("selectedOrderIndex_backup")) || 0;
-
-    // Sau khi khôi phục, render lại
     renderOrderTabs();
     renderOrder();
-
-    // ✅ Dọn dẹp storage
     localStorage.removeItem("orders_backup");
     localStorage.removeItem("selectedOrderIndex_backup");
   }
+
+  // 📦 Hiện hóa đơn nếu thanh toán online thành công
+  const shouldShowInvoice = /*[[${showInvoice}]]*/ false;
+  const orderId = /*[[${orderId}]]*/ null;
+
+  if (shouldShowInvoice && orderId) {
+    // chỉ xóa đúng đơn hàng đó khỏi pendingOrders
+    const stored = JSON.parse(localStorage.getItem("pendingOrders") || "[]");
+    const updated = stored.filter(o => o.orderId != orderId);
+    if (updated.length === 0) localStorage.removeItem("pendingOrders");
+    else localStorage.setItem("pendingOrders", JSON.stringify(updated));
+
+    fetch(`/orders/${orderId}/json`)
+      .then(res => res.json())
+      .then(orderData => {
+        console.log("🧾 OrderData:", orderData);
+        showOrderInvoiceModal(orderData);
+        setTimeout(() => exportInvoiceToPDF(), 500);
+      })
+      .catch(err => console.error("Fetch order json failed:", err));
+  }
 });
+
+
 
 function closeQRModal() {
   document.getElementById("qrPaymentModal").style.display = "none";
@@ -1345,23 +1403,22 @@ function confirmQRPayment() {
   closeQRModal();
 
   const currentOrder = orders[selectedOrderIndex];
-  const orderId = currentOrder.orderId; // ✅ Dùng orderId
+  const customer = currentOrder.customer;
+  const orderId = currentOrder.orderId;
 
   const customerText = document.getElementById("customerResult")?.innerText.trim();
   const fallbackTexts = ["Vui lòng nhập số điện thoại.", "Không tìm thấy khách hàng."];
-  const isGuest = !customerText || fallbackTexts.includes(customerText);
-  const customerCode = isGuest ? null : (currentOrder.customerCode || null);
-  const description = isGuest ? "Khách lẻ" : customerText;
+  const isGuest = !customer || fallbackTexts.includes(customerText);
 
   const requestBody = {
-    orderId: orderId, // ✅ thay vì orderCode
-    customerCode: customerCode,
-    address: null,
-    phone: null,
-    description: description,
+    orderId: orderId,
+    userId: isGuest ? null : customer.id,
+    address: isGuest ? null : customer.address || "",
+    phone: isGuest ? null : customer.phone,
+    description: isGuest ? "Khách lẻ" : customer.name,
     amount: currentOrder.items.reduce((sum, item) => sum + item.price * item.qty, 0),
     items: currentOrder.items.map(item => ({
-      productId: parseInt(item.productId || item.code), // ✅ lấy productId
+      productId: parseInt(item.productId || item.code),
       name: item.name,
       price: item.price,
       quantity: item.qty
@@ -1381,9 +1438,18 @@ function confirmQRPayment() {
       return res.json();
     })
     .then(orderData => {
+      // ✅ Xóa đúng 1 đơn khỏi orders và lưu lại
       orders.splice(selectedOrderIndex, 1);
-      localStorage.setItem("pendingOrders", JSON.stringify(orders));
-<!--      showOrderInvoiceModal(orderData); // ✅ gọi lại modal hiển thị-->
+      if (orders.length === 0) {
+        localStorage.removeItem("pendingOrders");
+      } else {
+        localStorage.setItem("pendingOrders", JSON.stringify(orders));
+      }
+
+
+
+      // ✅ Tự động in hoặc xuất PDF
+      setTimeout(() => exportInvoiceToPDF(exportInvoiceToPDF), 500); // in sau 0.5s cho chắc ăn render xong
     })
     .catch(err => {
       console.error(err);
@@ -1502,6 +1568,7 @@ attachSelectEvents();
 
 
 
+
 </script>
 <script th:inline="javascript">
     /*<![CDATA[*/
@@ -1526,9 +1593,11 @@ attachSelectEvents();
         renderOrder();
     }
     /*]]>*/
+
 </script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <script src="/js/html2pdf.bundle.min.js"></script>
+
 </body>
 </html>

@@ -239,5 +239,12 @@ public class OrderController {
 		excelExporter.export(response);
 
 	}
+//	@GetMapping("/order/invoice/{orderId}")
+//	public String getInvoiceHtml(@PathVariable String orderId, Model model) {
+//		Order order = orderRepository.findOrderById(orderId); // Lấy đơn hàng
+//		model.addAttribute("order", order);
+//		return "admin/hoaDonInRa"; // File HTML chứa hóa đơn
+//	}
+
 
 }

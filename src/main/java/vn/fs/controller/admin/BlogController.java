@@ -7,11 +7,15 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import vn.fs.entities.Blog;
+import vn.fs.entities.User;
+import vn.fs.repository.UserRepository;
 import vn.fs.service.BlogService;
 
+import java.security.Principal;
 import java.util.List;
 
 @Controller
@@ -19,6 +23,14 @@ import java.util.List;
 @RequestMapping("/admin/blogs")
 public class BlogController {
     private final BlogService blogService;
+    UserRepository userRepository;
+//    @ModelAttribute("user")
+//    public User addLoggedInUser(Principal principal) {
+//        if (principal != null) {
+//            return userRepository.findByEmail(principal.getName());
+//        }
+//        return null;
+//    }
 
     // Danh sách tất cả bài viết
     @GetMapping

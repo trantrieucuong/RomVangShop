@@ -3,20 +3,21 @@ package vn.fs.request;
 
 import lombok.Getter;
 import lombok.Setter;
+import vn.fs.entities.User;
 
 import java.util.List;
 
 @Getter
 @Setter
 public class OrderPaymentRequest {
-    private Long orderId; // <-- Dùng Long vì orderId là khóa chính trong entity Order
+    private Long orderId;
     private String paymentMethod;
     private String address;
     private String phone;
-    private String customerCode; // Có thể null nếu là khách lẻ
-    private String description;  // Ví dụ: "Khách lẻ"
-    private List<ItemDTO> items; // Danh sách sản phẩm trong đơn
-
+    private Integer customerCode;
+    private String description;
+    private Long userId;
+    private List<ItemDTO> items;
     @Getter
     @Setter
     public static class ItemDTO {

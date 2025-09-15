@@ -1,6 +1,7 @@
 package vn.fs.controller.Sale;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -56,11 +57,14 @@ public User user(Principal principal) {
     @GetMapping("/saleHome")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SALE')")
     public String saleHome(Model model, HttpSession session) {
-        List<Product> products = productRepository.findAll();
+        List<Product> products = productRepository.findByQuantityGreaterThan(0); // Chỉ lấy sản phẩm có số lượng > 0
         List<Category> categories = categoryRepository.findAll();
 
         model.addAttribute("products", products);
         model.addAttribute("categories", categories);
+
+        return "sale/banhangoff/index";
+    }
 
 //        // ✅ Phục hồi đơn hàng nếu có từ session
 //        Long pendingOrderId = (Long) session.getAttribute("pendingOrderId");
@@ -71,9 +75,6 @@ public User user(Principal principal) {
 //            }
 //            session.removeAttribute("pendingOrderId"); // ✅ Xóa sau khi sử dụng
 //        }
-
-        return "sale/banhangoff/index";
-    }
 
 //    @GetMapping("/qlKhachHang")
 //    public String qlKhachHang(Model model) {
@@ -278,6 +279,60 @@ public ResponseEntity<?> updateStock(@RequestBody Map<String, Object> data) {
         return password.toString();
     }
 
+    @GetMapping("/phone/search")
+    public ResponseEntity<?> searchByPhone(@RequestParam String phone) {
+        Optional<User> customer = userRepository.findByPhone(phone.trim());
+        if (customer.isPresent()) {
+            return ResponseEntity.ok(customer.get());
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Not found");
+        }
+    }
+    @GetMapping("/checkPhone")
+    public ResponseEntity<Boolean> checkPhone(@RequestParam String phone) {
+        boolean exists = userRepository.existsByPhone(phone);
+        return ResponseEntity.ok(exists);
+    }
+    @GetMapping("/checkEmail")
+    public ResponseEntity<Boolean> checkEmail(@RequestParam String email) {
+        if (email == null || email.trim().isEmpty()) {
+            return ResponseEntity.ok(false);
+        }
+        boolean exists = userRepository.existsByEmailIgnoreCase(email.trim());
+
+        return ResponseEntity.ok(exists);
+    }
+    @GetMapping("/thanh-toan-online")
+    public String showSuccessInvoice(HttpSession session, Model model) {
+        Long orderId = (Long) session.getAttribute("pendingOrderId");
+        if (orderId == null) {
+            return "redirect:/sale/saleHome"; // fallback nếu không có đơn
+        }
+
+        // Lấy dữ liệu đơn hàng + chi tiết
+        Order order = orderRepository.findById(orderId).orElse(null);
+        if (order == null) {
+            return "redirect:/sale/saleHome";
+        }
+
+        model.addAttribute("order", order);
+        model.addAttribute("orderDetails", order.getOrderDetails());
+
+        // Nếu vẫn cần hiển thị sản phẩm & category cho navbar/menu
+        model.addAttribute("products", productRepository.findAll());
+        model.addAttribute("categories", categoryRepository.findAll());
+
+        // Dọn session
+        session.removeAttribute("pendingOrderId");
+
+        return "admin/hoaDonInRa"; // thymeleaf html hóa đơn
+    }
+
+    @GetMapping("/saleHome1")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SALE')")
+    public String check(Model model, HttpSession session) {
 
 
+        return "admin/hoaDonInRa";
+    }
 }

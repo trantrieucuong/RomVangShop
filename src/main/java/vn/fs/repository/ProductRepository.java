@@ -1,12 +1,14 @@
 package vn.fs.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import vn.fs.entities.Category;
 import vn.fs.entities.Product;
 
 
@@ -40,8 +42,12 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
 	@Query(value = "select * from products o where product_id in :ids", nativeQuery = true)
 	List<Product> findByInventoryIds(@Param("ids") List<Integer> listProductId);
+
 	//tuyên
 	List<Product> findByCategory_CategoryId(Long categoryId);
 	List<Product> findByProductNameContainingIgnoreCase(String productName);
+	List<Product> findByQuantityGreaterThan(int quantity);
+	Optional<Product> findByProductNameIgnoreCaseAndCategory(String name, Category category);
+	Optional<Product> findByProductNameIgnoreCase(String productName);
 
 }

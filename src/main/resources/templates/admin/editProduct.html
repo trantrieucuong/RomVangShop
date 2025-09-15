@@ -74,8 +74,8 @@
 							<div class="card-header">
 								<section class="row">
 						           <div class="col-9 offset-1">
-						             <form th:action="@{/admin/updateProduct}" th:object="${product}" method="post" enctype="multipart/form-data">
-										<div class="row">
+									   <form id="updateProductForm" th:action="@{/admin/updateProduct}" th:object="${product}" method="post" enctype="multipart/form-data">
+									   <div class="row">
 										 	<div class="col-sm-12">
 							                       <label for="productId">ID <a style="color: red"><strong>*</strong></a></label>
 							                       <input type="hidden">
@@ -116,12 +116,6 @@
 												<div class="form-group form-group-default">
 													<label>Giảm giá</label>
 													<input th:field="*{discount}" id="discount" min = 0 type="number" class="form-control" placeholder="giảm giá">
-												</div>
-											</div>
-											<div class="col-md-6 pr-0">
-												<div class="form-group form-group-default">
-													<label>Ngày thêm</label>
-													<input th:field="*{enteredDate}" id="enteredDate" type="date" class="form-control" placeholder="ngày thêm">
 												</div>
 											</div>
 
@@ -211,5 +205,51 @@
 	<script src="/assets/js/atlantis.min.js"></script>
 	<!-- Atlantis DEMO methods, don't include it in your project! -->
 	<script src="/assets/js/setting-demo2.js"></script>
+	<script>
+document.addEventListener("DOMContentLoaded", function () {
+	const form = document.getElementById("updateProductForm");
+
+	form.addEventListener("submit", function (e) {
+		const name = document.getElementById("productName").value.trim();
+		const category = document.getElementById("categoryId").value;
+		const price = document.getElementById("price").value;
+		const quantity = document.getElementById("quantity").value;
+		const discount = document.getElementById("discount").value;
+		const description = document.getElementById("description").value.trim();
+
+		let errors = [];
+
+		if (name === "") {
+			errors.push("Tên sản phẩm không được để trống.");
+		}
+
+		if (!category || category === "0") {
+			errors.push("Vui lòng chọn thể loại.");
+		}
+
+		if (price === "" || isNaN(price) || Number(price) < 0) {
+			errors.push("Đơn giá phải là số >= 0.");
+		}
+
+		if (quantity === "" || isNaN(quantity) || Number(quantity) < 0) {
+			errors.push("Số lượng phải là số >= 0.");
+		}
+
+		if (discount === "" || isNaN(discount) || Number(discount) < 0 || Number(discount) > 100) {
+			errors.push("Giảm giá phải từ 0 đến 100.");
+		}
+
+		if (description === "") {
+			errors.push("Mô tả sản phẩm không được để trống.");
+		}
+
+		if (errors.length > 0) {
+			e.preventDefault();
+			alert(errors.join("\n"));
+		}
+	});
+});
+</script>
+
 </body>
 </html>

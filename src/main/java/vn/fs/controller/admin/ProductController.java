@@ -3,13 +3,24 @@ package vn.fs.controller.admin;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.Principal;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
@@ -26,9 +37,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import vn.fs.entities.Category;
 import vn.fs.entities.Product;
 import vn.fs.entities.User;
+import vn.fs.excel.ExcelHelper;
 import vn.fs.repository.CategoryRepository;
 import vn.fs.repository.ProductRepository;
 import vn.fs.repository.UserRepository;
@@ -87,28 +100,41 @@ public class ProductController{
 
 	// add product
 	@PostMapping(value = "/addProduct")
-	public String addProduct(@ModelAttribute("product") Product product, ModelMap model,
-			@RequestParam("file") MultipartFile file, HttpServletRequest httpServletRequest) {
+	public String addProduct(@ModelAttribute("product") Product product,
+							 @RequestParam("file") MultipartFile file,
+							 ModelMap model) {
 
-		try {
-
-			File convFile = new File(pathUploadImage + "/" + file.getOriginalFilename());
-			FileOutputStream fos = new FileOutputStream(convFile);
-			fos.write(file.getBytes());
-			fos.close();
-		} catch (IOException e) {
-
+		// Lưu ảnh
+		if (!file.isEmpty()) {
+			try {
+				File convFile = new File(pathUploadImage + "/" + file.getOriginalFilename());
+				FileOutputStream fos = new FileOutputStream(convFile);
+				fos.write(file.getBytes());
+				fos.close();
+				product.setProductImage(file.getOriginalFilename());
+			} catch (IOException e) {
+				e.printStackTrace(); // log lỗi
+			}
 		}
 
-		product.setProductImage(file.getOriginalFilename());
-		Product p = productRepository.save(product);
-		if (null != p) {
-			model.addAttribute("message", "Update success");
-			model.addAttribute("product", product);
+		product.setEnteredDate(new Date());
+
+		// Check sản phẩm trùng tên
+		Optional<Product> optionalProduct = productRepository.findByProductNameIgnoreCase(product.getProductName());
+
+		if (optionalProduct.isPresent()) {
+			// Sản phẩm đã tồn tại -> cộng dồn số lượng
+			Product existingProduct = optionalProduct.get();
+			existingProduct.setQuantity(existingProduct.getQuantity() + product.getQuantity());
+			existingProduct.setEnteredDate(new Date()); // cập nhật ngày nhập
+			productRepository.save(existingProduct);
+			model.addAttribute("message", "Cập nhật số lượng sản phẩm thành công");
 		} else {
-			model.addAttribute("message", "Update failure");
-			model.addAttribute("product", product);
+			// Sản phẩm mới -> thêm vào
+			productRepository.save(product);
+			model.addAttribute("message", "Thêm sản phẩm mới thành công");
 		}
+
 		return "redirect:/admin/products";
 	}
 
@@ -183,4 +209,78 @@ public class ProductController{
 		sdf.setLenient(true);
 		binder.registerCustomEditor(Date.class, new CustomDateEditor(sdf, true));
 	}
+
+	//tuyen
+	@PostMapping("/products/import")
+	public String importProducts(@RequestParam("file") MultipartFile file,
+								 RedirectAttributes redirectAttributes) {
+		try (InputStream is = file.getInputStream()) {
+			List<Product> products = ExcelHelper.parseExcelToProductsWithAction(is, categoryRepository, productRepository);
+			productRepository.saveAll(products);
+			redirectAttributes.addFlashAttribute("success", "Import thành công " + products.size() + " sản phẩm");
+		} catch (Exception e) {
+			redirectAttributes.addFlashAttribute("error", "Lỗi import: " + e.getMessage());
+			e.printStackTrace();
+		}
+		return "redirect:/admin/products";
+	}
+// Xuất file eexecl nhé ...__)__
+
+@PostMapping("/export-products")
+public void exportProducts(
+		@RequestParam(value = "selectedIds", required = false) List<Long> selectedIds,
+		HttpServletResponse response) throws IOException {
+
+	response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+	String fileName = "products_" + System.currentTimeMillis() + ".xlsx";
+	response.setHeader("Content-Disposition", "attachment; filename=" + fileName);
+
+	List<Product> products;
+	if (selectedIds != null && !selectedIds.isEmpty()) {
+		products = productRepository.findAllById(selectedIds);
+	} else {
+		products = productRepository.findAll();
+	}
+
+	Workbook workbook = new XSSFWorkbook();
+	Sheet sheet = workbook.createSheet("Products");
+	String[] columns = {"Product Name", "Quantity", "Price", "Discount", "Image",
+			"Description", "Entered Date", "Status", "Category"};
+
+	Row headerRow = sheet.createRow(0);
+	for (int i = 0; i < columns.length; i++) {
+		headerRow.createCell(i).setCellValue(columns[i]);
+	}
+
+	int rowNum = 1;
+	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+	for (Product p : products) {
+		Row row = sheet.createRow(rowNum++);
+		row.createCell(0).setCellValue(p.getProductName());
+		row.createCell(1).setCellValue(p.getQuantity());
+		row.createCell(2).setCellValue(p.getPrice());
+		row.createCell(3).setCellValue(p.getDiscount());
+		row.createCell(4).setCellValue(p.getProductImage() != null ? p.getProductImage() : "");
+		row.createCell(5).setCellValue(p.getDescription() != null ? p.getDescription() : "");
+
+		if (p.getEnteredDate() != null) {
+			LocalDate localDate = ((java.sql.Date) p.getEnteredDate()).toLocalDate();
+			row.createCell(6).setCellValue(localDate.format(formatter));
+		} else {
+			row.createCell(6).setCellValue("");
+		}
+		row.createCell(7).setCellValue(
+				p.getStatus() == null ? "" : p.getStatus().toString()
+		);
+		row.createCell(8).setCellValue(
+				p.getCategory() != null ? p.getCategory().getCategoryName() : ""
+		);
+	}
+	for (int i = 0; i < columns.length; i++) sheet.autoSizeColumn(i);
+
+	workbook.write(response.getOutputStream());
+	workbook.close();
+}
+
+
 }
