@@ -109,18 +109,19 @@
 
 
 
-									<div class="product-add1">
-									  <a  th:href="@{/admin/export}" style="padding-left: 20px;">
-										<i class="fas fa-save" style="padding-right: 8px"></i></i><span>Tạo báo cáo</span>
-									</a>
-									 </div>	       	                               
-									
-								</div>
+                                    <div class="product-add1">
+                                        <a th:href="@{/admin/export(month=${selectedMonth})}" style="padding-left: 20px;">
+                                            <i class="fas fa-save" style="padding-right: 8px"></i><span>Tạo báo cáo</span>
+                                        </a>
+                                    </div>
+
+
+                                </div>
 								<div class="btn-group order-filter-group" role="group" aria-label="Lọc đơn hàng theo trạng thái">
 									<a th:href="@{/admin/orders(month=${selectedMonth})}" class="btn btn-outline-primary" th:classappend="${selectedStatus} == null ? 'active'">
 										Tất cả <span class="badge badge-primary ml-1">[[${countNew + countConfirmed + countDelivered + countCanceled}]]</span>
 									</a>
-									<a th:href="@{/admin/orders(month=${selectedMonth}, orderStatus=0)}" class="btn btn-outline-secondary" th:classappend="${selectedStatus} == 0 ? 'active'">
+									<a th:href="@{/admin/orders(month=${selectedMonth} , orderStatus=0)}" class="btn btn-outline-secondary" th:classappend="${selectedStatus} == 0 ? 'active'">
 										Chờ xác nhận <span class="badge badge-secondary ml-1">[[${countNew}]]</span>
 									</a>
 									<a th:href="@{/admin/orders(month=${selectedMonth}, orderStatus=1)}" class="btn btn-outline-warning" th:classappend="${selectedStatus} == 1 ? 'active'">
@@ -140,7 +141,39 @@
 							<div class="alert alert-success row col-12"
 									th:if="${message}" th:text="${message}">
 								</div>
-							<div class="card-body">
+                            <div class="card-body">
+                            <form id="searchForm" method="get" action="#" class="d-flex align-items-center" style="gap: 5px;">
+                                <label for="orderIdSearch" class="mb-0">Tìm mã đơn:</label>
+                                <input type="text" id="orderIdSearch" name="orderId"
+                                       th:value="${searchOrderId}"
+                                       placeholder="Nhập mã đơn hàng"
+                                       class="form-control form-control-sm"
+                                       style="width: 150px;">
+                                <input type="hidden" name="month" th:value="${selectedMonth}" />
+                                <input type="hidden" name="orderStatus" th:value="${selectedStatus}" />
+
+                                <!-- Nút tìm kiếm -->
+                                <button type="submit" class="btn btn-sm btn-primary">Tìm kiếm</button>
+                            </form>
+
+                            <script>
+                                // Cho phép ấn Enter trong ô input cũng submit form
+                                const searchInput = document.getElementById('orderIdSearch');
+                                searchInput.addEventListener('keypress', function(event) {
+                                    if (event.key === 'Enter') {
+                                        event.preventDefault(); // ngăn submit mặc định để tránh lỗi nếu muốn xử lý JS
+                                        document.getElementById('searchForm').submit();
+                                    }
+                                });
+                            </script>
+                            </div>
+
+
+
+
+
+
+                            <div class="card-body">
 								<div class="table-responsive">
 									<table id="add-row" class="display table table-striped table-hover" >
 										<thead>
@@ -512,31 +545,31 @@
 			$('#basic-datatables').DataTable({
 			});
 
-			$('#multi-filter-select').DataTable( {
-				"pageLength": 5,
-				initComplete: function () {
-					this.api().columns().every( function () {
-						var column = this;
-						var select = $('<select class="form-control"><option value=""></option></select>')
-						.appendTo( $(column.footer()).empty() )
-						.on( 'change', function () {
-							var val = $.fn.dataTable.util.escapeRegex(
-								$(this).val()
-								);
+            $('#multi-filter-select').DataTable({
+                "pageLength": 5,
+                "dom": 'lrtip', // <-- thêm dòng này để ẩn ô tìm kiếm mặc định (bỏ 'f')
+                initComplete: function () {
+                    this.api().columns().every(function () {
+                        var column = this;
+                        var select = $('<select class="form-control"><option value=""></option></select>')
+                            .appendTo($(column.footer()).empty())
+                            .on('change', function () {
+                                var val = $.fn.dataTable.util.escapeRegex($(this).val());
 
-							column
-							.search( val ? '^'+val+'$' : '', true, false )
-							.draw();
-						} );
+                                column
+                                    .search(val ? '^' + val + '$' : '', true, false)
+                                    .draw();
+                            });
 
-						column.data().unique().sort().each( function ( d, j ) {
-							select.append( '<option value="'+d+'">'+d+'</option>' )
-						} );
-					} );
-				}
-			});
+                        column.data().unique().sort().each(function (d, j) {
+                            select.append('<option value="' + d + '">' + d + '</option>')
+                        });
+                    });
+                }
+            });
 
-			// Add Row
+
+            // Add Row
 			$('#add-row').DataTable({
 				"pageLength": 5,
 			});
