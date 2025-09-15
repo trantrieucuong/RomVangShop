@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>vn</groupId>
-	<artifactId>romvang-shop</artifactId>
+	<artifactId>greenty-shop</artifactId>
 	<version>1.0</version>
-	<name>romvang-shop</name>
-	<description>romvang-shop</description>
+	<name>greenty-shop</name>
+	<description>greenty-shop</description>
 	<properties>
 		<java.version>11</java.version>
 	</properties>
@@ -135,6 +135,13 @@
 			<artifactId>slugify</artifactId>
 			<version>2.4</version>
 		</dependency>
+
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml</artifactId>
+			<version>5.2.2</version>
+		</dependency>
+
 
 	</dependencies>
 

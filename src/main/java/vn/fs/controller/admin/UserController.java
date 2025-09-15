@@ -28,14 +28,27 @@ public class UserController{
 		User user = userRepository.findByEmail(principal.getName());
 		model.addAttribute("user", user);
 		
-		List<User> users = userRepository.findAll();
+		List<User> users = userRepository.findCustomerWithRoleUser();
 		model.addAttribute("users", users);
 		
 		return "/admin/users";
 	}
-	
-	
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+	@GetMapping(value = "/admin/nhanvien")
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public String nhanVien(Model model, Principal principal) {
+		User user = userRepository.findByEmail(principal.getName());
+		model.addAttribute("user", user);
+
+		// Chỉ lấy user có role là ROLE_USER
+		List<User> users = userRepository.findSaleWithRoleUser();
+		model.addAttribute("users", users);
+
+		return "/admin/nhanvien";
+	}
+
+
+
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	 @PostMapping(value = "/admin/users/{userId}/lock")
 	    public String lockUser(@PathVariable("userId") Long userId) {
 	        User user = userRepository.findById(userId).orElse(null);

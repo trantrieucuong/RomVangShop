@@ -10,10 +10,12 @@ public class OrderPaymentBankRequest {
 
     private Long orderId; // ✅ Dùng orderId thay vì invCode
     private double amount;
-    private String customerCode;
+    private String paymentMethod;
     private String address;
     private String phone;
+    private Integer customerCode;
     private String description;
+    private Long userId;
     private List<ItemDTO> items;
 
     @Data

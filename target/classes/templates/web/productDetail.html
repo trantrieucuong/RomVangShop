@@ -43,7 +43,7 @@
     
     <section
       class="single-banner inner-section"
-      style="background: url(/images/single-banner.png) no-repeat center">
+     >
       <div class="container">
         <h2>Chi tiết sản phẩm</h2>
         <ol class="breadcrumb">
@@ -51,7 +51,21 @@
         </ol>
       </div>
     </section>
-    
+	<script>
+  const banner = document.querySelector(".single-banner");
+  const images = [
+    "/images/single-banner.png",
+    "/images/single-banner2.jpg",
+    "/images/single-banner4.jpg"
+  ];
+
+  let i = 0;
+  setInterval(() => {
+    banner.style.background = `url(${images[i]}) no-repeat center`;
+    banner.style.backgroundSize = "cover";
+    i = (i + 1) % images.length;
+  }, 5000); // đổi sau 5 giây
+</script>
     <section class="inner-section">
       <div class="container">
         <div class="row">
@@ -182,6 +196,64 @@
         </div>
       </div>
     </section>
+
+
+	<!--hien -->
+	<section class="inner-section">
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-12">
+					<div class="product-details-frame">
+						<h3 class="frame-title">Khách hàng đánh giá</h3>
+<!--						<ul th:each="comment : ${comments}">-->
+<!--							<li class="comment-item">-->
+<!--								<div class="comment-content">-->
+<!--									<strong th:text="${comment.user.name}">Tên khách</strong>-->
+<!--									<small th:text="${#dates.format(comment.rateDate, 'dd/MM/yyyy')}">Ngày đánh giá</small> <br>-->
+<!--									<p th:text="${comment.content}">Nội dung đánh giá</p>-->
+<!--									<span th:each="i : ${#numbers.sequence(1,5)}"-->
+<!--										  th:text="'★'"-->
+<!--										  th:classappend="${i <= comment.rating} ? 'highlight' : 'normal'"></span>-->
+<!--								</div>-->
+<!--								<button class="delete-btn">Xóa</button>-->
+<!--								<button class="delete-btn">Sửa</button>-->
+<!--							</li>-->
+<!--						</ul>-->
+
+						<ul th:each="comment : ${comments}">
+							<li class="comment-item">
+								<div class="comment-content">
+									<strong th:text="${comment.user.name}">Tên khách</strong>
+									<small th:text="${#dates.format(comment.rateDate, 'dd/MM/yyyy')}">Ngày đánh giá</small> <br>
+									<p th:text="${comment.content}">Nội dung đánh giá</p>
+									<span th:each="i : ${#numbers.sequence(1,5)}"
+										  th:text="'★'"
+										  th:classappend="${i <= comment.rating} ? 'highlight' : 'normal'"></span>
+								</div>
+
+
+								<!-- Nút sửa: chỉ hiển thị khi là ROLE_USER và là comment của chính user -->
+								<button class="edit-btn"
+										sec:authorize="hasRole('ROLE_USER')"
+										th:if="${currentUser != null and comment.user != null and comment.user.userId eq currentUser.userId}"
+
+										th:attr="data-id=${comment.id}">
+									Sửa
+								</button>
+
+								<button class="delete-btn" sec:authorize="hasRole('ROLE_ADMIN')"
+										th:attr="data-id=${comment.id}">Xóa</button>
+							</li>
+						</ul>
+
+					</div>
+
+				</div>
+
+			</div>
+		</div>
+		</div>
+	</section>
  
     <section class="section newitem-part">
 		<div class="container">
@@ -401,5 +473,41 @@
     <script src="js/venobox.js"></script>
     <script src="js/slick.js"></script>
     <script src="js/main.js"></script>
+	<script>
+
+// Xóa của thằng admin cho bình luận nhé
+document.querySelectorAll(".delete-btn").forEach(btn => {
+  btn.addEventListener("click", function() {
+    let id = this.dataset.id;
+    fetch(`/comments/delete/${id}`, { method: "DELETE" })
+      .then(res => res.text())
+      .then(msg => {
+        alert(msg);
+        location.reload();
+      });
+  });
+});
+
+// Sửa của thằng usser cho bình luận
+document.querySelectorAll(".edit-btn").forEach(btn => {
+  btn.addEventListener("click", function() {
+    let id = this.dataset.id;
+    let newContent = prompt("Nhập nội dung mới:");
+    if (newContent) {
+      fetch(`/comments/edit/${id}?content=${encodeURIComponent(newContent)}`, {
+        method: "POST"
+      })
+        .then(res => res.text())
+        .then(msg => {
+          alert(msg);
+          location.reload();
+        })
+        .catch(err => alert("Không thể sửa: " + err));
+    }
+  });
+});
+
+
+	</script>
   </body>
 </html>

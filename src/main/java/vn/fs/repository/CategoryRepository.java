@@ -8,5 +8,7 @@ import vn.fs.entities.Category;
 
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, Long> {
+    // tuyên
+    Category findByCategoryNameIgnoreCase(String categoryName);
 
 }

@@ -6,7 +6,8 @@
 	<title>Rơm Vàng  - Trang quản trị</title>
 	<meta content='width=device-width, initial-scale=1.0, shrink-to-fit=no' name='viewport' />
 	<link rel="icon" href="/assets/img/icon.ico" type="image/x-icon"/>
-	
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
 	<!-- Fonts and icons -->
 	<script src="/assets/js/plugin/webfont/webfont.min.js"></script>
 	<script>
@@ -61,7 +62,7 @@
 		<div class="content">
 			<div class="page-inner">
 				<div class="page-header">
-					<!-- Bộ lọc theo trạng thái -->
+
 
 
 
@@ -163,6 +164,7 @@
 												<th>Địa chỉ</th>
 												<th>Tổng tiền</th>
 												<th>Chi tiết đơn hàng</th>
+												<th>Xuất PDF</th>
 												<th style="width: 10%">Hành động</th>
 											</tr>
 										</tfoot>
@@ -179,7 +181,12 @@
 														<i class="fa fa-info-circle"> Chi tiết đơn hàng</i>
 													</a>
 												</td>
-												
+<!--												<td>-->
+<!--													<button onclick="exportInvoiceToPDF()"-->
+<!--															style="padding: 6px 12px; background: #22c55e; color: white; border-radius: 4px;">📄 Tải PDF-->
+<!--													</button>-->
+<!--												</td>-->
+
 												<td class="text-center">
 
 													<div th:if="${item.status==0}">
@@ -498,6 +505,8 @@
 	<script src="/assets/js/atlantis.min.js"></script>
 	<!-- Atlantis DEMO methods, don't include it in your project! -->
 	<script src="/assets/js/setting-demo2.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
 	<script >
 		$(document).ready(function() {
 			$('#basic-datatables').DataTable({
@@ -545,6 +554,42 @@
 
 			});
 		});
+
+
+function exportInvoiceToPDF() {
+    const invoice = document.getElementById("invoiceToPrint");
+    const modal = document.getElementById("invoiceModal-IV");
+    const footer = document.getElementById("invoiceFooter");
+
+    const wasHidden = modal.style.display === "none" || getComputedStyle(modal).display === "none";
+
+    if (wasHidden) {
+        modal.style.display = "flex";
+        modal.style.visibility = "hidden";
+    }
+
+    // Ẩn footer tạm thời để không in
+    if (footer) footer.style.display = "none";
+
+    setTimeout(() => {
+        html2pdf().set({
+            margin: 5,
+            filename: 'hoa-don.pdf',
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2 },
+            jsPDF: { unit: 'mm', format: 'a5', orientation: 'portrait' }
+        }).from(invoice).save().then(() => {
+            // Hiện lại footer
+            if (footer) footer.style.display = "flex";
+
+            if (wasHidden) {
+                modal.style.display = "none";
+                modal.style.visibility = "visible";
+            }
+        });
+    }, 200);
+}
+
 	</script>
 </body>
 </html>

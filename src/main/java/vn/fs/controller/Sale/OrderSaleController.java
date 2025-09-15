@@ -10,6 +10,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import vn.fs.dto.OrderDetailResponseDTO;
 import vn.fs.dto.OrderResponseDTO;
 import vn.fs.entities.*;
 import vn.fs.repository.*;
@@ -23,6 +24,7 @@ import vn.payos.type.PaymentData;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -185,105 +187,19 @@ public ResponseEntity<?> thanhToanDonHang(@RequestBody OrderPaymentRequest reque
 
 
 
-    @GetMapping("/thanh-toan-online")
-    public String showSuccessInvoice(@RequestParam("invCode") String maHoaDon, Model model) {
 
-        List<Product> products = productRepository.findAll(); // lấy toàn bộ sản phẩm
-        List<Category> categories = categoryRepository.findAll(); // lấy tất cả danh mục
-
-        model.addAttribute("products", products);
-        model.addAttribute("categories", categories);
-        return "sale/banhangoff/index";
-
-
-    }
-//
-//
-//
-//
-//    // Tạo mã mới kiểu OI000001
-//    private String generateNextOrderItemCode() {
-//        String prefix = "OI";
-//        String maxCode = orderItemRepository.findMaxCode(); // ví dụ: OI000123
-//        int nextNumber = 1;
-//
-//        if (maxCode != null && maxCode.startsWith(prefix)) {
-//            try {
-//                nextNumber = Integer.parseInt(maxCode.substring(prefix.length())) + 1;
-//            } catch (NumberFormatException e) {
-//                System.err.println("Lỗi phân tích mã OrderItem: " + maxCode);
-//            }
-//        }
-//
-//        String result = String.format("%s%06d", prefix, nextNumber);
-//        System.out.println("🔢 Mã OrderItem mới: " + result);
-//        return result;
-//    }
-//
-//        @PostMapping("/createPaymentLink")
-//        public void checkout(HttpServletRequest request, HttpServletResponse httpServletResponse,
-//                             @RequestParam("invCode") String maDonHang, @RequestParam("amount") int amount) {
-//            try {
-//                List<OrderItemDTO> orderItemDTOList = orderItemRepository.findByOrderCode(maDonHang);
-//
-//// Convert từ OrderItemDTO sang ItemDTO
-//                List<OrderPaymentBankRequest.ItemDTO> itemDTOList = orderItemDTOList.stream().map(orderItem -> {
-//                    OrderPaymentBankRequest.ItemDTO itemDTO = new OrderPaymentBankRequest.ItemDTO();
-//                    itemDTO.setCode(orderItem.getCode());
-//                    itemDTO.setName(orderItem.getName());
-//                    itemDTO.setQty(orderItem.getQty());
-//                    itemDTO.setPrice(orderItem.getPrice());
-//                    return itemDTO;
-//                }).collect(Collectors.toList());
-//
-//// Gán vào request
-//                OrderPaymentBankRequest paymentRequest = new OrderPaymentBankRequest();
-//                paymentRequest.setInvCode(maDonHang);
-//                paymentRequest.setAmount(amount);
-//                paymentRequest.setItems(itemDTOList);
-//
-//                // ✅ Gọi xử lý lưu hóa đơn
-//                orderPaymentService.processPaymentOnline(paymentRequest);
-//                // ✅ Bước 2: Tạo URL PayOS như cũ
-//                final String baseUrl = getBaseUrl(request);
-//                final String productName = "Rơm Vàng";
-//                final String description = "Thanh toan " + maDonHang;
-//                final String returnUrl = baseUrl + "/admin/banhangoff";
-//                final String cancelUrl = baseUrl + "/admin/banhangoff";
-//                final int price = amount;
-//
-//                // Gen order code
-//                String currentTimeString = String.valueOf(new Date().getTime());
-//                long orderCode = Long.parseLong(currentTimeString.substring(currentTimeString.length() - 6));
-//                ItemData item = ItemData.builder().name(productName).quantity(1).price(price).build();
-//                PaymentData paymentData = PaymentData.builder()
-//                        .orderCode(orderCode)
-//                        .amount(price)
-//                        .description(description)
-//                        .returnUrl(returnUrl)
-//                        .cancelUrl(cancelUrl)
-//                        .item(item)
-//                        .build();
-//
-//                CheckoutResponseData data = payOS.createPaymentLink(paymentData);
-//
-//                // ✅ Bước 3: Redirect sang PayOS
-//                String checkoutUrl = data.getCheckoutUrl();
-//                httpServletResponse.setHeader("Location", checkoutUrl);
-//                httpServletResponse.setStatus(302);
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//        }
 
     @PostMapping("/createPaymentLinkSale")
     public void checkoutSale(HttpServletRequest request, HttpServletResponse httpServletResponse,
                              @RequestParam("orderId") Long orderId,
-                             @RequestParam("amount") int amount) {
+                             @RequestParam("amount") int amount,
+                             @RequestParam(value = "userId", required = false) Long userId,
+                             @RequestParam(value = "phone", required = false) String phone,
+                             @RequestParam(value = "address", required = false) String address,
+                             @RequestParam(value = "description", required = false) String description) {
         try {
             List<OrderDetail> orderDetails = orderDetailRepository.findByOrderId(orderId);
 
-            // Chuyển sang DTO
             List<OrderPaymentBankRequest.ItemDTO> itemDTOList = orderDetails.stream().map(detail -> {
                 OrderPaymentBankRequest.ItemDTO dto = new OrderPaymentBankRequest.ItemDTO();
                 dto.setProductId(detail.getProduct().getProductId());
@@ -293,26 +209,25 @@ public ResponseEntity<?> thanhToanDonHang(@RequestBody OrderPaymentRequest reque
                 return dto;
             }).collect(Collectors.toList());
 
-            // Gán vào request
             OrderPaymentBankRequest paymentRequest = new OrderPaymentBankRequest();
             paymentRequest.setOrderId(orderId);
-            paymentRequest.setAmount(amount);
+            paymentRequest.setAmount((double) amount);
             paymentRequest.setItems(itemDTOList);
+            paymentRequest.setUserId(userId);
+            paymentRequest.setPhone(phone);
+            paymentRequest.setAddress(address);
+            paymentRequest.setDescription(description);
 
-            // ✅ Gọi xử lý thanh toán
             orderPaymentService.processPaymentOnline(paymentRequest);
 
-            // ✅ Lưu lại orderId vào Session để phục hồi khi quay lại
             request.getSession().setAttribute("pendingOrderId", orderId);
 
-            // Tạo URL PayOS
-            final String baseUrl = getBaseUrl(request);
-            final String description = "Thanh toán DH" + orderId;
-            final String returnUrl = baseUrl + "/sale/saleHome"; // Quay lại
-            final String cancelUrl = baseUrl + "/sale/saleHome"; // Bấm hủy cũng quay lại
+            String baseUrl = getBaseUrl(request);
+            String payDesc = "Thanh toán DH" + orderId;
+            String returnUrl = baseUrl + "/sale/thanh-toan-online";
+            String cancelUrl = baseUrl + "/sale/saleHome";
 
-            String currentTimeString = String.valueOf(System.currentTimeMillis());
-            long orderCode = Long.parseLong(currentTimeString.substring(currentTimeString.length() - 6));
+            long orderCode = System.currentTimeMillis() % 1_000_000;
 
             ItemData item = ItemData.builder()
                     .name("Rơm Vàng")
@@ -323,15 +238,13 @@ public ResponseEntity<?> thanhToanDonHang(@RequestBody OrderPaymentRequest reque
             PaymentData paymentData = PaymentData.builder()
                     .orderCode(orderCode)
                     .amount(amount)
-                    .description(description)
+                    .description(payDesc)
                     .returnUrl(returnUrl)
                     .cancelUrl(cancelUrl)
                     .item(item)
                     .build();
 
             CheckoutResponseData data = payOS.createPaymentLink(paymentData);
-
-            // ✅ Redirect đến PayOS
             httpServletResponse.setHeader("Location", data.getCheckoutUrl());
             httpServletResponse.setStatus(302);
         } catch (Exception e) {
@@ -353,4 +266,7 @@ public ResponseEntity<?> thanhToanDonHang(@RequestBody OrderPaymentRequest reque
         url += contextPath;
         return url;
     }
+
+
+
 }

@@ -2,6 +2,7 @@ package vn.fs.controller.admin;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -63,20 +64,28 @@ public class CategoryController {
 
 	// add category
 	@PostMapping(value = "/addCategory")
-	public String addCategory(@Validated @ModelAttribute("category") Category category, ModelMap model,
-			BindingResult bindingResult) {
+	public String addCategory(@Validated @ModelAttribute("category") Category category,
+							  BindingResult bindingResult,
+							  ModelMap model) {
 
 		if (bindingResult.hasErrors()) {
 			model.addAttribute("error", "failure");
+			return "admin/categories";
+		}
 
+		Optional<Category> existingCategory = Optional.ofNullable(categoryRepository.findByCategoryNameIgnoreCase(category.getCategoryName()));
+
+		if (existingCategory.isPresent()) {
+			model.addAttribute("error", "Tên danh mục đã tồn tại!");
 			return "admin/categories";
 		}
 
 		categoryRepository.save(category);
-		model.addAttribute("message", "successful!");
+		model.addAttribute("message", "Thêm danh mục thành công!");
 
 		return "redirect:/admin/categories";
 	}
+
 
 	// get Edit category
 	@GetMapping(value = "/editCategory/{id}")
