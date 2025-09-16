@@ -22,4 +22,12 @@ public interface FavoriteRepository extends JpaRepository<Favorite, Long> {
 	@Query(value = "SELECT Count(favorite_id)  FROM favorites  where user_id = ?;", nativeQuery = true)
 	public Integer selectCountSave(Long userId);
 
+    List<Favorite> findByUser_UserId(Long userId);
+
+    Favorite findByProduct_ProductIdAndUser_UserId(Long productId, Long userId);
+
+    boolean existsByProduct_ProductIdAndUser_UserId(Long productId, Long userId);
 }
+
+
+

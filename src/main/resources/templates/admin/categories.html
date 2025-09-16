@@ -123,9 +123,11 @@
 												</form>
 
 											</div>
+
 										</div>
 									</div>
 								</div>
+
 
 								<div class="alert alert-success row col-12"
 									th:if="${message}" th:text="${message}">
@@ -200,7 +202,49 @@
 									</div>
 								</div>
 							</div>
-						</div>
+
+                            <!-- Toast container -->
+                            <div id="toast-container" style="
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;">
+                            </div>
+
+                            <!-- Script hiện toast -->
+                            <script th:inline="javascript">
+                                /*<![CDATA[*/
+                                let errorMsg = /*[[${error}]]*/ null;
+                                if (errorMsg !== null && errorMsg !== '') {
+                                    showToast(errorMsg, 'danger');
+                                }
+
+                                let successMsg = /*[[${message}]]*/ null;
+                                if (successMsg !== null && successMsg !== '') {
+                                    showToast(successMsg, 'success');
+                                }
+
+                                function showToast(message, type) {
+                                    const toast = document.createElement('div');
+                                    toast.className = `alert alert-${type} shadow`;
+                                    toast.style.minWidth = '250px';
+                                    toast.style.marginBottom = '10px';
+                                    toast.innerHTML = `
+            <span>${message}</span>
+        `;
+
+                                    document.getElementById('toast-container').appendChild(toast);
+
+                                    setTimeout(() => {
+                                        toast.classList.add('fade');
+                                        toast.style.opacity = '0';
+                                        setTimeout(() => toast.remove(), 500);
+                                    }, 5000);
+                                }
+                                /*]]>*/
+                            </script>
+
+                        </div>
 					</div>
 				</div>
 			</div>

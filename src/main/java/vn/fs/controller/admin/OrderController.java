@@ -2,7 +2,9 @@ package vn.fs.controller.admin;
 
 import java.io.IOException;
 import java.security.Principal;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -23,6 +25,8 @@ import vn.fs.entities.*;
 import vn.fs.repository.*;
 import vn.fs.service.OrderDetailService;
 import vn.fs.service.SendMailService;
+import java.time.LocalDate;
+import java.time.ZoneId;
 
 
 @Controller
@@ -81,51 +85,97 @@ public class OrderController {
 		return user;
 	}
 
-	@GetMapping("/orders")
-	public String orders(
-			Model model,
-			Principal principal,
-			@RequestParam(value = "month", required = false) Integer month,
-			@RequestParam(value = "orderStatus", required = false) Integer status
-	) {
-		if (month == null) {
-			month = LocalDate.now().getMonthValue(); // mặc định là tháng hiện tại
-		}
+    @GetMapping("/orders")
+    public String orders(
+            Model model,
+            Principal principal,
+            @RequestParam(value = "month", required = false) Integer month,
+            @RequestParam(value = "orderStatus", required = false) Integer status,
+            @RequestParam(value = "orderId", required = false) String orderId
+    ) {
+        LocalDate today = LocalDate.now(); // FAKE DATE để test
 
-		List<Integer> months = IntStream.rangeClosed(1, 12).boxed().collect(Collectors.toList());
-		model.addAttribute("months", months);
+        int selectedMonth = (month != null) ? month : today.getMonthValue();
+        model.addAttribute("selectedMonth", selectedMonth);
 
-		// Lấy toàn bộ đơn hàng của tháng
-		List<Order> allOrdersByMonth = orderRepository.findByMonth(month);
-		List<Order> orderDetailst = orderRepository.findAllWithCancellation();
+        List<Integer> months = IntStream.rangeClosed(1, 12).boxed().collect(Collectors.toList());
+        model.addAttribute("months", months);
 
-		// Đếm theo trạng thái
-		model.addAttribute("countNew", allOrdersByMonth.stream().filter(o -> o.getStatus() == 0).count());
-		model.addAttribute("countConfirmed", allOrdersByMonth.stream().filter(o -> o.getStatus() == 1).count());
-		model.addAttribute("countDelivered", allOrdersByMonth.stream().filter(o -> o.getStatus() == 2).count());
-		model.addAttribute("countCanceled", allOrdersByMonth.stream().filter(o -> o.getStatus() == 3).count());
-		model.addAttribute("countCanceleds", allOrdersByMonth.stream().filter(o -> o.getStatus() == 4).count());
+        // --- nếu có nhập orderId (tìm gần đúng) ---
+        if (orderId != null && !orderId.trim().isEmpty()) {
+            List<Order> searchResults = orderRepository.searchByOrderIdLike(orderId.trim());
+            model.addAttribute("orderDetails", searchResults != null ? searchResults : new ArrayList<>());
+            model.addAttribute("orderDetailst", new ArrayList<>());
+            model.addAttribute("selectedStatus", status);
+            model.addAttribute("searchOrderId", orderId);
 
-		// Lọc theo trạng thái nếu có
-		List<Order> orderDetails = allOrdersByMonth;
-		if (status != null) {
-			orderDetails = allOrdersByMonth.stream()
-					.filter(o -> o.getStatus() == status)
-					.collect(Collectors.toList());
-		}
+            model.addAttribute("countNew", 0);
+            model.addAttribute("countConfirmed", 0);
+            model.addAttribute("countDelivered", 0);
+            model.addAttribute("countCanceled", 0);
+            model.addAttribute("countCanceleds", 0);
 
-		model.addAttribute("orderDetails", orderDetails);
-		model.addAttribute("orderDetailst", orderDetailst);
-		model.addAttribute("selectedMonth", month);
-		model.addAttribute("selectedStatus", status);
+            return "admin/orders";
+        }
 
-		return "admin/orders";
-	}
+        // --- lấy toàn bộ đơn của tháng hiện tại ---
+        List<Order> allOrdersByMonth = orderRepository.findByMonth(selectedMonth);
+        if (allOrdersByMonth == null) allOrdersByMonth = new ArrayList<>();
+
+        if (today.getDayOfMonth() == 1) {
+            LocalDate lastDayPrevMonth = today.minusMonths(1)
+                    .withDayOfMonth(today.minusMonths(1).lengthOfMonth());
+
+            List<Order> lastDayPrevMonthOrders = orderRepository.findAll().stream()
+                    .filter(o -> o.getStatus() == 0)
+                    .filter(o -> o.getOrderDate() != null)
+                    .filter(o -> {
+                        LocalDate orderDate = Instant.ofEpochMilli(o.getOrderDate().getTime())
+                                .atZone(ZoneId.systemDefault())
+                                .toLocalDate();
+                        return orderDate.isEqual(lastDayPrevMonth);
+                    })
+                    .collect(Collectors.toList());
+
+            allOrdersByMonth.addAll(lastDayPrevMonthOrders);
+        }
+
+        List<Order> orderDetailst = orderRepository.findAllWithCancellation();
+        if (orderDetailst == null) orderDetailst = new ArrayList<>();
+
+        List<Order> orderDetails;
+        if (status != null) {
+            orderDetails = allOrdersByMonth.stream()
+                    .filter(o -> o.getStatus() == status)
+                    .collect(Collectors.toList());
+        } else {
+            orderDetails = new ArrayList<>(allOrdersByMonth);
+        }
+
+        long countNew = allOrdersByMonth.stream().filter(o -> o.getStatus() == 0).count();
+        long countConfirmed = allOrdersByMonth.stream().filter(o -> o.getStatus() == 1).count();
+        long countDelivered = allOrdersByMonth.stream().filter(o -> o.getStatus() == 2).count();
+        long countCanceled = allOrdersByMonth.stream().filter(o -> o.getStatus() == 3).count();
+        long countCanceleds = allOrdersByMonth.stream().filter(o -> o.getStatus() == 4).count();
+
+        model.addAttribute("orderDetails", orderDetails);
+        model.addAttribute("orderDetailst", orderDetailst);
+        model.addAttribute("selectedStatus", status);
+
+        model.addAttribute("countNew", countNew);
+        model.addAttribute("countConfirmed", countConfirmed);
+        model.addAttribute("countDelivered", countDelivered);
+        model.addAttribute("countCanceled", countCanceled);
+        model.addAttribute("countCanceleds", countCanceleds);
+
+        return "admin/orders";
+    }
 
 
 
 
-	@GetMapping("/order/detail/{order_id}")
+
+    @GetMapping("/order/detail/{order_id}")
 	public ModelAndView detail(ModelMap model, @PathVariable("order_id") Long id) {
 
 		List<OrderDetail> listO = orderDetailRepository.findByOrderId(id);
@@ -224,21 +274,55 @@ public class OrderController {
 	}
 
 	// to excel
-	@GetMapping(value = "/export")
-	public void exportToExcel(HttpServletResponse response) throws IOException {
+    @GetMapping(value = "/export")
+    public void exportToExcel(
+            HttpServletResponse response,
+            @RequestParam(value = "month", required = false) Integer month
+    ) throws IOException {
 
-		response.setContentType("application/octet-stream");
-		String headerKey = "Content-Disposition";
-		String headerValue = "attachement; filename=donHang.xlsx";
+        // Lấy tháng hiện tại nếu month null
+        LocalDate today = LocalDate.now();
+        int selectedMonth = (month != null) ? month : today.getMonthValue();
 
-		response.setHeader(headerKey, headerValue);
+        // Tạo tên file theo tháng
+        String filename = "donHang_thang" + selectedMonth + ".xlsx";
 
-		List<Order> lisOrders = orderDetailService.listAll();
+        // Set header để trình duyệt tải file đúng tên và encode UTF-8
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        response.setHeader("Content-Disposition",
+                "attachment; filename=\"" + filename + "\"; filename*=UTF-8''" + java.net.URLEncoder.encode(filename, "UTF-8"));
 
-		OrderExcelExporter excelExporter = new OrderExcelExporter(lisOrders);
-		excelExporter.export(response);
+        // Lấy danh sách đơn hàng theo tháng
+        List<Order> orders = orderRepository.findByMonth(selectedMonth);
+        if (orders == null) orders = new ArrayList<>();
 
-	}
+        // Nếu hôm nay là ngày 1, thêm các đơn status=0 ngày cuối tháng trước
+        if (today.getDayOfMonth() == 1) {
+            LocalDate lastDayPrevMonth = today.minusMonths(1)
+                    .withDayOfMonth(today.minusMonths(1).lengthOfMonth());
+
+            List<Order> lastDayPrevMonthOrders = orderRepository.findAll().stream()
+                    .filter(o -> o.getStatus() == 0)
+                    .filter(o -> o.getOrderDate() != null)
+                    .filter(o -> {
+                        LocalDate orderDate = Instant.ofEpochMilli(o.getOrderDate().getTime())
+                                .atZone(ZoneId.systemDefault())
+                                .toLocalDate();
+                        return orderDate.isEqual(lastDayPrevMonth);
+                    })
+                    .collect(Collectors.toList());
+
+            orders.addAll(lastDayPrevMonthOrders);
+        }
+
+        // Xuất Excel với tháng đã chọn
+        OrderExcelExporter excelExporter = new OrderExcelExporter(orders, selectedMonth);
+        excelExporter.export(response);
+    }
+
+
+
+
 //	@GetMapping("/order/invoice/{orderId}")
 //	public String getInvoiceHtml(@PathVariable String orderId, Model model) {
 //		Order order = orderRepository.findOrderById(orderId); // Lấy đơn hàng
