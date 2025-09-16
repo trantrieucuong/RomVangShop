@@ -538,21 +538,36 @@ button:focus {
   border-left: 1px solid var(--border);
 }
 .dropdown-position-list li a {
-  width: 100%;
-  font-size: 15px;
-  line-height: 18px;
-  border-radius: 8px;
-  padding: 8px 15px;
-  color: var(--text);
-  background: var(--white);
-  white-space: nowrap;
-  text-transform: capitalize;
-  transition: all linear 0.3s;
-  -webkit-transition: all linear 0.3s;
-  -moz-transition: all linear 0.3s;
-  -ms-transition: all linear 0.3s;
-  -o-transition: all linear 0.3s;
+    width: 100%;
+    font-size: 15px;
+    line-height: 18px;
+    border-radius: 8px;
+    padding: 8px 15px;
+    color: var(--text);
+    background: var(--white);
+    /* Cho phép xuống dòng */
+    white-space: normal;
+    word-wrap: break-word;
+    text-transform: capitalize;
+    transition: all linear 0.3s;
 }
+
+.dropdown-list li a {
+    width: 100%;
+    font-size: 15px;
+    line-height: 18px;
+    border-radius: 8px;
+    padding: 10px 15px 10px 35px;
+    color: var(--text);
+    background: var(--white);
+    position: relative;
+    /* Cho phép xuống dòng */
+    white-space: normal;
+    word-wrap: break-word;
+    text-transform: capitalize;
+    transition: all linear 0.3s;
+}
+
 .dropdown-position-list li a:hover {
   color: var(--primary);
   background: var(--chalk);

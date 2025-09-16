@@ -314,19 +314,43 @@
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start
     -webkit-box-align: center;
     -ms-flex-align: center;
     align-items: center;
     -webkit-box-pack: center;
     -ms-flex-pack: center;
-    justify-content: center
+
 }
 
 .details-tag-list li {
     margin-right: 8px
 }
 
+/*.details-tag-list li a {*/
+/*    font-size: 14px;*/
+/*    line-height: 12px;*/
+/*    padding: 8px 10px;*/
+/*    border-radius: 5px;*/
+/*    letter-spacing: 0.3px;*/
+/*    text-transform: capitalize;*/
+/*    color: var(--text);*/
+/*    background: var(--chalk);*/
+/*    transition: all linear .3s;*/
+/*    -webkit-transition: all linear .3s;*/
+/*    -moz-transition: all linear .3s;*/
+/*    -ms-transition: all linear .3s;*/
+/*    -o-transition: all linear .3s*/
+/*}*/
+
 .details-tag-list li a {
+    display: inline-block;
+    max-width: 120px;        /* 👈 giới hạn chiều rộng tối đa */
+    white-space: nowrap;     /* 👈 không cho xuống dòng */
+    overflow: hidden;        /* 👈 ẩn phần bị tràn */
+    text-overflow: ellipsis; /* 👈 hiện dấu ... khi tràn */
+
     font-size: 14px;
     line-height: 12px;
     padding: 8px 10px;
@@ -339,8 +363,14 @@
     -webkit-transition: all linear .3s;
     -moz-transition: all linear .3s;
     -ms-transition: all linear .3s;
-    -o-transition: all linear .3s
+    -o-transition: all linear .3s;
 }
+.details-tag-list li {
+    margin-right: 8px;
+    display: flex;
+    align-items: center;
+}
+
 
 .details-tag-list li a:hover {
     color: var(--white);

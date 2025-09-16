@@ -100,7 +100,7 @@ xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 									<a class="navbar-link dropdown-arrow" href="javascript:void(0);">Thể loại</a>
 									<ul class="dropdown-position-list">
 										<li th:each="item : ${categoryList}">
-											<a th:href="@{/productByCategory(id=${item.categoryId})}">[[${item.categoryName}]]</a>
+											<a th:href="@{/productByCategory(id=${item.categoryId})}">+ [[${item.categoryName}]]</a>
 										</li>
 									</ul>
 								</li>

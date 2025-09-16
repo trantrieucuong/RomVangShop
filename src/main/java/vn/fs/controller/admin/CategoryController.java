@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import vn.fs.entities.Category;
 import vn.fs.entities.User;
 import vn.fs.repository.CategoryRepository;
@@ -63,31 +64,33 @@ public class CategoryController {
 	}
 
 	// add category
-	@PostMapping(value = "/addCategory")
-	public String addCategory(@Validated @ModelAttribute("category") Category category,
-							  BindingResult bindingResult,
-							  ModelMap model) {
+    @PostMapping("/addCategory")
+    public String addCategory(@Validated @ModelAttribute("category") Category category,
+                              BindingResult bindingResult,
+                              RedirectAttributes redirectAttributes) {
 
-		if (bindingResult.hasErrors()) {
-			model.addAttribute("error", "failure");
-			return "admin/categories";
-		}
+        if (bindingResult.hasErrors()) {
+            redirectAttributes.addFlashAttribute("error", "Vui lòng nhập đầy đủ thông tin!");
+            return "redirect:/admin/categories";
+        }
 
-		Optional<Category> existingCategory = Optional.ofNullable(categoryRepository.findByCategoryNameIgnoreCase(category.getCategoryName()));
+        Optional<Category> existingCategory = Optional.ofNullable(
+                categoryRepository.findByCategoryNameIgnoreCase(category.getCategoryName())
+        );
 
-		if (existingCategory.isPresent()) {
-			model.addAttribute("error", "Tên danh mục đã tồn tại!");
-			return "admin/categories";
-		}
+        if (existingCategory.isPresent()) {
+            redirectAttributes.addFlashAttribute("error", "Tên danh mục đã tồn tại!");
+            return "redirect:/admin/categories";
+        }
 
-		categoryRepository.save(category);
-		model.addAttribute("message", "Thêm danh mục thành công!");
+        categoryRepository.save(category);
+        redirectAttributes.addFlashAttribute("message", "Thêm danh mục thành công!");
+        return "redirect:/admin/categories";
+    }
 
-		return "redirect:/admin/categories";
-	}
 
 
-	// get Edit category
+    // get Edit category
 	@GetMapping(value = "/editCategory/{id}")
 	public String editCategory(@PathVariable("id") Long id, ModelMap model) {
 		Category category = categoryRepository.findById(id).orElse(null);
