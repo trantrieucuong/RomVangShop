@@ -68,8 +68,9 @@ public class IndexAdminController{
 		model.addAttribute("totalRevenue", orderRepository.findTotalRevenue());
 		model.addAttribute("successfulOrders", orderRepository.countSuccessfulOrders());
 		model.addAttribute("cancelledOrders", orderRepository.countCancelledOrders());
-		model.addAttribute("totalUsers", userRepository.count());
-		model.addAttribute("newOrders", orderRepository.countNewOrders());
+        model.addAttribute("totalUsers", userRepository.countActiveUsersWithUserRole());
+
+        model.addAttribute("newOrders", orderRepository.countNewOrders());
 
 		return "admin/index"; // Tên của file template trong thư mục templates/admin
 	}

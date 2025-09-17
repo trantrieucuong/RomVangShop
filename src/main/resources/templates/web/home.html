@@ -120,9 +120,7 @@
 										<label class="label-text new">mới về</label>
 										<label class="label-text sale">- [[${item.discount + '%'}]]</label>
 									</div>
-									<button class="product-wish wish">
-										<i class="fas fa-heart"></i>
-									</button>
+
 									<a class="product-image" th:href="@{/productDetail(id=${item.productId})}">
 										<div class="image-container">
 										<img th:src="@{'/loadImage?imageName='+${item.productImage}}" alt="product" class="fixed-image" />
@@ -244,9 +242,7 @@
 										<label class="label-text new">Nổi Bật</label>
 										<label class="label-text sale">- [[${item.discount + '%'}]]</label>
 									</div>
-									<button class="product-wish wish">
-										<i class="fas fa-heart"></i>
-									</button>
+
 									<a class="product-image" th:href="@{/productDetail(id=${item.productId})}">
 										<div class="image-container">
 											<img th:src="@{'/loadImage?imageName='+${item.productImage}}" alt="product" class="fixed-image" />
@@ -387,9 +383,7 @@
 										<label class="label-text new">Bán Chạy</label>
 										<label class="label-text sale">- [[${item.discount + '%'}]]</label>
 									</div>
-									<button class="product-wish wish">
-										<i class="fas fa-heart"></i>
-									</button>
+
 									<a class="product-image" th:href="@{/productDetail(id=${item.productId})}">
 										<div class="image-container">
 											<img th:src="@{'/loadImage?imageName='+${item.productImage}}" alt="product" class="fixed-image" />

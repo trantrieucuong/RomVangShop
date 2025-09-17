@@ -173,18 +173,26 @@
 <!--                 <i class="icofont-heart"></i> -->
 <!--                 <span>Thêm yêu thích</span></a> -->
 <!--               </div> -->
-              
-               <th:block th:if="${user.email != null}">
-	                <div class="details-action-group">
-	               <a "details-wish" th:if="${product.favorite} == false"
-	                        title="Yêu thích"
-	                        th:href="@{/doFavorite(id=${product.productId})}" >               
-	                         <i class="icofont-heart"></i>
-	                        <span>Thêm yêu thích</span>
-	                 </a>
-	              </div>                                       
-                 </th:block>
-              
+
+                <th:block th:if="${user.email != null}">
+                    <div class="details-action-group">
+                        <a class="details-wish"
+                           th:if="${!isFavorite}"
+                           th:href="@{/doFavorite(id=${product.productId})}">
+                            <i class="icofont-heart"></i>
+                            <span>Thêm yêu thích</span>
+                        </a>
+
+                        <a class="details-wish"
+                           th:if="${isFavorite}"
+                           th:href="@{/doUnFavorite(id=${product.productId})}">
+                            <i class="icofont-heart"></i>
+                            <span>Bỏ yêu thích</span>
+                        </a>
+                    </div>
+                </th:block>
+
+
             </div>
           </div>
         </div>
