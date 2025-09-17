@@ -26,4 +26,8 @@ List<User> findSaleWithRoleUser();
 
 	boolean existsByPhone(String phone);
 
+    @Query("SELECT COUNT(u) FROM User u JOIN u.roles r WHERE r.name = 'ROLE_USER' AND u.status = true")
+    Long countActiveUsersWithUserRole();
+
+
 }

@@ -139,7 +139,7 @@ h1 {
 				     <div class="dashboard-card col-sm-6 col-md-3 col-lg-3">
 				            <span class="title">Đơn hàng mới </span>
 				            <p class="value " th:text="${newOrders}"></p>
-									 <a th:href="@{/admin/orders}">
+									 <a th:href="@{/admin/orders?month=9&orderStatus=0}">
 								        <span th:if="${newOrders > 0}">
         								<i class="fas fa-bell blink">  Xác nhận ngay</i> <!-- Icon "New" -->
 								        </span>
@@ -156,13 +156,13 @@ h1 {
 				        <div class="dashboard-card col-sm-6 col-md-3 col-lg-3">
 				            <span class="title">Đơn hàng thành công</span>
 				            <p class="value" th:text="${successfulOrders}"></p>
-									<a th:href="@{/admin/orders}">Xem chi tiết</a>
+									<a th:href="@{/admin/orders?month=9&orderStatus=2}">Xem chi tiết</a>
 				        </div>
 				        
 				        <div class="dashboard-card col-sm-6 col-md-3 col-lg-3">
 				            <span class="title">Số đơn hàng hủy</span>
 				            <p class="value" th:text="${cancelledOrders}"></p>
-									<a th:href="@{/admin/orders}">Xem chi tiết</a>
+									<a th:href="@{/admin/orders?month=9&orderStatus=3}">Xem chi tiết</a>
 				        </div>
 				        
 				        <div class="dashboard-card col-sm-6 col-md-3 col-lg-3">
