@@ -145,11 +145,19 @@
 															</div>
 														</div>
 														<div class="col-sm-12">
-															<div class="form-group form-group-default">
-																<label>Mô tả sản phẩm</label>
-																<textarea th:field="*{description}" id="description" class="form-control" placeholder="Mô tả sản phẩm"></textarea>
-															</div>
-														</div>
+                                                            <div class="form-group form-group-default">
+                                                                <label>Mô tả sản phẩm</label>
+                                                                <textarea th:field="*{description}"
+                                                                          id="description"
+                                                                          class="form-control"
+                                                                          placeholder="Mô tả sản phẩm"
+                                                                          maxlength="255"></textarea>
+
+                                                                <!-- Dòng đếm ký tự -->
+                                                                <small id="description-count" class="text-muted d-block text-end">0 / 255 ký tự</small>
+                                                            </div>
+
+                                                        </div>
 													</div>
 													<div class="modal-footer no-bd">
 														<button type="submit" id="" class="btn btn-primary">Thêm mới</button>
@@ -192,8 +200,13 @@
 											<td>
 												<img th:src="@{'/loadImage?imageName='+${item.productImage}}" width="80" />
 											</td>
-											<td>[[${item.productName}]]</td>
-											<td>[[${item.category.categoryName}]]</td>
+                                            <td
+                                                    title="[[${item.productName}]]"
+                                                    style="max-width:200px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:inline-block; vertical-align:middle;">
+                                                [[${item.productName}]]
+                                            </td>
+
+                                            <td>[[${item.category.categoryName}]]</td>
 											<td th:text="${#numbers.formatDecimal(item.price, 1, 'DEFAULT', 0, 'DEFAULT')}+' đ'"></td>
 											<td>[[${#numbers.formatDecimal(item.discount, 1, 'DEFAULT', 0, 'DEFAULT')}+' %']]</td>
 											<td>[[${item.quantity}]]</td>
@@ -302,7 +315,15 @@
 	<!-- Atlantis DEMO methods, don't include it in your project! -->
 	<script src="/assets/js/setting-demo2.js"></script>
 	<script >
-		$(document).ready(function() {
+        const description = document.getElementById("description");
+        const counter = document.getElementById("description-count");
+
+        description.addEventListener("input", function () {
+            const length = description.value.length;
+            counter.textContent = `${length} / 255 ký tự`;
+        });
+
+        $(document).ready(function() {
 			$('#basic-datatables').DataTable({
 			});
 
@@ -391,7 +412,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
 		if (description === "") {
 			errorMessages.push("Mô tả sản phẩm không được để trống.");
-		}
+		}else if (description.length > 255) {
+            errorMessages.push("Mô tả sản phẩm không được vượt quá 255 ký tự.");
+        }
 
 		if (errorMessages.length > 0) {
 			e.preventDefault();
