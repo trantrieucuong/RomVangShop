@@ -43,7 +43,7 @@
 		<div class="content">
 			<div class="page-inner">
 				<div class="page-header">
-					<h4 class="page-title">Quản lý Khách Hàng</h4>
+					<h4 class="page-title">Quản lý Tài Khoản</h4>
 					<ul class="breadcrumbs">
 						<li class="nav-home">
 							<a href="javascript:void(0);">
@@ -60,15 +60,17 @@
 							<i class="flaticon-right-arrow"></i>
 						</li>
 						<li class="nav-item">
-							<a href="javascript:void(0);">Quản lý Khách Hàng</a>
+							<a href="javascript:void(0);">Quản lý Tài Khoản</a>
 						</li>
 					</ul>
 				</div>
+				<span id="successMsg" th:text="${success}" style="display:none;"></span>
+				<span id="errorMsg" th:text="${error}" style="display:none;"></span>
 					<div class="col-md-12">
 						<div class="card">
 							<div class="card-header">
 								<div class="d-flex align-items-center">
-									<h4 class="card-title" style="text-decoration: underline;">Quản Lý Khách Hàng</h4>
+									<h4 class="card-title" style="text-decoration: underline;">Quản Lý Tài Khoản</h4>
 								</div>
 							</div>
 							<div class="card-body">
@@ -92,29 +94,36 @@
 											<tr th:each="item : ${users}">
 											    <td>[[${item.userId}]]</td>
 											    <td>
-											        <img th:src="@{'/loadImage?imageName='+${item.avatar}}" alt="..." class="avatar-img rounded-circle" style="width: 60px">
-											    </td>
+													<img th:src="@{'/loadImage?imageName=' + ${item.avatar}}"
+														 alt="avatar"
+														 class="avatar-img rounded-circle"
+														 style="width: 60px"
+														 onerror="this.onerror=null; this.src='/images/user.png';">
+												</td>
 											    <td>[[${item.name}]]</td>
 											    <td>[[${item.email}]]</td>
 											    <td>[[${item.registerDate}]]</td>
 											    <td>[[${item.status?'Đang hoạt động':'Đã khóa'}]]</td>
-											    <td>
-											        <div class="form-button-action">
-											            <!-- Nút khóa tài khoản -->
-											            <form th:action="@{'/admin/users/' + ${item.userId} + '/lock'}" method="post">
-											                <button type="submit" class="btn btn-link btn-danger" data-toggle="tooltip" title="Khóa tài khoản">
-											                    <i class="fa fa-lock"></i>
-											                </button>
-											            </form>
-											                
-											            <!-- Nút mở khóa tài khoản -->
-											            <form th:action="@{'/admin/users/' + ${item.userId} + '/unlock'}" method="post">
-											                <button type="submit" class="btn btn-link btn-success" data-toggle="tooltip" title="Mở khóa tài khoản">
-											                    <i class="fa fa-unlock"></i>
-											                </button>
-											            </form>
-											        </div>
-											    </td>
+												<td>
+													<div class="form-button-action">
+														<!-- Nút khóa tài khoản: chỉ hiển thị khi đang hoạt động -->
+														<form th:if="${item.status}"
+															  th:action="@{'/admin/users/' + ${item.userId} + '/lock'}" method="post">
+															<button type="submit" class="btn btn-link btn-danger" data-toggle="tooltip" title="Khóa tài khoản">
+																<i class="fa fa-lock"></i>
+															</button>
+														</form>
+
+														<!-- Nút mở khóa tài khoản: chỉ hiển thị khi đã khóa -->
+														<form th:if="${!item.status}"
+															  th:action="@{'/admin/users/' + ${item.userId} + '/unlock'}" method="post">
+															<button type="submit" class="btn btn-link btn-success" data-toggle="tooltip" title="Mở khóa tài khoản">
+																<i class="fa fa-unlock"></i>
+															</button>
+														</form>
+													</div>
+												</td>
+
 											</tr>
 
 										</tbody>
@@ -131,7 +140,7 @@
 					<ul class="nav">
 						<li class="nav-item">
 							<a class="nav-link" href="javascript:void(0);">
-								GREENTY-SHOP
+								Rơm Vàng
 							</a>
 						</li>
 						<li class="nav-item">
@@ -147,7 +156,7 @@
 					</ul>
 				</nav>
 				<div class="copyright ml-auto">
-					2021, made with <i class="fa fa-heart heart text-danger"></i> by <a href="javascript:void(0);">RomVang-SHOP</a>
+					2025, made with <i class="fa fa-heart heart text-danger"></i> by <a href="javascript:void(0);">RomVang-SHOP</a>
 				</div>				
 			</div>
 		</footer>
@@ -217,6 +226,19 @@
 
 			}); */
 		});
+
+		//tuyên
+				document.addEventListener("DOMContentLoaded", function () {
+    const success = document.getElementById("successMsg").innerText.trim();
+    const error = document.getElementById("errorMsg").innerText.trim();
+
+    if (success) {
+        alert(success);
+    }
+    if (error) {
+        alert(error);
+    }
+});
 	</script>
 </body>
 </html>

@@ -7,6 +7,14 @@
   <meta content='width=device-width, initial-scale=1.0, shrink-to-fit=no' name='viewport' />
   <link rel="icon" href="/assets/img/icon.ico" type="image/x-icon"/>
   <style>
+  #image-preview {
+  width: 150px;     /* cố định chiều rộng */
+  height: 150px;    /* cố định chiều cao */
+  object-fit: cover; /* ảnh vừa khung, không méo */
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
     body {
       background: #f5f6fa;
     }
@@ -406,6 +414,7 @@
                                     </label>
                                     <input type="file" id="image" class="d-none">
                                   </div>
+
                                 </div>
                               </div>
                             </form>

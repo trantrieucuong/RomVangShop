@@ -6,7 +6,7 @@
 	<title>Rơm Vàng  - Trang quản trị</title>
 	<meta content='width=device-width, initial-scale=1.0, shrink-to-fit=no' name='viewport' />
 	<link rel="icon" href="/assets/img/icon.ico" type="image/x-icon"/>
-	
+
 	<!-- Fonts and icons -->
 	<script src="/assets/js/plugin/webfont/webfont.min.js"></script>
 	<script>
@@ -28,17 +28,17 @@
 <body>
 	<div class="wrapper">
 	<!-- Header -->
-	
+
 	<th:block th:replace="~{admin/fragments/header :: header}"></th:block>
-	
+
 	<!-- End Header -->
-	
+
 	<!-- Navbar -->
-	
+
 	<th:block th:replace="~{admin/fragments/navbar :: navbar}"></th:block>
-	
+
 	<!-- End Navbar -->
-		
+
 	<div class="main-panel">
 		<div class="content">
 			<div class="page-inner">
@@ -75,6 +75,9 @@
 									</button>
 								</div>
 							</div>
+<!--							<div th:if="${message}" class="alert alert-success" th:text="${message}"></div>-->
+<!--							<div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>-->
+
 							<div class="card-body">
 								<!-- Modal add -->
 								<div class="modal fade" id="addRowModal" tabindex="-1" role="dialog" aria-hidden="true">
@@ -83,14 +86,35 @@
 											<div class="modal-header no-bd">
 												<h5 class="modal-title">
 													<span class="fw-mediumbold" style="text-decoration: underline; color: black;">
-													Thêm mới thể loại</span> 
-												
+													Thêm mới thể loại</span>
+
 												</h5>
 												<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 													<span aria-hidden="true">&times;</span>
 												</button>
 											</div>
+											<!-- Hiển thị alert khi có lỗi -->
+<!--											<div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">-->
+<!--												<span th:text="${error}"></span>-->
+<!--												<span th:text="${success}"></span>-->
+<!--												<button type="button" class="close" data-dismiss="alert" aria-label="Close">-->
+<!--													<span aria-hidden="true">&times;</span>-->
+<!--												</button>-->
+<!--											</div>-->
 
+											<!-- Hiển thị alert khi thành công -->
+<!--											<div th:if="${message}" class="alert alert-success alert-dismissible fade show" role="alert">-->
+<!--												<span th:text="${message}"></span>-->
+<!--												<button type="button" class="close" data-dismiss="alert" aria-label="Close">-->
+<!--													<span aria-hidden="true">&times;</span>-->
+<!--												</button>-->
+<!--											</div>-->
+<!--											<div th:if="${error}" class="alert alert-success alert-dismissible fade show" role="alert">-->
+<!--												<span th:text="${error}"></span>-->
+<!--												<button type="button" class="close" data-dismiss="alert" aria-label="Close">-->
+<!--													<span aria-hidden="true">&times;</span>-->
+<!--												</button>-->
+<!--											</div>-->
 
 											<div class="modal-body">
 												<form th:action="@{/admin/addCategory}" th:object="${category}" method="post">
@@ -113,9 +137,11 @@
 										</div>
 									</div>
 								</div>
-
-
-
+								<span id="successMsg" th:text="${success}" style="display:none;"></span>
+								<span id="errorMsg" th:text="${error}" style="display:none;"></span>
+<!--								<div class="alert alert-success row col-12"-->
+<!--									th:if="${message}" th:text="${message}">-->
+<!--								</div>-->
 								<div class="table-responsive">
 									<table id="add-row" class="display table table-striped table-hover" >
 										<thead>
@@ -152,7 +178,7 @@
 											</tr>
 										</tbody>
 									</table>
-									
+
 									<!-- Delete Category th:data-id="${item.categoryId}" th:href="@{/editCategory/(id=${category.categoryId})}"-->
 									<script>
 									function showConfigModalDialog(id, name) {
@@ -161,7 +187,7 @@
 										$('#configmationId').modal('show');
 									}
 									</script>
-									
+
 									<!-- Modal -->
 									<div class="modal" tabindex="-1" role="dialog" id="configmationId">
 										<div class="modal-dialog" role="document">
@@ -255,11 +281,11 @@
 				</nav>
 				<div class="copyright ml-auto">
 					2024, made with <i class="fa fa-heart heart text-danger"></i> by <a href="">Rơm Vàng</a>
-				</div>				
+				</div>
 			</div>
 		</footer>
 	</div>
-	
+
 		<!-- End Custom template -->
 	</div>
 	<!--   Core JS Files   -->
@@ -269,7 +295,7 @@
 	<!-- jQuery UI -->
 	<script src="/assets/js/plugin/jquery-ui-1.12.1.custom/jquery-ui.min.js"></script>
 	<script src="/assets/js/plugin/jquery-ui-touch-punch/jquery.ui.touch-punch.min.js"></script>
-	
+
 	<!-- jQuery Scrollbar -->
 	<script src="/assets/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js"></script>
 	<!-- Datatables -->
@@ -305,7 +331,7 @@
 						} );
 					} );
 				}
-			});	
+			});
 
 			// Add Row
 			$('#add-row').DataTable({
@@ -324,7 +350,7 @@
 				$('#addRowModal').modal('hide');
 
 			}); */
-			
+
 			 $('#editRowButton').click(function(event) {
 				/* $('#edit-row').dataTable().fnAddData([
 					$("#categoryId").val(category.categoryId),
@@ -332,37 +358,47 @@
 					action
 					]);
 				$('#editRowModal').modal('hide'); */
-				
-				event.preventDefault();
-				
-				var href= $(this).attr('href');
-				
-				$.get(href, function(category){
-					$('#categoryId').val(category.categoryId);
-					$('#name').val(category.name);
-				})
-				
-				$('#editRowModal').modal();	
 
-			}); 
-			
-			/* $('.table .btn').on('click', function(event){
-				
 				event.preventDefault();
-				
+
 				var href= $(this).attr('href');
-				
+
 				$.get(href, function(category){
 					$('#categoryId').val(category.categoryId);
 					$('#name').val(category.name);
 				})
-				
+
+				$('#editRowModal').modal();
+
+			});
+
+			/* $('.table .btn').on('click', function(event){
+
+				event.preventDefault();
+
+				var href= $(this).attr('href');
+
+				$.get(href, function(category){
+					$('#categoryId').val(category.categoryId);
+					$('#name').val(category.name);
+				})
+
 				$('#editRowModal').modal();
 			}); */
-			
+
 		});
-		
-		
+document.addEventListener("DOMContentLoaded", function () {
+    const success = document.getElementById("successMsg").innerText.trim();
+    const error = document.getElementById("errorMsg").innerText.trim();
+
+    if (success) {
+        alert(success); // báo thành công
+    }
+    if (error) {
+        alert(error); // báo lỗi
+    }
+});
+
 	</script>
 </body>
 </html>

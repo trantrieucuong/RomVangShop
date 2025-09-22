@@ -64,6 +64,8 @@
 						</li>
 					</ul>
 				</div>
+				<span id="successMsg" th:text="${success}" style="display:none;"></span>
+				<span id="errorMsg" th:text="${error}" style="display:none;"></span>
 					<div class="col-md-12">
 						<div class="card">
 							<div class="card-header">
@@ -152,5 +154,18 @@
 	<script src="../../assets/js/atlantis.min.js"></script>
 	<!-- Atlantis DEMO methods, don't include it in your project! -->
 	<script src="../../assets/js/setting-demo2.js"></script>
+	<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const success = document.getElementById("successMsg").innerText.trim();
+    const error = document.getElementById("errorMsg").innerText.trim();
+
+    if (success) {
+        alert(success);
+    }
+    if (error) {
+        alert(error);
+    }
+});
+</script>
 </body>
 </html>

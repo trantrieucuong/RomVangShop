@@ -27,9 +27,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     @Query(value = "SELECT * FROM products ORDER BY product_id DESC LIMIT 10", nativeQuery = true)
     List<Product> listProductNew101();
 
-
-
-    @Query(value = "SELECT * FROM products WHERE product_name LIKE %?1%" , nativeQuery = true)
+	@Query(value = "SELECT * FROM products WHERE product_name LIKE %?1%" , nativeQuery = true)
 	public List<Product> searchProduct(String productName);
 
 	@Query(value = "SELECT c.category_id, c.category_name, COUNT(*) AS SoLuong " +
@@ -51,8 +49,14 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 	//tuyên
 	List<Product> findByCategory_CategoryId(Long categoryId);
 	List<Product> findByProductNameContainingIgnoreCase(String productName);
-	List<Product> findByQuantityGreaterThan(int quantity);
+	List<Product> findByQuantityGreaterThanAndStatus(int quantity, boolean status);
+
 	Optional<Product> findByProductNameIgnoreCaseAndCategory(String name, Category category);
 	Optional<Product> findByProductNameIgnoreCase(String productName);
+	// Tất cả sản phẩm còn hoạt động và còn hàng
+	List<Product> findByStatusTrueAndQuantityGreaterThan(int quantity);
+
+	// Sản phẩm theo category, còn hoạt động và còn hàng
+	List<Product> findByCategory_CategoryIdAndStatusTrueAndQuantityGreaterThan(Long categoryId, int quantity);
 
 }

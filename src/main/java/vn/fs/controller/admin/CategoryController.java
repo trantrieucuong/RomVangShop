@@ -1,7 +1,9 @@
 package vn.fs.controller.admin;
 
 import java.security.Principal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,11 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import vn.fs.entities.Category;
@@ -64,24 +62,67 @@ public class CategoryController {
 	}
 
 	// add category
-    @PostMapping("/addCategory")
-    public String addCategory(@Validated @ModelAttribute("category") Category category,
-                              BindingResult bindingResult,
-                              RedirectAttributes redirectAttributes) {
 
-        if (bindingResult.hasErrors()) {
-            redirectAttributes.addFlashAttribute("error", "Vui lòng nhập đầy đủ thông tin!");
-            return "redirect:/admin/categories";
-        }
+//	@PostMapping(value = "/addCategory")
+//	public String addCategory(@Validated @ModelAttribute("category") Category category,
+//							  BindingResult bindingResult,
+//							  RedirectAttributes redirectAttributes) {
+//
+//		if (bindingResult.hasErrors()) {
+//			redirectAttributes.addFlashAttribute("error", "failure");
+//			return "redirect:/admin/categories";
+//		}
+//
+//		Optional<Category> existingCategory = Optional.ofNullable(
+//				categoryRepository.findByCategoryNameIgnoreCase(category.getCategoryName())
+//		);
+//
+//		if (existingCategory.isPresent()) {
+//			redirectAttributes.addFlashAttribute("error", "Tên danh mục đã tồn tại!");
+//			return "redirect:/admin/categories";
+//		}
+//
+//		categoryRepository.save(category);
+//		redirectAttributes.addFlashAttribute("success", "Thêm danh mục thành công!");
+//
+//		return "redirect:/admin/categories";
+//	}
 
-        Optional<Category> existingCategory = Optional.ofNullable(
-                categoryRepository.findByCategoryNameIgnoreCase(category.getCategoryName())
-        );
+	@PostMapping(value = "/addCategory")
+	public String addCategory(@ModelAttribute("category") Category category,
+							  RedirectAttributes redirectAttributes) {
 
-        if (existingCategory.isPresent()) {
-            redirectAttributes.addFlashAttribute("error", "Tên danh mục đã tồn tại!");
-            return "redirect:/admin/categories";
-        }
+		String categoryName = category.getCategoryName();
+
+		//  Check rỗng
+		if (categoryName == null || categoryName.trim().isEmpty()) {
+			redirectAttributes.addFlashAttribute("error", "Tên thể loại không được để trống!");
+			return "redirect:/admin/categories";
+		}
+
+		//  Check độ dài
+		if (categoryName.length() > 50) {
+			redirectAttributes.addFlashAttribute("error", "Tên thể loại không được quá 50 ký tự!");
+			return "redirect:/admin/categories";
+		}
+
+		//  Check ký tự đặc biệt
+		if (!categoryName.matches("^[\\p{L}0-9 ]+$")) {
+			redirectAttributes.addFlashAttribute("error", "Tên thể loại chỉ được chứa chữ cái, số và khoảng trắng!");
+			return "redirect:/admin/categories";
+		}
+
+		//  Check trùng tên trong DB
+		Optional<Category> existingCategory =
+				Optional.ofNullable(categoryRepository.findByCategoryNameIgnoreCase(categoryName));
+
+		if (existingCategory.isPresent()) {
+			redirectAttributes.addFlashAttribute("error", "Tên danh mục đã tồn tại!");
+			return "redirect:/admin/categories";
+		}
+
+		categoryRepository.save(category);
+		redirectAttributes.addFlashAttribute("success", "Thêm danh mục thành công!");
 
         categoryRepository.save(category);
         redirectAttributes.addFlashAttribute("message", "Thêm danh mục thành công!");
@@ -90,23 +131,61 @@ public class CategoryController {
 
 
 
-    // get Edit category
+	// get Edit category
 	@GetMapping(value = "/editCategory/{id}")
-	public String editCategory(@PathVariable("id") Long id, ModelMap model) {
-		Category category = categoryRepository.findById(id).orElse(null);
+	public String editCategory(@PathVariable("id") Long id,
+							   ModelMap model,
+							   RedirectAttributes redirectAttributes) {
 
+		// ✅ Validate id
+		if (id == null || id <= 0) {
+			redirectAttributes.addFlashAttribute("error", "ID danh mục không hợp lệ!");
+			return "redirect:/admin/categories";
+		}
+
+		// ✅ Tìm category
+		Optional<Category> categoryOpt = categoryRepository.findById(id);
+
+		if (categoryOpt.isEmpty()) {
+			redirectAttributes.addFlashAttribute("error", "Không tìm thấy danh mục với ID: " + id);
+			return "redirect:/admin/categories";
+		}
+
+		Category category = categoryOpt.get();
+		String categoryName = category.getCategoryName();
+
+		// ✅ Validate categoryName
+		if (categoryName == null || categoryName.trim().isEmpty()) {
+			redirectAttributes.addFlashAttribute("error", "Tên thể loại không được để trống!");
+			return "redirect:/admin/categories";
+		}
+
+		if (categoryName.length() > 50) {
+			redirectAttributes.addFlashAttribute("error", "Tên thể loại không được quá 50 ký tự!");
+			return "redirect:/admin/categories";
+		}
+
+		if (!categoryName.matches("^[\\p{L}0-9 ]+$")) {
+			redirectAttributes.addFlashAttribute("error", "Tên thể loại chỉ được chứa chữ cái, số và khoảng trắng!");
+			return "redirect:/admin/categories";
+		}
+
+		// ✅ Nếu hợp lệ thì cho edit
 		model.addAttribute("category", category);
-
 		return "admin/editCategory";
 	}
 
-	// delete category
+
 	@GetMapping("/delete/{id}")
-	public String delCategory(@PathVariable("id") Long id, Model model) {
-		categoryRepository.deleteById(id);
-
-		model.addAttribute("message", "Delete successful!");
-
+	public String delCategory(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
+		try {
+			categoryRepository.deleteById(id);
+			redirectAttributes.addFlashAttribute("message", "Xóa thành công!");
+		} catch (Exception e) {
+			// Bắt lỗi khi đang có sản phẩm liên kết
+			redirectAttributes.addFlashAttribute("error", "Không thể xóa: Thể loại đang có sản phẩm đi kèm!");
+		}
 		return "redirect:/admin/categories";
 	}
+
 }

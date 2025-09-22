@@ -33,56 +33,54 @@ public class ProductDetailController extends CommomController{
 
 	@Autowired
 	CommentRepository commentRepository;
+	@Autowired
+	FavoriteRepository favoriteRepository;
 
-    @Autowired
-    FavoriteRepository favoriteRepository;
+	@GetMapping("productDetail")
+	public String productDetail(@RequestParam("id") Long id,
+								Model model,
+								User user,
+								Principal principal) {
 
-    @GetMapping("productDetail")
-    public String productDetail(@RequestParam("id") Long id,
-                                Model model,
-                                User user,
-                                Principal principal) {
+		// 🔹 Lấy sản phẩm theo id
+		Product product = productRepository.findById(id).orElse(null);
+		if (product == null) {
+			return "redirect:/"; // hoặc trang 404 nếu muốn
+		}
 
-        // 🔹 Lấy sản phẩm theo id
-        Product product = productRepository.findById(id).orElse(null);
-        if (product == null) {
-            return "redirect:/"; // hoặc trang 404 nếu muốn
-        }
+		// 🔹 Lấy bình luận của sản phẩm
+		List<Comment> comments = commentRepository.findByProductId(product.getProductId());
+		model.addAttribute("product", product);
+		model.addAttribute("comments", comments);
 
-        // 🔹 Lấy bình luận của sản phẩm
-        List<Comment> comments = commentRepository.findByProductId(product.getProductId());
-        model.addAttribute("product", product);
-        model.addAttribute("comments", comments);
+		// 🔹 Dữ liệu chung (header, category,...)
+		commomDataService.commonData(model, user);
+		listProductByCategory10(model, product.getCategory().getCategoryId());
 
-        // 🔹 Dữ liệu chung (header, category,...)
-        commomDataService.commonData(model, user);
-        listProductByCategory10(model, product.getCategory().getCategoryId());
+		// 🔹 Nếu đã đăng nhập
+		if (principal != null) {
+			User currentUser = userRepository.findByEmail(principal.getName());
+			if (currentUser != null) {
+				model.addAttribute("currentUser", currentUser);
 
-        // 🔹 Nếu đã đăng nhập
-        if (principal != null) {
-            User currentUser = userRepository.findByEmail(principal.getName());
-            if (currentUser != null) {
-                model.addAttribute("currentUser", currentUser);
+				// Kiểm tra đã yêu thích chưa
+				boolean isFavorite = favoriteRepository.existsByUser_UserIdAndProduct_ProductId(
+						currentUser.getUserId(),
+						product.getProductId()
+				);
+				model.addAttribute("isFavorite", isFavorite);
+			} else {
+				model.addAttribute("isFavorite", false);
+			}
+		} else {
+			model.addAttribute("isFavorite", false);
+		}
 
-                // Kiểm tra đã yêu thích chưa
-                boolean isFavorite = favoriteRepository.existsByUser_UserIdAndProduct_ProductId(
-                        currentUser.getUserId(),
-                        product.getProductId()
-                );
-                model.addAttribute("isFavorite", isFavorite);
-            } else {
-                model.addAttribute("isFavorite", false);
-            }
-        } else {
-            model.addAttribute("isFavorite", false);
-        }
-
-        return "web/productDetail";
-    }
-
+		return "web/productDetail";
+	}
 
 
-    // Gợi ý top 10 sản phẩm cùng loại
+	// Gợi ý top 10 sản phẩm cùng loại
 	public void listProductByCategory10(Model model, Long categoryId) {
 		List<Product> products = productRepository.listProductByCategory10(categoryId);
 		model.addAttribute("productByCategory", products);

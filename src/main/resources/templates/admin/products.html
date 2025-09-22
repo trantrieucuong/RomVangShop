@@ -82,6 +82,27 @@
 									</form>
 								</div>
 							</div>
+<!--							<div th:if="${success}" id="successAlert"-->
+<!--								 class="alert alert-success alert-dismissible fade show" role="alert">-->
+<!--								<span th:text="${success}"></span>-->
+<!--								<button type="button" class="close" data-dismiss="alert" aria-label="Close">-->
+<!--									<span aria-hidden="true">&times;</span>-->
+<!--								</button>-->
+<!--							</div>-->
+
+<!--							<div th:if="${error}" id="errorAlert"-->
+<!--								 class="alert alert-danger alert-dismissible fade show" role="alert">-->
+<!--								<span th:text="${error}"></span>-->
+<!--								<button type="button" class="close" data-dismiss="alert" aria-label="Close">-->
+<!--									<span aria-hidden="true">&times;</span>-->
+<!--								</button>-->
+<!--							</div>-->
+							<div th:if="${error}" id="errorAlert" class="d-none">
+								<span th:text="${error}"></span>
+							</div>
+							<div th:if="${message}" id="successAlert" class="d-none">
+								<span th:text="${message}"></span>
+							</div>
 							<div class="card-body">
 								<!-- Modal -->
 								<div class="modal fade" id="addRowModal" tabindex="-1" role="dialog" aria-hidden="true">
@@ -145,19 +166,11 @@
 															</div>
 														</div>
 														<div class="col-sm-12">
-                                                            <div class="form-group form-group-default">
-                                                                <label>Mô tả sản phẩm</label>
-                                                                <textarea th:field="*{description}"
-                                                                          id="description"
-                                                                          class="form-control"
-                                                                          placeholder="Mô tả sản phẩm"
-                                                                          maxlength="255"></textarea>
-
-                                                                <!-- Dòng đếm ký tự -->
-                                                                <small id="description-count" class="text-muted d-block text-end">0 / 255 ký tự</small>
-                                                            </div>
-
-                                                        </div>
+															<div class="form-group form-group-default">
+																<label>Mô tả sản phẩm</label>
+																<textarea th:field="*{description}" id="description" class="form-control" placeholder="Mô tả sản phẩm"></textarea>
+															</div>
+														</div>
 													</div>
 													<div class="modal-footer no-bd">
 														<button type="submit" id="" class="btn btn-primary">Thêm mới</button>
@@ -168,6 +181,8 @@
 										</div>
 									</div>
 								</div>
+<!--								<div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>-->
+<!--								<div th:if="${message}" class="alert alert-success" th:text="${message}"></div>-->
 
 								<div class="table-responsive">
 									<table id="add-row" class="display table table-striped table-hover" >
@@ -200,13 +215,8 @@
 											<td>
 												<img th:src="@{'/loadImage?imageName='+${item.productImage}}" width="80" />
 											</td>
-                                            <td
-                                                    title="[[${item.productName}]]"
-                                                    style="max-width:200px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:inline-block; vertical-align:middle;">
-                                                [[${item.productName}]]
-                                            </td>
-
-                                            <td>[[${item.category.categoryName}]]</td>
+											<td>[[${item.productName}]]</td>
+											<td>[[${item.category.categoryName}]]</td>
 											<td th:text="${#numbers.formatDecimal(item.price, 1, 'DEFAULT', 0, 'DEFAULT')}+' đ'"></td>
 											<td>[[${#numbers.formatDecimal(item.discount, 1, 'DEFAULT', 0, 'DEFAULT')}+' %']]</td>
 											<td>[[${item.quantity}]]</td>
@@ -252,7 +262,7 @@
 													</button>
 												</div>
 												<div class="modal-body">
-													<p style="color: black">Bạn muốn xóa sản phẩm này không?</p>
+													<p style="color: black">Bạn muốn ẩn sản phẩm này không?</p>
 												</div>
 												<div class="modal-footer">
 													<a id="yesOption" type="button" class="btn btn-primary">Có</a>
@@ -315,15 +325,7 @@
 	<!-- Atlantis DEMO methods, don't include it in your project! -->
 	<script src="/assets/js/setting-demo2.js"></script>
 	<script >
-        const description = document.getElementById("description");
-        const counter = document.getElementById("description-count");
-
-        description.addEventListener("input", function () {
-            const length = description.value.length;
-            counter.textContent = `${length} / 255 ký tự`;
-        });
-
-        $(document).ready(function() {
+		$(document).ready(function() {
 			$('#basic-datatables').DataTable({
 			});
 
@@ -394,17 +396,18 @@ document.addEventListener("DOMContentLoaded", function () {
 			errorMessages.push("Vui lòng chọn thể loại.");
 		}
 
-		if (price === "" || isNaN(price) || Number(price) < 0) {
-			errorMessages.push("Đơn giá phải là số > 0.");
-		}
+	if (price === "" || isNaN(price) || Number(price) <= 0) {
+    errorMessages.push("Đơn giá phải là số > 0.");
+}
 
-		if (quantity === "" || isNaN(quantity) || Number(quantity) < 0) {
-			errorMessages.push("Số lượng phải là số > 0.");
-		}
+if (quantity === "" || isNaN(quantity) || Number(quantity) <= 0) {
+    errorMessages.push("Số lượng phải là số > 0.");
+}
 
-		if (discount === "" || isNaN(discount) || Number(discount) < 0 || Number(discount) > 100) {
-			errorMessages.push("Giảm giá phải từ 0 đến 100.");
-		}
+// discount cho phép = 0 nhưng không vượt quá 100
+if (discount === "" || isNaN(discount) || Number(discount) < 0 || Number(discount) > 100) {
+    errorMessages.push("Giảm giá phải từ 0 đến 100.");
+}
 
 		if (image === "") {
 			errorMessages.push("Vui lòng chọn ảnh sản phẩm.");
@@ -412,9 +415,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 		if (description === "") {
 			errorMessages.push("Mô tả sản phẩm không được để trống.");
-		}else if (description.length > 255) {
-            errorMessages.push("Mô tả sản phẩm không được vượt quá 255 ký tự.");
-        }
+		}
 
 		if (errorMessages.length > 0) {
 			e.preventDefault();
@@ -459,7 +460,18 @@ document.addEventListener("DOMContentLoaded", function () {
   // Ví dụ test:
   // console.log(getSelectedProducts());
 
+        document.addEventListener("DOMContentLoaded", function () {
+        const successEl = document.querySelector("#successAlert span");
+        const errorEl   = document.querySelector("#errorAlert span");
 
+        if (successEl) {
+            alert(successEl.innerText);
+        }
+
+        if (errorEl) {
+            alert(errorEl.innerText);
+        }
+    });
 
 	</script>
 </body>
