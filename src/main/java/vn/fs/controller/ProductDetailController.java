@@ -82,7 +82,7 @@ public class ProductDetailController extends CommomController{
 
 	// Gợi ý top 10 sản phẩm cùng loại
 	public void listProductByCategory10(Model model, Long categoryId) {
-		List<Product> products = productRepository.listProductByCategory10(categoryId);
+		List<Product> products = productRepository.findByCategory_CategoryId(categoryId);
 		model.addAttribute("productByCategory", products);
 	}
 

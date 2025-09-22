@@ -61,7 +61,7 @@ public class ShopController extends CommomController {
 
 	public Page<Product> findPaginated(Pageable pageable) {
 
-		List<Product> productPage = productRepository.findAll();
+		List<Product> productPage = productRepository.findByStatusTrue();
 
 		int pageSize = pageable.getPageSize();
 		int currentPage = pageable.getPageNumber();

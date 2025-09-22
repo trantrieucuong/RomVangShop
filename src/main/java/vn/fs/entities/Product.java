@@ -3,15 +3,7 @@ package vn.fs.entities;
 import java.io.Serializable;
 import java.util.Date;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -37,11 +29,13 @@ public class Product implements Serializable {
 	private String description;
 	@Temporal(TemporalType.DATE)
 	private Date enteredDate;
-	private Boolean status;
-	public boolean favorite;
+    @Column(nullable = false, columnDefinition = "TINYINT(1)")
+    private Boolean status;
 
-	@ManyToOne
-	@JoinColumn(name = "categoryId")
-	private Category category;
+    public boolean favorite;
+
+    @ManyToOne
+    @JoinColumn(name = "category_id") // sửa thành category_id
+    private Category category;
 
 }
