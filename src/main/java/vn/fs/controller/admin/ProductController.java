@@ -116,7 +116,7 @@ public class ProductController{
 				e.printStackTrace(); // log lỗi
 			}
 		}
-
+product.setStatus(true);
 		product.setEnteredDate(new Date());
 
 		// Check sản phẩm trùng tên
@@ -151,7 +151,7 @@ public class ProductController{
 	@GetMapping(value = "/editProduct/{id}")
 	public String editCategory(@PathVariable("id") Long id, ModelMap model) {
 		Product product = productRepository.findById(id).orElse(null);
-		
+
 		model.addAttribute("product", product);
 
 		return "admin/editProduct";
@@ -165,43 +165,72 @@ public class ProductController{
 	public String updateProduct(@ModelAttribute("product") Product product,
 								@RequestParam("file") MultipartFile file,
 								@RequestParam("oldImageName") String oldImageName,
-								HttpServletRequest request,
-								Model model) {
+								RedirectAttributes redirectAttributes) {
 
 		try {
+			// Lấy product cũ từ DB
+			Product existingProduct = productRepository.findById(product.getProductId())
+					.orElse(null);
+
+			if (existingProduct == null) {
+				redirectAttributes.addFlashAttribute("error", "Không tìm thấy sản phẩm cần cập nhật!");
+				return "redirect:/admin/products";
+			}
+
+			// Nếu có file mới thì lưu file mới
 			if (!file.isEmpty()) {
-				// Nếu có file mới thì lưu file mới
 				String fileName = file.getOriginalFilename();
 				File uploadFile = new File(pathUploadImage + "/" + fileName);
-				FileOutputStream fos = new FileOutputStream(uploadFile);
-				fos.write(file.getBytes());
-				fos.close();
-
-				product.setProductImage(fileName); // set ảnh mới
+				try (FileOutputStream fos = new FileOutputStream(uploadFile)) {
+					fos.write(file.getBytes());
+				}
+				product.setProductImage(fileName);
 			} else {
-				// Không có ảnh mới -> giữ nguyên ảnh cũ
+				// Nếu không có ảnh mới thì giữ ảnh cũ
 				product.setProductImage(oldImageName);
 			}
 
+			// Giữ nguyên ngày thêm cũ
+			product.setEnteredDate(existingProduct.getEnteredDate());
+
+			// Lưu cập nhật
 			productRepository.save(product);
-			model.addAttribute("message", "Update success");
+
+			redirectAttributes.addFlashAttribute("success", "Cập nhật sản phẩm thành công!");
 		} catch (IOException e) {
 			e.printStackTrace();
-			model.addAttribute("message", "Update failure");
+			redirectAttributes.addFlashAttribute("error", "Có lỗi xảy ra khi cập nhật sản phẩm!");
 		}
 
 		return "redirect:/admin/products";
 	}
 
 
-	// delete category
 	@GetMapping("/deleteProduct/{id}")
-	public String delProduct(@PathVariable("id") Long id, Model model) {
-		productRepository.deleteById(id);
-		model.addAttribute("message", "Delete successful!");
+	public String toggleProductStatus(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
+		try {
+			Optional<Product> productOpt = productRepository.findById(id);
 
+			if (productOpt.isPresent()) {
+				Product product = productOpt.get();
+				// 🔄 Đảo trạng thái
+				product.setStatus(!Boolean.TRUE.equals(product.getStatus()));
+				productRepository.save(product);
+
+				String msg = product.getStatus()
+						? "Sản phẩm đã được kích hoạt trở lại."
+						: "Sản phẩm đã được ẩn thành công.";
+				redirectAttributes.addFlashAttribute("message", msg);
+			} else {
+				redirectAttributes.addFlashAttribute("error", "Không tìm thấy sản phẩm!");
+			}
+		} catch (Exception e) {
+			redirectAttributes.addFlashAttribute("error", "Có lỗi xảy ra khi cập nhật trạng thái sản phẩm!");
+		}
 		return "redirect:/admin/products";
 	}
+
+
 
 	@InitBinder
 	public void initBinder(WebDataBinder binder) {

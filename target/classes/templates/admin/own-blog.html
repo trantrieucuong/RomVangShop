@@ -19,6 +19,36 @@
     .btn {
       min-width: 120px;
     }
+    /* Bọc table trong khung scroll ngang khi màn hình hẹp */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch; /* mượt trên mobile */
+}
+
+/* Table full chiều ngang */
+.table-responsive table {
+  width: 100%;
+  min-width: 600px; /* giữ kích thước tối thiểu để không bị nát */
+  border-collapse: collapse;
+}
+
+/* Đảm bảo chữ xuống dòng khi cần */
+.table-responsive th,
+.table-responsive td {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+/* Trên màn hình nhỏ, cho phép chữ xuống dòng */
+@media (max-width: 768px) {
+  .table-responsive th,
+  .table-responsive td {
+    white-space: normal;
+  }
+}
+
   </style>
   <!-- Fonts and icons -->
   <script src="/assets/js/plugin/webfont/webfont.min.js"></script>
@@ -301,7 +331,7 @@
               <i class="flaticon-right-arrow"></i>
             </li>
             <li class="nav-item">
-              <a href="javascript:void(0);">Quản lý người dùng</a>
+              <a href="javascript:void(0);">Quản lý bài viết</a>
             </li>
           </ul>
         </div>
@@ -309,7 +339,7 @@
           <div class="card">
             <div class="card-header">
               <div class="d-flex align-items-center">
-                <h4 class="card-title" style="text-decoration: underline;">Quản lý người dùng</h4>
+                <h4 class="card-title" style="text-decoration: underline;">Bài viết của tôi</h4>
               </div>
             </div>
             <div class="card-body">
@@ -351,28 +381,31 @@
                       <div class="col-12">
                         <div class="card">
                           <div class="card-body">
-                            <table id="table-blog" class="table table-bordered table-hover table-striped">
-                              <thead class="thead-light">
-                              <tr>
-                                <th>Tiêu đề</th>
-                                <th>Trạng thái</th>
-                                <th>Ngày tạo</th>
-                              </tr>
-                              </thead>
-                              <tbody>
-                              <tr th:each="blog : ${blogList}">
-                                <td>
-                                  <a th:href="@{/admin/blogs/{id}/detail(id=${blog.blogCode})}"
-                                     th:text="${blog.title}">Tên bài viết</a>
-                                </td>
-                                <td>
-                    <span th:classappend="${blog.status} ? 'badge badge-success' : 'badge badge-secondary'"
-                          th:text="${blog.status ? 'Công khai' : 'Nháp'}">Trạng thái</span>
-                                </td>
-                                <td th:text="${#dates.format(blog.createdAt, 'dd/MM/yyyy')}">09/01/2024</td>
-                              </tr>
-                              </tbody>
-                            </table>
+                            <!-- Bọc table trong .table-responsive -->
+                            <div class="table-responsive">
+                              <table id="table-blog" class="table table-bordered table-hover table-striped">
+                                <thead class="thead-light">
+                                <tr>
+                                  <th>Tiêu đề</th>
+                                  <th>Trạng thái</th>
+                                  <th>Ngày tạo</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="blog : ${blogList}">
+                                  <td>
+                                    <a th:href="@{/admin/blogs/{id}/detail(id=${blog.blogCode})}"
+                                       th:text="${blog.title}">Tên bài viết</a>
+                                  </td>
+                                  <td>
+                  <span th:classappend="${blog.status} ? 'badge badge-success' : 'badge badge-secondary'"
+                        th:text="${blog.status ? 'Công khai' : 'Nháp'}">Trạng thái</span>
+                                  </td>
+                                  <td th:text="${#dates.format(blog.createdAt, 'dd/MM/yyyy')}">09/01/2024</td>
+                                </tr>
+                                </tbody>
+                              </table>
+                            </div>
                           </div>
                         </div>
                       </div>

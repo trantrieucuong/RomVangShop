@@ -60,7 +60,7 @@
               <i class="flaticon-right-arrow"></i>
             </li>
             <li class="nav-item">
-              <a href="javascript:void(0);">Quản lý người dùng</a>
+              <a href="javascript:void(0);">Bán hàng</a>
             </li>
           </ul>
         </div>
@@ -68,7 +68,7 @@
           <div class="card">
             <div class="card-header">
               <div class="d-flex align-items-center">
-                <h4 class="card-title" style="text-decoration: underline;">Quản lý người dùng</h4>
+                <h4 class="card-title" style="text-decoration: underline;">Hóa đơn </h4>
               </div>
             </div>
             <div class="card-body">
@@ -82,7 +82,7 @@
                 </div>
                 <p><b>Mã đơn hàng:</b> DH [[${order.orderId}]]</p>
                 <p><b>Khách hàng:</b> [[${order.note != null ? order.note : 'Khách lẻ'}]]</p>
-                <p><b>Ngày:</b> [[${#dates.format(order.orderDate, 'dd/MM/yyyy HH:mm')}]]</p>
+                <p><b>Ngày:</b> [[${#dates.format(order.orderDate, 'dd/MM/yyyy')}]]</p>
 
                 <table class="table table-bordered">
                   <thead>

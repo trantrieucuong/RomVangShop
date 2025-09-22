@@ -26,23 +26,34 @@
 	<!-- CSS Just for demo purpose, don't include it in your project -->
 	<link rel="stylesheet" href="/assets/css/demo.css">
     <link rel="stylesheet" href="css/main.css" />
-    
-    <style type="text/css">
-    .product-add1 {
-		  font-size: 15px;
-		  padding: 8px 10px;
-		  border-radius: 6px;
-		  text-align: center;
-		  background-color: #1572e8;
-    }
-    
-     .product-add1 a {
-     	  padding: 5px 15px;
-		  text-align: center;
-		  color: white;
-		  text-decoration: none;
-    }
-    </style>
+	<style>
+
+
+	/* Tránh cắt bảng, tránh khối trắng */
+	.exporting table,
+	.exporting tr,
+	.exporting td,
+	.exporting th {
+	page-break-inside: avoid !important;
+	}
+	.exporting {
+	background: white; /* đảm bảo nền trắng, không bị khối khác đè */
+	}
+	.product-add1 {
+	font-size: 15px;
+	padding: 8px 10px;
+	border-radius: 6px;
+	text-align: center;
+	background-color: #1572e8;
+	}
+
+	.product-add1 a {
+	padding: 5px 15px;
+	text-align: center;
+	color: white;
+	text-decoration: none;
+	}
+	</style>
 </head>
 <body>
 	<div class="wrapper">
@@ -142,20 +153,7 @@
 									th:if="${message}" th:text="${message}">
 								</div>
                             <div class="card-body">
-                            <form id="searchForm" method="get" action="#" class="d-flex align-items-center" style="gap: 5px;">
-                                <label for="orderIdSearch" class="mb-0">Tìm mã đơn:</label>
-                                <input type="text" id="orderIdSearch" name="orderId"
-                                       th:value="${searchOrderId}"
-                                       placeholder="Nhập mã đơn hàng"
-                                       class="form-control form-control-sm"
-                                       style="width: 150px;">
-                                <input type="hidden" name="month" th:value="${selectedMonth}" />
-                                <input type="hidden" name="orderStatus" th:value="${selectedStatus}" />
-
-                                <!-- Nút tìm kiếm -->
-                                <button type="submit" class="btn btn-sm btn-primary">Tìm kiếm</button>
-                            </form>
-
+                           
                             <script>
                                 // Cho phép ấn Enter trong ô input cũng submit form
                                 const searchInput = document.getElementById('orderIdSearch');
@@ -185,22 +183,11 @@
 												<th>Địa chỉ</th>
 												<th>Tổng tiền</th>
 												<th>Chi tiết đơn hàng</th>
+												<th>Xuất PDF</th>
 												<th style="width: 10%">Hành động</th>
 											</tr>
 										</thead>
-										<tfoot>
-											<tr>
-												<th>Mã đơn hàng</th>
-												<th>Tên khách hàng</th>
-												<th>Số ĐT</th>
-												<th>Ngày đặt hàng</th>
-												<th>Địa chỉ</th>
-												<th>Tổng tiền</th>
-												<th>Chi tiết đơn hàng</th>
 
-												<th style="width: 10%">Hành động</th>
-											</tr>
-										</tfoot>
 										<tbody>
 											<tr th:each="item : ${orderDetails}">
 												<td>[[${item.orderId}]]</td>
@@ -214,11 +201,13 @@
 														<i class="fa fa-info-circle"> Chi tiết đơn hàng</i>
 													</a>
 												</td>
-<!--												<td>-->
-<!--													<button onclick="exportInvoiceToPDF()"-->
-<!--															style="padding: 6px 12px; background: #22c55e; color: white; border-radius: 4px;">📄 Tải PDF-->
-<!--													</button>-->
-<!--												</td>-->
+												<td>
+													<button th:onclick="|exportInvoiceToPDF('${item.orderId}')|"
+															style="padding:6px 12px; background:#22c55e; color:white; border-radius:4px;">
+														📄 Tải PDF
+													</button>
+
+												</td>
 
 												<td class="text-center">
 
@@ -295,6 +284,42 @@
 										</div>
 									</div>
 
+									<div th:each="item : ${orderDetails}"
+										 th:id="'invoiceToPrint-' + ${item.orderId}"
+										 style="display:none;">
+
+										<div style="text-align:center; margin-bottom:10px;">
+											<img src="/images/logo1.jpg" alt="Logo" style="height:60px; object-fit:contain;">
+											<h2 style="margin:5px 0; font-size:18px;">HÓA ĐƠN BÁN HÀNG</h2>
+											<p style="font-size:12px;">Cửa hàng Rơm Vàng - Xin cảm ơn quý khách!</p>
+										</div>
+
+										<p><b>Mã đơn hàng:</b> [[${item.orderId}]]</p>
+										<p><b>Khách hàng:</b> [[${item.user.name != null ? item.user.name : 'Khách lẻ'}]]</p>
+										<p><b>Ngày:</b> [[${#dates.format(item.orderDate, 'dd/MM/yyyy')}]]</p>
+
+										<table class="table table-bordered">
+											<thead>
+											<tr>
+												<th>Sản phẩm</th>
+												<th>SL</th>
+												<th>Giá</th>
+												<th>Thành tiền</th>
+											</tr>
+											</thead>
+											<tbody>
+											<tr th:each="detail : ${item.orderDetails}">
+												<td>[[${detail.product.productName}]]</td>
+												<td>[[${detail.quantity}]]</td>
+												<td>[[${#numbers.formatDecimal(detail.price, 0, 'DEFAULT', 0, 'DEFAULT')}]] đ</td>
+												<td>[[${#numbers.formatDecimal(detail.price * detail.quantity, 0, 'DEFAULT', 0, 'DEFAULT')}]] đ</td>
+											</tr>
+											</tbody>
+										</table>
+
+										<p><b>Tổng tiền:</b> [[${#numbers.formatDecimal(item.amount, 0, 'DEFAULT', 0, 'DEFAULT')}]] đ</p>
+										<p>Cảm ơn quý khách!</p>
+									</div>
 
 
 									<!-- Duyệt huỷ đơn -->
@@ -450,77 +475,7 @@
 		</footer>
 	</div>
 		
-		<!-- Custom template | don't include it in your project! -->
-		<!-- <div class="custom-template">
-			<div class="title">Settings</div>
-			<div class="custom-content">
-				<div class="switcher">
-					<div class="switch-block">
-						<h4>Logo Header</h4>
-						<div class="btnSwitch">
-							<button type="button" class="changeLogoHeaderColor" data-color="dark"></button>
-							<button type="button" class="selected changeLogoHeaderColor" data-color="blue"></button>
-							<button type="button" class="changeLogoHeaderColor" data-color="purple"></button>
-							<button type="button" class="changeLogoHeaderColor" data-color="light-blue"></button>
-							<button type="button" class="changeLogoHeaderColor" data-color="green"></button>
-							<button type="button" class="changeLogoHeaderColor" data-color="orange"></button>
-							<button type="button" class="changeLogoHeaderColor" data-color="red"></button>
-							<button type="button" class="changeLogoHeaderColor" data-color="white"></button>
-							<br/>
-							<button type="button" class="changeLogoHeaderColor" data-color="dark2"></button>
-							<button type="button" class="changeLogoHeaderColor" data-color="blue2"></button>
-							<button type="button" class="changeLogoHeaderColor" data-color="purple2"></button>
-							<button type="button" class="changeLogoHeaderColor" data-color="light-blue2"></button>
-							<button type="button" class="changeLogoHeaderColor" data-color="green2"></button>
-							<button type="button" class="changeLogoHeaderColor" data-color="orange2"></button>
-							<button type="button" class="changeLogoHeaderColor" data-color="red2"></button>
-						</div>
-					</div>
-					<div class="switch-block">
-						<h4>Navbar Header</h4>
-						<div class="btnSwitch">
-							<button type="button" class="changeTopBarColor" data-color="dark"></button>
-							<button type="button" class="changeTopBarColor" data-color="blue"></button>
-							<button type="button" class="changeTopBarColor" data-color="purple"></button>
-							<button type="button" class="changeTopBarColor" data-color="light-blue"></button>
-							<button type="button" class="changeTopBarColor" data-color="green"></button>
-							<button type="button" class="changeTopBarColor" data-color="orange"></button>
-							<button type="button" class="changeTopBarColor" data-color="red"></button>
-							<button type="button" class="changeTopBarColor" data-color="white"></button>
-							<br/>
-							<button type="button" class="changeTopBarColor" data-color="dark2"></button>
-							<button type="button" class="selected changeTopBarColor" data-color="blue2"></button>
-							<button type="button" class="changeTopBarColor" data-color="purple2"></button>
-							<button type="button" class="changeTopBarColor" data-color="light-blue2"></button>
-							<button type="button" class="changeTopBarColor" data-color="green2"></button>
-							<button type="button" class="changeTopBarColor" data-color="orange2"></button>
-							<button type="button" class="changeTopBarColor" data-color="red2"></button>
-						</div>
-					</div>
-					<div class="switch-block">
-						<h4>Sidebar</h4>
-						<div class="btnSwitch">
-							<button type="button" class="selected changeSideBarColor" data-color="white"></button>
-							<button type="button" class="changeSideBarColor" data-color="dark"></button>
-							<button type="button" class="changeSideBarColor" data-color="dark2"></button>
-						</div>
-					</div>
-					<div class="switch-block">
-						<h4>Background</h4>
-						<div class="btnSwitch">
-							<button type="button" class="changeBackgroundColor" data-color="bg2"></button>
-							<button type="button" class="changeBackgroundColor selected" data-color="bg1"></button>
-							<button type="button" class="changeBackgroundColor" data-color="bg3"></button>
-							<button type="button" class="changeBackgroundColor" data-color="dark"></button>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="custom-toggle">
-				<i class="flaticon-settings"></i>
-			</div>
-		</div> -->
-		<!-- End Custom template -->
+
 	</div>
 	<!--   Core JS Files   -->
 	<script src="/assets/js/core/jquery.3.2.1.min.js"></script>
@@ -587,41 +542,45 @@
 
 			});
 		});
+function exportInvoiceToPDF(orderId) {
+    const invoice = document.getElementById("invoiceToPrint-" + orderId);
 
-
-function exportInvoiceToPDF() {
-    const invoice = document.getElementById("invoiceToPrint");
-    const modal = document.getElementById("invoiceModal-IV");
-    const footer = document.getElementById("invoiceFooter");
-
-    const wasHidden = modal.style.display === "none" || getComputedStyle(modal).display === "none";
-
-    if (wasHidden) {
-        modal.style.display = "flex";
-        modal.style.visibility = "hidden";
+    if (!invoice) {
+        alert("Không tìm thấy hóa đơn cho đơn hàng " + orderId);
+        return;
     }
 
-    // Ẩn footer tạm thời để không in
-    if (footer) footer.style.display = "none";
+    const prevDisplay = invoice.style.display;
 
-    setTimeout(() => {
-        html2pdf().set({
-            margin: 5,
-            filename: 'hoa-don.pdf',
-            image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2 },
-            jsPDF: { unit: 'mm', format: 'a5', orientation: 'portrait' }
-        }).from(invoice).save().then(() => {
-            // Hiện lại footer
-            if (footer) footer.style.display = "flex";
+    // Hiện tạm để render
+    invoice.style.display = "block";
 
-            if (wasHidden) {
-                modal.style.display = "none";
-                modal.style.visibility = "visible";
-            }
-        });
-    }, 200);
+    // CSS tạm để tránh lỗi ngắt trang
+    invoice.classList.add("exporting");
+
+    const opt = {
+        margin: [5, 10, 5, 10], // top, left, bottom, right
+        filename: 'hoa-don-' + orderId + '.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: {
+            scale: 2,
+            useCORS: true,
+            scrollY: 0   // tránh bị lệch vị trí
+        },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+        pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+    };
+
+    html2pdf().set(opt).from(invoice).save().then(() => {
+        // Restore
+        invoice.style.display = prevDisplay;
+        invoice.classList.remove("exporting");
+    });
 }
+
+
+
+
 
 	</script>
 </body>

@@ -27,6 +27,96 @@
         .form-control.is-invalid {
             border-color: #dc3545;
         }
+        /* Đảm bảo khung container co giãn */
+.container {
+  max-width: 100%;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+/* Form co giãn theo chiều ngang */
+.card {
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+/* Input và textarea full chiều ngang */
+.form-group input,
+.form-group textarea,
+.form-group select {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Nhãn và input canh đẹp */
+.form-group label {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+/* Responsive: trên màn hình nhỏ thì cách nhau rõ ràng */
+@media (max-width: 768px) {
+  .breadcrumb {
+    flex-wrap: wrap; /* breadcrumb tự xuống dòng */
+    font-size: 14px;
+  }
+
+  .btn {
+    margin-bottom: 0.5rem; /* tránh dính nhau */
+  }
+
+  .form-group {
+    margin-bottom: 1.25rem;
+  }
+}
+
+/* Responsive: trên màn hình rất nhỏ */
+@media (max-width: 480px) {
+  .breadcrumb {
+    font-size: 12px;
+  }
+
+  .btn {
+    width: 100%; /* nút full chiều ngang */
+  }
+}
+/* Đảm bảo editor co giãn theo khung */
+#content {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Nếu editor có toolbar bên trên */
+.ql-toolbar,
+.tox-toolbar,
+.editor-toolbar {
+  display: flex;
+  flex-wrap: wrap; /* Cho phép xuống dòng khi chật */
+  gap: 4px;
+  overflow-x: auto; /* Cho phép cuộn ngang nếu nhiều nút quá */
+}
+
+/* Các nút trong toolbar co lại cho đều */
+.ql-toolbar button,
+.tox-toolbar button,
+.editor-toolbar button {
+  flex: 0 0 auto;
+}
+
+/* Phần nội dung editor */
+.ql-container,
+.tox-edit-area,
+.editor-content {
+  min-height: 200px;
+  max-width: 100%;
+  overflow-wrap: break-word; /* Xuống dòng khi chữ dài */
+  word-break: break-word;
+}
+
+
     </style>
     <style>
     body {
@@ -323,7 +413,7 @@
                             <i class="flaticon-right-arrow"></i>
                         </li>
                         <li class="nav-item">
-                            <a href="javascript:void(0);">Quản lý người dùng</a>
+                            <a href="javascript:void(0);">Quản lý bài viết</a>
                         </li>
                     </ul>
                 </div>
@@ -331,7 +421,7 @@
                     <div class="card">
                         <div class="card-header">
                             <div class="d-flex align-items-center">
-                                <h4 class="card-title" style="text-decoration: underline;">Quản lý người dùng</h4>
+                                <h4 class="card-title" style="text-decoration: underline;">Quản lý bài viết</h4>
                             </div>
                         </div>
                         <div class="card-body">
@@ -347,8 +437,10 @@
                                 </nav>
 
                                 <!-- Action Buttons -->
-                                <div class="mb-3">
-                                    <a href="/admin/blogs/own-blogs" class="btn btn-secondary"><i class="fas fa-chevron-left"></i> Quay lại</a>
+                                <div class="mb-3 d-flex flex-wrap gap-2">
+                                    <a href="/admin/blogs" class="btn btn-secondary">
+                                        <i class="fas fa-chevron-left"></i> Quay lại
+                                    </a>
                                     <button type="button" class="btn btn-primary" id="btn-create">Lưu</button>
                                 </div>
 

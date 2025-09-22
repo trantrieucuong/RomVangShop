@@ -44,19 +44,179 @@
     <!-- End Header -->
 
     <!-- Navbar -->
+<!--    <div class="sidebar sidebar-style-2" th:fragment="navbar">-->
+<!--        <div class="sidebar-wrapper scrollbar scrollbar-inner">-->
+<!--            <div class="sidebar-content">-->
+<!--&lt;!&ndash;                <div class="user">&ndash;&gt;-->
+<!--&lt;!&ndash;                    <div class="avatar-sm float-left mr-2">&ndash;&gt;-->
+<!--&lt;!&ndash;                        <img src="/assets/img/06.jpg" alt="..." class="avatar-img rounded-circle">&ndash;&gt;-->
+<!--&lt;!&ndash;                    </div>&ndash;&gt;-->
+<!--&lt;!&ndash;                    <div class="info">&ndash;&gt;-->
+<!--&lt;!&ndash;                        <a data-toggle="collapse" href="#collapseExample" aria-expanded="true">&ndash;&gt;-->
+<!--&lt;!&ndash;							<span>&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;/* Tên : [[${user.name}]] */&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;								<span class="user-level">Saler</span>&ndash;&gt;-->
+<!--&lt;!&ndash;							</span>&ndash;&gt;-->
+<!--&lt;!&ndash;                        </a>&ndash;&gt;-->
+<!--&lt;!&ndash;                        <div class="clearfix"></div>&ndash;&gt;-->
+<!--&lt;!&ndash;                    </div>&ndash;&gt;-->
+<!--&lt;!&ndash;                </div>&ndash;&gt;-->
+<!--&lt;!&ndash;                <ul class="nav nav-primary">&ndash;&gt;-->
+<!--&lt;!&ndash;                    &lt;!&ndash; 					<li class="nav-item active" > &ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;                    &lt;!&ndash; 						<a data-toggle="collapse" href="#dashboard" class="collapsed" style="background-color:#42964a" aria-expanded="false"> &ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;                    &lt;!&ndash; 							<i class="fas fa-home"></i> &ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;                    &lt;!&ndash; 							<p >Trang chủ</p> &ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;                    &lt;!&ndash; 							<span class="caret"></span> &ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;                    &lt;!&ndash; 						</a> &ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;                    &lt;!&ndash; 						<div class="collapse" id="dashboard"> &ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;                    &lt;!&ndash; 							<ul class="nav nav-collapse"> &ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;                    &lt;!&ndash; 								<li > &ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;                    &lt;!&ndash; 									<a th:href="@{/admin/home}"> &ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;                    &lt;!&ndash; 										<span class="sub-item">Trang chủ</span> &ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;                    &lt;!&ndash; 									</a> &ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;                    &lt;!&ndash; 								</li> &ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;                    &lt;!&ndash; 							</ul> &ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;                    &lt;!&ndash; 		    				</div> &ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;                    &lt;!&ndash; 					</li> &ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;                    <li class="nav-section">&ndash;&gt;-->
+<!--&lt;!&ndash;						<span class="sidebar-mini-icon">&ndash;&gt;-->
+<!--&lt;!&ndash;							<i class="fa fa-ellipsis-h"></i>&ndash;&gt;-->
+<!--&lt;!&ndash;						</span>&ndash;&gt;-->
+<!--&lt;!&ndash;                        <h4 class="text-section">Các thành phần</h4>&ndash;&gt;-->
+<!--&lt;!&ndash;                    </li>&ndash;&gt;-->
+<!--&lt;!&ndash;                    <li class="nav-item">&ndash;&gt;-->
+<!--&lt;!&ndash;                        <a data-toggle="collapse" href="#tables">&ndash;&gt;-->
+<!--&lt;!&ndash;                            <i class="fas fa-table"></i>&ndash;&gt;-->
+<!--&lt;!&ndash;                            <p>Hệ Thống Quản Lý</p>&ndash;&gt;-->
+<!--&lt;!&ndash;                            <span class="caret"></span>&ndash;&gt;-->
+<!--&lt;!&ndash;                        </a>&ndash;&gt;-->
+<!--&lt;!&ndash;                        <div class="collapse" id="tables">&ndash;&gt;-->
+<!--&lt;!&ndash;                            <ul class="nav nav-collapse">&ndash;&gt;-->
+<!--&lt;!&ndash;                                <li>&ndash;&gt;-->
+<!--&lt;!&ndash;                                    <a th:href="@{/admin/categories}">&ndash;&gt;-->
+<!--&lt;!&ndash;                                        <span class="sub-item">Quản Lý Thể Loại</span>&ndash;&gt;-->
+<!--&lt;!&ndash;                                    </a>&ndash;&gt;-->
+<!--&lt;!&ndash;                                </li>&ndash;&gt;-->
+<!--&lt;!&ndash;                                <li>&ndash;&gt;-->
+<!--&lt;!&ndash;                                    <a th:href="@{/admin/products}">&ndash;&gt;-->
+<!--&lt;!&ndash;                                        <span class="sub-item">Quản Lý Sản Phẩm</span>&ndash;&gt;-->
+<!--&lt;!&ndash;                                    </a>&ndash;&gt;-->
+<!--&lt;!&ndash;                                </li>&ndash;&gt;-->
+<!--&lt;!&ndash;                                <li>&ndash;&gt;-->
+<!--&lt;!&ndash;                                    <a th:href="@{/admin/orders}">&ndash;&gt;-->
+<!--&lt;!&ndash;                                        <span class="sub-item">Quản Lý Đơn Hàng</span>&ndash;&gt;-->
+<!--&lt;!&ndash;                                    </a>&ndash;&gt;-->
+<!--&lt;!&ndash;                                </li>&ndash;&gt;-->
+<!--&lt;!&ndash;                                <li>&ndash;&gt;-->
+<!--&lt;!&ndash;                                    <a th:href="@{/admin/users}">&ndash;&gt;-->
+<!--&lt;!&ndash;                                        <span class="sub-item">Quản Lý Tài Khoản</span>&ndash;&gt;-->
+<!--&lt;!&ndash;                                    </a>&ndash;&gt;-->
+<!--&lt;!&ndash;                                </li>&ndash;&gt;-->
+<!--&lt;!&ndash;                                <li>&ndash;&gt;-->
+<!--&lt;!&ndash;                                    <a th:href="@{/admin/nhanvien}">&ndash;&gt;-->
+<!--&lt;!&ndash;                                        <span class="sub-item">Quản Lý Nhân Viên</span>&ndash;&gt;-->
+<!--&lt;!&ndash;                                    </a>&ndash;&gt;-->
+<!--&lt;!&ndash;                                </li>&ndash;&gt;-->
+<!--&lt;!&ndash;                            </ul>&ndash;&gt;-->
+<!--&lt;!&ndash;                        </div>&ndash;&gt;-->
+<!--&lt;!&ndash;                    </li>&ndash;&gt;-->
+<!--&lt;!&ndash;                    <li class="nav-item"&ndash;&gt;-->
+<!--&lt;!&ndash;                        th:classappend="${#httpServletRequest.requestURI.startsWith('/admin/blogs') ? 'active submenu' : ''}">&ndash;&gt;-->
+<!--&lt;!&ndash;                        <a data-toggle="collapse" href="#blogMenu"&ndash;&gt;-->
+<!--&lt;!&ndash;                           th:attr="aria-expanded=${#httpServletRequest.requestURI.startsWith('/admin/blogs')}"&ndash;&gt;-->
+<!--&lt;!&ndash;                           class="nav-link">&ndash;&gt;-->
+<!--&lt;!&ndash;                            <i class="nav-icon fas fa-recycle"></i>&ndash;&gt;-->
+<!--&lt;!&ndash;                            <p>Bài viết</p>&ndash;&gt;-->
+<!--&lt;!&ndash;                            <span class="caret"></span>&ndash;&gt;-->
+<!--&lt;!&ndash;                        </a>&ndash;&gt;-->
+<!--&lt;!&ndash;                        <div class="collapse"&ndash;&gt;-->
+<!--&lt;!&ndash;                             id="blogMenu"&ndash;&gt;-->
+<!--&lt;!&ndash;                             th:classappend="${#httpServletRequest.requestURI.startsWith('/admin/blogs') ? ' show' : ''}">&ndash;&gt;-->
+<!--&lt;!&ndash;                            <ul class="nav nav-collapse">&ndash;&gt;-->
+<!--&lt;!&ndash;                                <li>&ndash;&gt;-->
+<!--&lt;!&ndash;                                    <a th:href="@{/admin/blogs}"&ndash;&gt;-->
+<!--&lt;!&ndash;                                       th:classappend="${#httpServletRequest.requestURI == '/admin/blogs' ? 'active' : ''}">&ndash;&gt;-->
+<!--&lt;!&ndash;                                        <span class="sub-item">Tất cả bài viết</span>&ndash;&gt;-->
+<!--&lt;!&ndash;                                    </a>&ndash;&gt;-->
+<!--&lt;!&ndash;                                </li>&ndash;&gt;-->
+<!--&lt;!&ndash;                                <li>&ndash;&gt;-->
+<!--&lt;!&ndash;                                    <a th:href="@{/admin/blogs/own-blogs}"&ndash;&gt;-->
+<!--&lt;!&ndash;                                       th:classappend="${#httpServletRequest.requestURI == '/admin/blogs/own-blogs' ? 'active' : ''}">&ndash;&gt;-->
+<!--&lt;!&ndash;                                        <span class="sub-item">Bài viết của tôi</span>&ndash;&gt;-->
+<!--&lt;!&ndash;                                    </a>&ndash;&gt;-->
+<!--&lt;!&ndash;                                </li>&ndash;&gt;-->
+<!--&lt;!&ndash;                                <li>&ndash;&gt;-->
+<!--&lt;!&ndash;                                    <a th:href="@{/admin/blogs/create}"&ndash;&gt;-->
+<!--&lt;!&ndash;                                       th:classappend="${#httpServletRequest.requestURI == '/admin/blogs/create' ? 'active' : ''}">&ndash;&gt;-->
+<!--&lt;!&ndash;                                        <span class="sub-item">Tạo bài viết</span>&ndash;&gt;-->
+<!--&lt;!&ndash;                                    </a>&ndash;&gt;-->
+<!--&lt;!&ndash;                                </li>&ndash;&gt;-->
+<!--&lt;!&ndash;                            </ul>&ndash;&gt;-->
+<!--&lt;!&ndash;                        </div>&ndash;&gt;-->
+<!--&lt;!&ndash;                    </li>&ndash;&gt;-->
 
-    <th:block th:replace="~{admin/fragments/navbar :: navbar}"></th:block>
+
+
+<!--&lt;!&ndash;                    <li class="nav-item">&ndash;&gt;-->
+<!--&lt;!&ndash;                        <a data-toggle="collapse" href="#charts">&ndash;&gt;-->
+<!--&lt;!&ndash;                            <i class="far fa-chart-bar"></i>&ndash;&gt;-->
+<!--&lt;!&ndash;                            <p>Thống Kê Doanh Số</p>&ndash;&gt;-->
+<!--&lt;!&ndash;                            <span class="caret"></span>&ndash;&gt;-->
+<!--&lt;!&ndash;                        </a>&ndash;&gt;-->
+<!--&lt;!&ndash;                        <div class="collapse" id="charts">&ndash;&gt;-->
+<!--&lt;!&ndash;                            <ul class="nav nav-collapse">&ndash;&gt;-->
+<!--&lt;!&ndash;                                <li>&ndash;&gt;-->
+<!--&lt;!&ndash;                                    <a th:href="@{/admin/reports}">&ndash;&gt;-->
+<!--&lt;!&ndash;                                        <span class="sub-item">Thống Kê sản Phẩm</span>&ndash;&gt;-->
+<!--&lt;!&ndash;                                    </a>&ndash;&gt;-->
+<!--&lt;!&ndash;                                </li>&ndash;&gt;-->
+<!--&lt;!&ndash;                                <li>&ndash;&gt;-->
+<!--&lt;!&ndash;                                    <a th:href="@{/admin/reportCategory}">&ndash;&gt;-->
+<!--&lt;!&ndash;                                        <span class="sub-item">Thống kê thể loại</span>&ndash;&gt;-->
+<!--&lt;!&ndash;                                    </a>&ndash;&gt;-->
+<!--&lt;!&ndash;                                </li>&ndash;&gt;-->
+<!--&lt;!&ndash;                                <li>&ndash;&gt;-->
+<!--&lt;!&ndash;                                    <a th:href="@{/admin/reportYear}">&ndash;&gt;-->
+<!--&lt;!&ndash;                                        <span class="sub-item">Thống kê theo năm</span>&ndash;&gt;-->
+<!--&lt;!&ndash;                                    </a>&ndash;&gt;-->
+<!--&lt;!&ndash;                                </li>&ndash;&gt;-->
+<!--&lt;!&ndash;                                <li>&ndash;&gt;-->
+<!--&lt;!&ndash;                                    <a th:href="@{/admin/reportMonth}">&ndash;&gt;-->
+<!--&lt;!&ndash;                                        <span class="sub-item">Thống kê theo tháng</span>&ndash;&gt;-->
+<!--&lt;!&ndash;                                    </a>&ndash;&gt;-->
+<!--&lt;!&ndash;                                </li>&ndash;&gt;-->
+<!--&lt;!&ndash;                                <li>&ndash;&gt;-->
+<!--&lt;!&ndash;                                    <a th:href="@{/admin/reportQuarter}">&ndash;&gt;-->
+<!--&lt;!&ndash;                                        <span class="sub-item">Thống kê theo quý</span>&ndash;&gt;-->
+<!--&lt;!&ndash;                                    </a>&ndash;&gt;-->
+<!--&lt;!&ndash;                                </li>&ndash;&gt;-->
+<!--&lt;!&ndash;                                <li>&ndash;&gt;-->
+<!--&lt;!&ndash;                                    <a th:href="@{/admin/reportOrderCustomer}">&ndash;&gt;-->
+<!--&lt;!&ndash;                                        <span class="sub-item">Thống kê theo khách hàng</span>&ndash;&gt;-->
+<!--&lt;!&ndash;                                    </a>&ndash;&gt;-->
+<!--&lt;!&ndash;                                </li>&ndash;&gt;-->
+<!--&lt;!&ndash;                            </ul>&ndash;&gt;-->
+<!--&lt;!&ndash;                        </div>&ndash;&gt;-->
+<!--&lt;!&ndash;                    </li>&ndash;&gt;-->
+<!--&lt;!&ndash;                </ul>&ndash;&gt;-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--    <th:block th:replace="~{admin/fragments/navbar :: navbar}"></th:block>-->
 
     <!-- End Navbar -->
 
     <section class="content-wrapper p-4">
-        <div class="pos-container flex gap-4">
+        <div class="pos-container max-w-7xl mx-auto px-3 py-4
+            flex flex-col lg:flex-row gap-4">
+
             <!-- VÙNG SẢN PHẨM -->
-            <div class="w-3/5 min-w-[65%] space-y-3">
-                <div class="flex justify-between mb-4">
+            <div class="product-area w-full lg:w-3/5 space-y-3 bg-white border border-gray-300 rounded-lg p-3">
+                <!-- Controls -->
+                <div class="flex flex-wrap gap-2 mb-4">
                     <input type="text" id="searchInput" placeholder="Tìm sản phẩm..."
-                           class="border rounded px-2 py-1 w-1/2">
-                    <select class="border rounded px-2 py-1" id="categorySelect">
+                           class="border rounded px-2 py-1 flex-1 min-w-[140px]">
+                    <select class="border rounded px-2 py-1 min-w-[140px]" id="categorySelect">
                         <option value="">Tất cả</option>
                         <option th:each="cat : ${categories}"
                                 th:value="${cat.categoryId}"
@@ -64,72 +224,71 @@
                     </select>
                 </div>
 
-                <div class="product-grid grid grid-cols-4 gap-3">
+                <!-- Grid sản phẩm -->
+                <div class="product-grid grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
                     <div th:each="product : ${products}"
-                         class="product-card border p-0.5 rounded-sm shadow-none text-[10px]"
-
+                         class="product-card border p-2 rounded shadow-sm text-xs flex flex-col justify-between text-center"
                          th:attr="data-product-code=${product.productId}">
 
                         <div class="product-image-wrapper text-center">
                             <img th:src="@{'/loadImage?imageName='+${product.productImage}}"
                                  alt="Ảnh sản phẩm"
-                                 class="product-image w-16 h-16 object-cover mx-auto">
+                                 class="product-image w-16 h-16 object-cover mx-auto rounded">
                         </div>
 
-                        <div class="product-name font-medium text-center mt-1 truncate text-[12px]"
+                        <div class="product-name font-medium truncate mt-1 text-sm"
                              th:text="${product.productName}"></div>
 
-                        <div class="product-info text-[11px] text-gray-600 text-center leading-tight">
+                        <div class="product-info text-gray-600 leading-tight text-xs">
                             <div th:text="'Giá: ' + ${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + 'đ'"></div>
                             <div>
                                 Tồn kho: <span class="product-stock" th:text="${product.quantity}"></span>
                             </div>
                         </div>
 
-                        <button class="select-btn bg-green-500 text-white px-1.5 py-1 rounded mt-1 w-full text-[11px]"
+                        <button class="select-btn bg-green-500 text-white px-2 py-1 rounded mt-1 w-full text-xs"
                                 th:attr="data-code=${product.productId}, data-name=${product.productName}, data-price=${product.price}, data-quantity=${product.quantity}">
                             Chọn
                         </button>
                     </div>
-
                 </div>
-
             </div>
 
             <!-- VÙNG ĐƠN HÀNG -->
-            <div class="pos-invoice w-[35%] min-w-[340px] flex-shrink-0 sticky top-4 self-start h-fit">
+            <div class="pos-invoice w-full lg:w-2/5 h-fit
+                bg-white border border-gray-300 rounded-lg p-3
+                sticky top-4 self-start">
                 <div class="order-header">
                     <div class="order-tabs-wrapper">
                         <div id="orderTabs" class="order-tabs"></div>
                     </div>
                     <br>
-
                 </div>
-                <button class="create-order-btn" onclick="createNewOrder()">+ Đơn Hàng</button>
 
+                <button class="create-order-btn w-full bg-blue-500 text-white py-1 rounded mb-2"
+                        onclick="createNewOrder()">+ Đơn Hàng</button>
 
-                <div id="orderContent" class="flex-1 overflow-y-auto border-t border-b py-2 space-y-2 text-sm"></div>
+                <div id="orderContent"
+                     class="flex-1 overflow-y-auto border-t border-b py-2 space-y-2 text-sm"></div>
 
                 <button onclick="clearCurrentOrder()"
-                        class="w-full mt-2 bg-red-500 text-white py-1 rounded text-sm">🗑 Clear
+                        class="w-full mt-2 bg-red-500 text-white py-1 rounded text-sm">
+                    🗑 Clear
                 </button>
 
                 <div class="mt-2">
                     <label class="text-xs text-gray-500">Khách hàng</label>
-                    <div class="input-search flex gap-2">
+                    <div class="flex gap-2">
                         <input type="text" id="phoneInput"
                                class="w-full border p-1 rounded text-sm"
                                placeholder="Nhập SĐT">
                         <button onclick="searchCustomer()"
                                 class="px-3 py-1 bg-gray-200 text-sm text-gray-700 rounded hover:bg-gray-300"
-                                title="Tìm khách hàng">
-                            🔍
-                        </button>
-
-
+                                title="Tìm khách hàng">🔍</button>
                     </div>
                     <div id="customerResult" class="mt-1 text-sm font-medium"></div>
-                    <button id="openCustomerFormBtn">+ Khách hàng mới</button>
+                    <button id="openCustomerFormBtn"
+                            class="mt-1 text-blue-500 hover:underline">+ Khách hàng mới</button>
                 </div>
 
                 <div class="mt-4 border-t pt-2 text-sm">
@@ -139,13 +298,14 @@
                     <div class="flex justify-between font-semibold text-lg mt-1">
                         <span>Tổng :</span><span id="total">0đ</span>
                     </div>
-                    <button onclick="showInvoice() " class="bg-green-500 text-white px-3 py-1 rounded">
+                    <button onclick="showInvoice()"
+                            class="bg-green-500 text-white px-3 py-1 rounded w-full">
                         Thanh toán
                     </button>
                 </div>
             </div>
-
         </div>
+
 
 
         <!-- POPUP nhập số lượng -->
@@ -231,18 +391,6 @@
         </div>
         <script>
 
-<!--document.getElementById('paymentForm').addEventListener('submit', function (e) {-->
-<!--    // Lấy tổng tiền-->
-<!--    const totalText = document.getElementById('total').innerText;-->
-<!--    const totalCleaned = totalText.replace(/[^\d]/g, '');-->
-<!--    document.getElementById('amount').value = totalCleaned;-->
-
-<!--    // Lấy mã đơn hàng từ <span>-->
-<!--    const maDonHang = document.getElementById('invCode').innerText;-->
-
-<!--    // Gán action có query param invCode-->
-<!--    this.action = '/orders/createPaymentLinkSale?invCode=' + encodeURIComponent(maDonHang);-->
-<!--});-->
 
 document.getElementById('paymentForm').addEventListener('submit', function (e) {
     // Lấy tổng tiền
@@ -595,6 +743,7 @@ async function createNewOrder() {
 }
 
 // ========================== HIỂN THỊ TAB ĐƠN HÀNG ==========================
+
 function renderOrderTabs() {
   const container = document.getElementById("orderTabs");
   container.innerHTML = "";
@@ -603,17 +752,73 @@ function renderOrderTabs() {
   const limitedOrders = orders.slice(0, 5);
 
   limitedOrders.forEach((order, index) => {
-    const btn = document.createElement("button");
-    btn.textContent = order.orderCode || `DH${index + 1}`;
-    btn.className = `text-sm px-2 py-1 border rounded ${index === selectedOrderIndex ? 'bg-yellow-400 text-black' : ''}`;
-    btn.onclick = () => {
+    // Tab bao ngoài
+    const tab = document.createElement("div");
+    tab.className = `relative inline-flex items-center px-3 py-1 mr-2 border rounded cursor-pointer
+                     ${index === selectedOrderIndex ? 'bg-yellow-400 text-black' : 'bg-white'}`;
+    tab.onclick = () => {
       selectedOrderIndex = index;
       renderOrderTabs();
       renderOrder();
     };
-    container.appendChild(btn);
+
+    // Tên đơn hàng
+    const span = document.createElement("span");
+    span.textContent = order.orderCode || `DH${index + 1}`;
+    tab.appendChild(span);
+
+    // Nút ❌ ở góc phải
+    const closeBtn = document.createElement("button");
+    closeBtn.innerHTML = "×";
+
+    // Style inline thay cho CSS
+Object.assign(closeBtn.style, {
+  position: "absolute",
+  top: "-3px",
+  right: "-7px",
+  fontSize: "16px",   // chỉnh nhỏ hoặc to tùy thích
+  color: "red",       // màu dấu ❌
+  background: "none", // bỏ nền
+  border: "none",     // bỏ viền mặc định
+  padding: "0",
+  cursor: "pointer",
+  lineHeight: "1",
+  appearance: "none"
+
+});
+
+
+
+
+
+    closeBtn.title = "Xóa đơn hàng";
+    closeBtn.onclick = (e) => {
+      e.stopPropagation(); // tránh click vào tab
+      deleteOrder(index);
+    };
+
+    tab.appendChild(closeBtn);
+    container.appendChild(tab);
   });
 }
+
+
+
+// ========================== XÓA ĐƠN HÀNG ==========================
+function deleteOrder(index) {
+  if (!confirm("Bạn có chắc muốn xóa đơn hàng này?")) return;
+
+  orders.splice(index, 1);
+
+  // Nếu xóa tab đang chọn thì chọn tab trước đó (nếu có)
+  if (selectedOrderIndex >= orders.length) {
+    selectedOrderIndex = orders.length - 1;
+  }
+
+  renderOrderTabs();
+  renderOrder();
+}
+
 
 // ========================== HIỂN THỊ GIỎ HÀNG ==========================
 function renderOrder() {

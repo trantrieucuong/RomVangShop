@@ -188,15 +188,15 @@ public OrderResponseDTO processCashPayment(OrderPaymentRequest request) {
         orderRepository.save(order);
 
         // Trừ tồn kho
-        for (OrderPaymentBankRequest.ItemDTO dto : request.getItems()) {
-            Product product = productRepository.findById(dto.getProductId())
-                    .orElseThrow(() -> new RuntimeException("Không tìm thấy sản phẩm: " + dto.getProductId()));
-            if (product.getQuantity() < dto.getQuantity()) {
-                throw new RuntimeException("Không đủ tồn kho cho sản phẩm: " + product.getProductName());
-            }
-            product.setQuantity(product.getQuantity() - dto.getQuantity());
-            productRepository.save(product);
-        }
+//        for (OrderPaymentBankRequest.ItemDTO dto : request.getItems()) {
+//            Product product = productRepository.findById(dto.getProductId())
+//                    .orElseThrow(() -> new RuntimeException("Không tìm thấy sản phẩm: " + dto.getProductId()));
+//            if (product.getQuantity() < dto.getQuantity()) {
+//                throw new RuntimeException("Không đủ tồn kho cho sản phẩm: " + product.getProductName());
+//            }
+//            product.setQuantity(product.getQuantity() - dto.getQuantity());
+//            productRepository.save(product);
+//        }
 
         // Lấy danh sách OrderDetail đã lưu
         List<OrderDetail> orderDetails = orderDetailRepository.findByOrder(order);

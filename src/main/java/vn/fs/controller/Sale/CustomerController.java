@@ -37,10 +37,46 @@ public class CustomerController {
 
     @PostMapping("/addKhachHang")
     public ResponseEntity<?> createCustomer(@RequestBody User user) {
-        // Chuẩn hóa email nếu có
-        if (user.getEmail() != null) {
-            user.setEmail(user.getEmail().trim().toLowerCase());
+        // --- Validate tên ---
+        if (user.getName() == null || user.getName().trim().isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Tên khách hàng không được để trống");
         }
+        if (user.getName().length() < 2 || user.getName().length() > 50) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Tên khách hàng phải từ 2 - 50 ký tự");
+        }
+
+        // --- Validate số điện thoại ---
+        if (user.getPhone() == null || user.getPhone().trim().isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Số điện thoại không được để trống");
+        }
+        // Regex: 10 số, bắt đầu bằng 0
+        if (!user.getPhone().matches("^(0[0-9]{9})$")) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Số điện thoại không hợp lệ (phải gồm 10 số, bắt đầu bằng 0)");
+        }
+
+        // ✅ Kiểm tra trùng số điện thoại
+        if (userRepository.existsByPhone(user.getPhone())) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Số điện thoại đã tồn tại");
+        }
+
+        // --- Validate email (nếu có nhập) ---
+        // ✅ Kiểm tra email
+        if (user.getEmail() == null || user.getEmail().trim().isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email không được để trống");
+        } else {
+            user.setEmail(user.getEmail().trim().toLowerCase());
+
+            // ✅ Check format email
+            if (!user.getEmail().matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email không hợp lệ");
+            }
+
+            // ✅ Check trùng email
+            if (userRepository.existsByEmailIgnoreCase(user.getEmail())) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("Email đã tồn tại");
+            }
+        }
+
 
         // ✅ Kiểm tra trùng số điện thoại
         if (user.getPhone() != null && userRepository.existsByPhone(user.getPhone())) {
@@ -57,19 +93,21 @@ public class CustomerController {
             user.setRegisterDate(new Date());
         }
 
-        // Gán trạng thái mặc định là true nếu chưa set
+        // Gán trạng thái mặc định
         if (user.getStatus() == null) {
             user.setStatus(true);
         }
 
-        // Nếu không gán role thì có thể set mặc định (ví dụ: ROLE_USER)
+        // Gán role mặc định nếu chưa có
         if (user.getRoles() == null || user.getRoles().isEmpty()) {
             Role defaultRole = roleRepository.findByName("ROLE_USER");
             user.setRoles(List.of(defaultRole));
         }
-// 🔐 Tạo mật khẩu ngẫu nhiên và mã hóa bằng BCrypt
+
+        // 🔐 Tạo mật khẩu ngẫu nhiên
         String rawPassword = generateRandomPassword(8);
         user.setPassword(new BCryptPasswordEncoder().encode(rawPassword));
+
         // Lưu user
         User savedUser = userRepository.save(user);
 
@@ -79,6 +117,11 @@ public class CustomerController {
         String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
         StringBuilder password = new StringBuilder();
         Random random = new Random();
+
+//    private String generateRandomPassword(int length) {
+//        String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+//        StringBuilder password = new StringBuilder();
+//        Random random = new Random();
 
         for (int i = 0; i < length; i++) {
             password.append(chars.charAt(random.nextInt(chars.length())));

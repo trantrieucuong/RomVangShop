@@ -57,7 +57,7 @@ public User user(Principal principal) {
     @GetMapping("/saleHome")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SALE')")
     public String saleHome(Model model, HttpSession session) {
-        List<Product> products = productRepository.findByQuantityGreaterThan(0); // Chỉ lấy sản phẩm có số lượng > 0
+        List<Product> products = productRepository.findByQuantityGreaterThanAndStatus(0,true); // Chỉ lấy sản phẩm có số lượng > 0
         List<Category> categories = categoryRepository.findAll();
 
         model.addAttribute("products", products);
@@ -192,12 +192,15 @@ public ResponseEntity<?> updateStock(@RequestBody Map<String, Object> data) {
     @GetMapping("/banhangoff/products")
     @ResponseBody
     public List<Product> getProductsByCategory(@RequestParam(value = "category", required = false) Long categoryId) {
-        if (categoryId == null ) {
-            return productRepository.findAll();
+        if (categoryId == null) {
+            // ✅ Chỉ lấy sản phẩm status = true và còn hàng
+            return productRepository.findByStatusTrueAndQuantityGreaterThan(0);
         } else {
-            return productRepository.findByCategory_CategoryId(categoryId);
+            // ✅ Theo category + status = true + còn hàng
+            return productRepository.findByCategory_CategoryIdAndStatusTrueAndQuantityGreaterThan(categoryId, 0);
         }
     }
+
     @GetMapping("/banhangoff/search")
     @ResponseBody
     public List<Product> searchProductsByName(@RequestParam String productName) {
@@ -207,24 +210,6 @@ public ResponseEntity<?> updateStock(@RequestBody Map<String, Object> data) {
         return productRepository.findByProductNameContainingIgnoreCase(productName.trim());
     }
 
-//    // Tạo mã mới kiểu OI000001
-//    private String generateNextOrderItemCode() {
-//        String prefix = "OI";
-//        String maxCode = orderItemRepository.findMaxCode(); // ví dụ: OI000123
-//        int nextNumber = 1;
-//
-//        if (maxCode != null && maxCode.startsWith(prefix)) {
-//            try {
-//                nextNumber = Integer.parseInt(maxCode.substring(prefix.length())) + 1;
-//            } catch (NumberFormatException e) {
-//                System.err.println("Lỗi phân tích mã OrderItem: " + maxCode);
-//            }
-//        }
-//
-//        String result = String.format("%s%06d", prefix, nextNumber);
-//        System.out.println("🔢 Mã OrderItem mới: " + result);
-//        return result;
-//    }
 
     @PostMapping("/create-or-update-customer")
     @ResponseBody
@@ -308,24 +293,21 @@ public ResponseEntity<?> updateStock(@RequestBody Map<String, Object> data) {
         if (orderId == null) {
             return "redirect:/sale/saleHome"; // fallback nếu không có đơn
         }
-
-        // Lấy dữ liệu đơn hàng + chi tiết
         Order order = orderRepository.findById(orderId).orElse(null);
         if (order == null) {
             return "redirect:/sale/saleHome";
         }
-
         model.addAttribute("order", order);
         model.addAttribute("orderDetails", order.getOrderDetails());
 
         // Nếu vẫn cần hiển thị sản phẩm & category cho navbar/menu
-        model.addAttribute("products", productRepository.findAll());
-        model.addAttribute("categories", categoryRepository.findAll());
+        List<Product> products = productRepository.findByQuantityGreaterThanAndStatus(0,true); // Chỉ lấy sản phẩm có số lượng > 0
+        List<Category> categories = categoryRepository.findAll();
 
         // Dọn session
         session.removeAttribute("pendingOrderId");
 
-        return "admin/hoaDonInRa"; // thymeleaf html hóa đơn
+        return "admin/hoaDonInRa";
     }
 
     @GetMapping("/saleHome1")
