@@ -127,6 +127,7 @@ product.setStatus(true);
 			Product existingProduct = optionalProduct.get();
 			existingProduct.setQuantity(existingProduct.getQuantity() + product.getQuantity());
 			existingProduct.setEnteredDate(new Date()); // cập nhật ngày nhập
+            existingProduct.setStatus(true);
 			productRepository.save(existingProduct);
 			model.addAttribute("message", "Cập nhật số lượng sản phẩm thành công");
 		} else {
