@@ -302,7 +302,7 @@ public class CartController extends CommomController {
 				Date date = new Date();
 				orderFinal.setOrderId(generateUniqueOrderId());
 				orderFinal.setOrderDate(date);
-				orderFinal.setStatus(0);
+				orderFinal.setStatus(1);
 				orderFinal.getOrderId();
 				orderFinal.setUser(user);
 				orderFinal.setAmount(totalPrice);
@@ -403,7 +403,7 @@ public class CartController extends CommomController {
 		Order order = new Order();
 		order.setOrderId(generateUniqueOrderId());
 		order.setOrderDate(new Date());
-		order.setStatus(0); // chưa xử lý
+		order.setStatus(1); // chưa xử lý
 		order.setAmount(totalPrice);
 		order.setUser(user);
 		order.setNote("Thanh toán qua VNPay");
